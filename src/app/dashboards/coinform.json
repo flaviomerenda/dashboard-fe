@@ -1,0 +1,451 @@
+{
+  "title": "Example Co-inform Document Level Dashboard",
+  "services": {
+    "query": {
+      "idQueue": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "list": {
+        "0": {
+          "query": "*:*",
+          "alias": "",
+          "color": "#7EB26D",
+          "id": 0,
+          "pin": false,
+          "type": "lucene"
+        }
+      },
+      "ids": [
+        0
+      ]
+    },
+    "filter": {
+      "idQueue": [
+        1,
+        2
+      ],
+      "list": {
+        "0": {
+          "from": "2018-12-22T15:49:55.000Z",
+          "to": "2020-01-20T16:22:59.000Z",
+          "field": "publishedDate",
+          "type": "time",
+          "mandate": "must",
+          "active": true,
+          "alias": "",
+          "id": 0
+        }
+      },
+      "ids": [
+        0
+      ]
+    }
+  },
+  "rows": [
+    {
+      "title": "Overview",
+      "height": "50px",
+      "editable": true,
+      "collapse": true,
+      "collapsable": true,
+      "panels": [
+        {
+          "error": false,
+          "span": 6,
+          "editable": true,
+          "type": "text",
+          "loadingEditor": false,
+          "status": "Stable",
+          "mode": "markdown",
+          "content": "You may be seeing a message that says Solr is not reachable or that the collection is not found. Click on _Configure Dashboard_ (cog icon) on the top right and set the Solr server and collection. By default, we have configured the dashboard to point to server _http://localhost:8983_ and collection _collection1_. You can also choose how many rows you want to have in the dashboard. \n\nTo configure what panels appear in a specific row, click on the _Configure Row_  (cog icon) at the far left of the row.\n\nEach panel can be configured by clicking on _Configure_ (cog icon) near the top right of the panel (just to the left of the panel type). The span of the panel determines its width; each row has width 12, and each panel can take up all or part of this span.\n\nAfter reading these _text panels_ (which are useful for presenting information about a dashboard), you can delete them by clicking on the \"x\" towards the top right of the panel.",
+          "style": {},
+          "title": "Configure Dashboard"
+        },
+        {
+          "error": false,
+          "span": 6,
+          "editable": true,
+          "group": [
+            "default"
+          ],
+          "type": "text",
+          "status": "Stable",
+          "mode": "markdown",
+          "content": "In the row below, we have put in a _time picker_ and a _search bar._ Banana is primarily designed for time series data, and we expect every dashboard to have a time picker. You will also almost always have a search bar for user searches. \n\nBelow that there is a hidden row that contains a _filtering_ module, which is used to configure global filter queries. You will almost certainly want to have one. Clicking on any facet in the terms module will filter results by that value. You can modify each filter once it is created; you can change the value and/or choose between \"must\", \"must not\" and \"either.\"\n\nClick on the right-facing triangle to the far left of the row to _Expand Row_. You can click on the upward-facing triangle on any row in order to _Hide Row._",
+          "style": {},
+          "title": "Timestamps, Queries and Filters"
+        }
+      ]
+    },
+    {
+      "title": "Query and Time Window",
+      "height": "50px",
+      "editable": true,
+      "collapse": false,
+      "collapsable": true,
+      "panels": [
+        {
+          "span": 3,
+          "editable": true,
+          "type": "facet",
+          "loadingEditor": false,
+          "status": "Stable",
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=*%3A*&fq=publishedDate:[2018-12-22T15:49:55.000Z%20TO%202020-01-20T16:22:59.000Z]&facet=true&facet.field=lang_orig&facet.field=taxonomy_crime_tax&facet.field=people_os&wt=json",
+            "basic_query": "q=*%3A*&fq=publishedDate:[2018-12-22T15:49:55.000Z%20TO%202020-01-20T16:22:59.000Z]&facet=true&facet.field=lang_orig&facet.field=taxonomy_crime_tax&facet.field=people_os",
+            "custom": ""
+          },
+          "group": "default",
+          "style": {
+            "font-size": "9pt"
+          },
+          "overflow": "min-height",
+          "fields": [
+            "lang_orig",
+            "taxonomy_crime_tax",
+            "people_os"
+          ],
+          "spyable": true,
+          "facet_limit": 10,
+          "maxnum_facets": 5,
+          "foundResults": true,
+          "header_title": "Facet Fields",
+          "toggle_element": "lang_orig",
+          "show_queries": true,
+          "title": "Language",
+          "exportSize": null,
+          "offset": 0
+        },
+        {
+          "error": false,
+          "span": 3,
+          "editable": true,
+          "spyable": true,
+          "group": [
+            "default"
+          ],
+          "type": "query",
+          "label": "Search",
+          "history": [
+            "*:*",
+            "_text_:god",
+            "_text_:*",
+            "*"
+          ],
+          "remember": 10,
+          "pinned": true,
+          "query": "*",
+          "title": "Search",
+          "def_type": ""
+        },
+        {
+          "error": "",
+          "span": 4,
+          "editable": true,
+          "type": "timepicker",
+          "loadingEditor": false,
+          "status": "Stable",
+          "mode": "absolute",
+          "time_options": [
+            "5m",
+            "15m",
+            "1h",
+            "6h",
+            "12h",
+            "24h",
+            "2d",
+            "7d",
+            "30d"
+          ],
+          "timespan": "30d",
+          "timefield": "publishedDate",
+          "timeformat": "",
+          "spyable": true,
+          "refresh": {
+            "enable": false,
+            "interval": 30,
+            "min": 3
+          },
+          "filter_id": 0,
+          "time": {
+            "from": "12/22/2018 16:49:55",
+            "to": "01/20/2020 17:22:59"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Filters",
+      "height": "50px",
+      "editable": true,
+      "collapse": false,
+      "collapsable": true,
+      "panels": [
+        {
+          "error": false,
+          "span": 12,
+          "editable": true,
+          "spyable": true,
+          "group": [
+            "default"
+          ],
+          "type": "filtering"
+        }
+      ]
+    },
+    {
+      "title": "Facets, Histogram and Table",
+      "height": "150px",
+      "editable": true,
+      "collapse": true,
+      "collapsable": true,
+      "panels": [
+        {
+          "error": false,
+          "span": 12,
+          "editable": true,
+          "group": [
+            "default"
+          ],
+          "type": "text",
+          "status": "Stable",
+          "mode": "markdown",
+          "content": "Without knowing about your data, I cannot fully configure the panels I have provided below. However, I have provided you with some starting points, assuming that your time field is \"event_timestamp\" and that there is a field called \"message\" that you wish to facet on in order to view the top terms that appear in the \"message\" field and their frequency. If there is no data, these panels will be empty, and may give an error.\n\nThe _histogram_ panel allows you to plot either _counts_ or a specific field's (integer) _values_ across time. If you go to  _Configure_, the panel allows you to set the type of chart and what variable is plotted (if choosing the _values_ option). Moreover, when plotting values, you can specify a _group by_ field which will produce multiple charts. You can modify the time window for the entire page from within the histogram panel.\n\nThe _terms_ panel is great for visualizing facets--as pie charts, bar charts or tables. Clicking on a term will create a global filter query restricting the result set (across all panels within the page) to the field value that is selected. You could have many such panels depending on the number of fields you choose to facet on.\n\nThe *table* panel at the bottom provides you a detailed view of search results. It has attempted to list your fields to the left; select a few to view them in the table. You can sort by any field. Click on a particular row to expand the resulting document that was returned.",
+          "style": {},
+          "title": "Facets, Histogram and Table"
+        }
+      ]
+    },
+    {
+      "title": "Graph",
+      "height": "250px",
+      "editable": true,
+      "collapse": false,
+      "collapsable": true,
+      "panels": [
+        {
+          "span": 4,
+          "editable": true,
+          "type": "bar",
+          "loadingEditor": false,
+          "queries": {
+            "mode": "all",
+            "query": "q=*%3A*&wt=json&rows=0&fq=publishedDate:[2018-12-22T15:49:55.000Z%20TO%202020-01-20T16:22:59.000Z]&facet=true&facet.field=taxonomy_crime_tax&facet.limit=10",
+            "custom": "",
+            "ids": [
+              0
+            ]
+          },
+          "field": "taxonomy_crime_tax",
+          "size": 10,
+          "spyable": true,
+          "show_queries": true,
+          "title": "crime"
+        },
+        {
+          "span": 4,
+          "editable": true,
+          "type": "tagcloud",
+          "loadingEditor": false,
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=*%3A*&wt=json&rows=0&fq=publishedDate:[2018-12-22T15:49:55.000Z%20TO%202020-01-20T16:22:59.000Z]&facet=true&facet.field=main_elements&facet.limit=20",
+            "custom": ""
+          },
+          "field": "main_elements",
+          "size": 20,
+          "alignment": "vertical and horizontal",
+          "fontScale": 7,
+          "ignoreStopWords": false,
+          "spyable": true,
+          "show_queries": true,
+          "title": "Main elements"
+        },
+        {
+          "span": 3,
+          "editable": true,
+          "type": "sunburst",
+          "loadingEditor": false,
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=*%3A*&fq=publishedDate:[2018-12-22T15:49:55.000Z%20TO%202020-01-20T16:22:59.000Z]&wt=json&facet=true&facet.pivot=relations_actions&facet.limit=1000&rows=0",
+            "custom": ""
+          },
+          "facet_limit": 1000,
+          "spyable": true,
+          "show_queries": true,
+          "title": "Relations",
+          "facet_pivot_strings": [
+            "relations_actions"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Events",
+      "height": "250px",
+      "editable": true,
+      "collapse": false,
+      "collapsable": true,
+      "panels": [
+        {
+          "span": 5,
+          "editable": true,
+          "type": "multiseries",
+          "loadingEditor": false,
+          "queries": {
+            "mode": "all",
+            "ids": [],
+            "query": "q=*%3A*&fq=publishedDate:[2018-12-22T15:49:55.000Z%20TO%202020-01-20T16:22:59.000Z]&fl=publishedDate,contentLength,contentLength&wt=json&rows=1000&sort=publishedDate asc",
+            "custom": ""
+          },
+          "size": 1000,
+          "max_rows": 1000,
+          "field": "publishedDate",
+          "yAxis": "contentLength",
+          "right_yAxis": "content length",
+          "fl": "contentLength",
+          "right_fl": "contentLength",
+          "spyable": true,
+          "show_queries": true,
+          "interpolate": "monotone",
+          "right_interpolate": "basis",
+          "rightYEnabled": false,
+          "showLegend": true,
+          "showRightLegend": true,
+          "refresh": {
+            "enable": false,
+            "interval": 2
+          }
+        },
+        {
+          "span": 3,
+          "editable": true,
+          "type": "hits",
+          "loadingEditor": false,
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=*%3A*&fq=publishedDate:[2018-12-22T15:49:55.000Z%20TO%202020-01-20T16:22:59.000Z]&stats=true&stats.field=organizations_os&stats.field=places_os&stats.field=medical_conditions_os&stats.field=medical_treatments_os&wt=json&rows=0\n",
+            "basic_query": "",
+            "custom": ""
+          },
+          "style": {
+            "font-size": "10pt"
+          },
+          "arrangement": "horizontal",
+          "chart": "total",
+          "counter_pos": "above",
+          "donut": false,
+          "tilt": false,
+          "labels": true,
+          "spyable": true,
+          "show_queries": true,
+          "metrics": [
+            {
+              "type": "count",
+              "field": "organizations_os",
+              "decimalDigits": 2,
+              "label": "organizations",
+              "value": "235721.00"
+            },
+            {
+              "type": "count",
+              "field": "places_os",
+              "decimalDigits": 2,
+              "label": "places",
+              "value": "424731.00"
+            },
+            {
+              "type": "count",
+              "field": "medical_conditions_os",
+              "decimalDigits": 2,
+              "label": "medical conditions",
+              "value": "22975.00"
+            },
+            {
+              "type": "count",
+              "field": "medical_treatments_os",
+              "decimalDigits": 2,
+              "label": "medical treatments",
+              "value": "3448.00"
+            }
+          ],
+          "refresh": {
+            "enable": false,
+            "interval": 2
+          },
+          "title": "Aggregates"
+        }
+      ]
+    }
+  ],
+  "editable": true,
+  "index": {
+    "interval": "none",
+    "pattern": "[logstash-]YYYY.MM.DD",
+    "default": "_all"
+  },
+  "style": "light",
+  "failover": false,
+  "panel_hints": true,
+  "loader": {
+    "save_gist": true,
+    "save_elasticsearch": true,
+    "save_local": true,
+    "save_default": true,
+    "save_temp": true,
+    "save_temp_ttl_enable": true,
+    "save_temp_ttl": "30d",
+    "load_gist": true,
+    "load_elasticsearch": true,
+    "load_elasticsearch_size": 20,
+    "load_local": true,
+    "hide": false,
+    "dropdown_collections": true,
+    "save_as_public": false
+  },
+  "solr": {
+    "server": "https://dashboard.coinform.eu/api/dboard/",
+    "core_name": "pilot-se",
+    "core_list": [
+      "2bd20c89-9b70-46e2-aad7-108337db80e6_shard1_replica1",
+      "34f73d18-b494-45c7-8294-a5e43b7d9efe_shard1_replica1",
+      "37a0ab9f-d52d-450e-b83b-80610d9bef19_shard1_replica1",
+      "483f1002-969e-49d1-9bcd-f1d937617e32_shard1_replica1",
+      "4a9bd25d-b952-4704-b392-dbbdc1182203_shard1_replica1",
+      "70e9e133-52b5-4195-8b43-1aa737cd26de_shard1_replica1",
+      "b93eeaa2-ebd3-4dd2-b54a-4dacc742373b_shard1_replica1",
+      "bd764318-2ed9-4e9d-8ccd-632d68851280_shard1_replica1",
+      "c9d15399-799b-4d38-97ed-43cd628b6664_shard1_replica1",
+      "claims-dev_shard1_replica1",
+      "co-inform.aw.local_shard1_replica1",
+      "collection1",
+      "d0f3a6d6-080b-46b4-a33b-088be9cfb840_shard1_replica1",
+      "d33b99cf-131a-46a5-86e5-f583627998a7_shard1_replica1",
+      "ee429e0e-655a-4b18-abc5-3553c59b09bb_shard1_replica1",
+      "f493a9ed-da66-4a9d-9605-a5501195eeef_shard1_replica1",
+      "fd5b4a2f-45a7-4f72-8b76-9f7e8f96269f_shard1_replica1",
+      "inform.aw.local_shard1_replica1",
+      "public_sources_shard1_replica1"
+    ],
+    "global_params": ""
+  },
+  "username": "guest",
+  "home": true
+}
