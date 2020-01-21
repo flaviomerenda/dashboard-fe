@@ -2399,8 +2399,9 @@ It seems there are mainly 3 services called by Banana:
         Request duration: 0.339002s
 ```
 
-    The `select` Solr endpoint can handle both `GET` and `POST` requests. From `curl` the query may look like this:
+The `select` Solr endpoint can handle both `GET` and `POST` requests. From `curl` the query may look like this:
 
+``` sh
         curl 'http://192.168.192.163:8984/solr/70e9e133-52b5-4195-8b43-1aa737cd26de/select' \
         -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) Gecko/20100101 Firefox/72.0' \
         -H 'Accept: application/json, text/plain, */*' \
@@ -2409,4 +2410,17 @@ It seems there are mainly 3 services called by Banana:
         -H 'Origin: http://localhost:8983' -H 'Connection: keep-alive' \
         -H 'Referer: http://localhost:8983/solr/banana/' \
         --data 'q=*%3A*&fq=publishedDate:[2018-07-10T16:00:25.000Z%20TO%202020-01-20T16:22:59.000Z]&fq=lang_orig:"en"&stats=true&stats.field=organizations_os&stats.field=places_os&stats.field=medical_conditions_os&stats.field=medical_treatments_os&wt=json&rows=0'
+```
+
+## Changes required by ESI's Content Collector API
+
+ESI's content collector API will be modified to include these 3 calls
+
+Eventually we'll have the following endpoints:
+
+* https://coinform.expertsystemcustomer.com/cc/api/v1/admin/luke
+* https://coinform.expertsystemcustomer.com/cc/api/v1/admin/core
+* https://coinform.expertsystemcustomer.com/cc/api/v1/admin/select
+
+which will adhere as much as possible to the responses output by Solr, but replacing some field names and values as well as collection names.
 
