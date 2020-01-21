@@ -2416,11 +2416,11 @@ The `select` Solr endpoint can handle both `GET` and `POST` requests. From `curl
 
 ESI's content collector API will be modified to include these 3 calls
 
-Eventually we'll have the following endpoints:
+Eventually we'll have the following endpoints. The [dashboard-be](https://github.com/co-inform/dashboard-be-api) component will forward the appropriate requests to ESI's API:
 
-* https://coinform.expertsystemcustomer.com/cc/api/v1/admin/luke
-* https://coinform.expertsystemcustomer.com/cc/api/v1/admin/core
-* https://coinform.expertsystemcustomer.com/cc/api/v1/admin/select
+* https://coinform.expertsystemcustomer.com/cc/api/v1/dboard/admin/luke
+* https://coinform.expertsystemcustomer.com/cc/api/v1/dboard/admin/core
+* https://coinform.expertsystemcustomer.com/cc/api/v1/dboard/{collection-name}/select
 
 which will adhere as much as possible to the responses output by Solr, but replacing some field names and values as well as collection names.
 
