@@ -1,5 +1,5 @@
-{
-  "title": "Example Co-inform Document Level Dashboard",
+﻿{
+  "title": "Co-inform Document Level Dashboard v20200310",
   "services": {
     "query": {
       "idQueue": [
@@ -10,7 +10,7 @@
       ],
       "list": {
         "0": {
-          "query": "*:*",
+          "query": "-credibility_label:\"not verifiable\"",
           "alias": "",
           "color": "#7EB26D",
           "id": 0,
@@ -25,14 +25,19 @@
     "filter": {
       "idQueue": [
         1,
-        2
+        2,
+        3,
+        4,
+        5
       ],
       "list": {
         "0": {
-          "from": "2018-12-22T15:49:55.000Z",
-          "to": "2020-01-20T16:22:59.000Z",
+          "from": "NOW/DAY-30DAY",
+          "to": "NOW/DAY%2B1DAY",
           "field": "publishedDate",
           "type": "time",
+          "fromDateObj": "2020-02-09T15:24:04.958Z",
+          "toDateObj": "2020-03-10T15:24:04.958Z",
           "mandate": "must",
           "active": true,
           "alias": "",
@@ -46,7 +51,7 @@
   },
   "rows": [
     {
-      "title": "Overview",
+      "title": "About this Dashboard",
       "height": "50px",
       "editable": true,
       "collapse": true,
@@ -60,124 +65,9 @@
           "loadingEditor": false,
           "status": "Stable",
           "mode": "markdown",
-          "content": "You may be seeing a message that says Solr is not reachable or that the collection is not found. Click on _Configure Dashboard_ (cog icon) on the top right and set the Solr server and collection. By default, we have configured the dashboard to point to server _http://localhost:8983_ and collection _collection1_. You can also choose how many rows you want to have in the dashboard. \n\nTo configure what panels appear in a specific row, click on the _Configure Row_  (cog icon) at the far left of the row.\n\nEach panel can be configured by clicking on _Configure_ (cog icon) near the top right of the panel (just to the left of the panel type). The span of the panel determines its width; each row has width 12, and each panel can take up all or part of this span.\n\nAfter reading these _text panels_ (which are useful for presenting information about a dashboard), you can delete them by clicking on the \"x\" towards the top right of the panel.",
+          "content": "# About this Dashboard\n\nThis dashboard shows an overview of all the documents analysed for the Co-inform Greek pilot. It consist of documents gathered by our content collector. Until now, we have focused on collecting **political news** from the following popular news-sites:\n\n* [www.ert.gr](http://www.ert.gr) \n* [https://www.in.gr/politics}(https://www.in.gr/politics)\n* [SKAI](http://feeds.feedburner.com/skai/yinm)\n* [https://www.newsbomb.gr/politikh](https://www.newsbomb.gr/politikh)",
           "style": {},
-          "title": "Configure Dashboard"
-        },
-        {
-          "error": false,
-          "span": 6,
-          "editable": true,
-          "group": [
-            "default"
-          ],
-          "type": "text",
-          "status": "Stable",
-          "mode": "markdown",
-          "content": "In the row below, we have put in a _time picker_ and a _search bar._ Banana is primarily designed for time series data, and we expect every dashboard to have a time picker. You will also almost always have a search bar for user searches. \n\nBelow that there is a hidden row that contains a _filtering_ module, which is used to configure global filter queries. You will almost certainly want to have one. Clicking on any facet in the terms module will filter results by that value. You can modify each filter once it is created; you can change the value and/or choose between \"must\", \"must not\" and \"either.\"\n\nClick on the right-facing triangle to the far left of the row to _Expand Row_. You can click on the upward-facing triangle on any row in order to _Hide Row._",
-          "style": {},
-          "title": "Timestamps, Queries and Filters"
-        }
-      ]
-    },
-    {
-      "title": "Query and Time Window",
-      "height": "50px",
-      "editable": true,
-      "collapse": false,
-      "collapsable": true,
-      "panels": [
-        {
-          "span": 3,
-          "editable": true,
-          "type": "facet",
-          "loadingEditor": false,
-          "status": "Stable",
-          "queries": {
-            "mode": "all",
-            "ids": [
-              0
-            ],
-            "query": "q=*%3A*&fq=publishedDate:[2018-12-22T15:49:55.000Z%20TO%202020-01-20T16:22:59.000Z]&facet=true&facet.field=lang_orig&facet.field=taxonomy_crime_tax&facet.field=people_os&wt=json",
-            "basic_query": "q=*%3A*&fq=publishedDate:[2018-12-22T15:49:55.000Z%20TO%202020-01-20T16:22:59.000Z]&facet=true&facet.field=lang_orig&facet.field=taxonomy_crime_tax&facet.field=people_os",
-            "custom": ""
-          },
-          "group": "default",
-          "style": {
-            "font-size": "9pt"
-          },
-          "overflow": "min-height",
-          "fields": [
-            "lang_orig",
-            "taxonomy_crime_tax",
-            "people_os"
-          ],
-          "spyable": true,
-          "facet_limit": 10,
-          "maxnum_facets": 5,
-          "foundResults": true,
-          "header_title": "Facet Fields",
-          "toggle_element": "lang_orig",
-          "show_queries": true,
-          "title": "Language",
-          "exportSize": null,
-          "offset": 0
-        },
-        {
-          "error": false,
-          "span": 3,
-          "editable": true,
-          "spyable": true,
-          "group": [
-            "default"
-          ],
-          "type": "query",
-          "label": "Search",
-          "history": [
-            "*:*",
-            "_text_:god",
-            "_text_:*",
-            "*"
-          ],
-          "remember": 10,
-          "pinned": true,
-          "query": "*",
-          "title": "Search",
-          "def_type": ""
-        },
-        {
-          "error": "",
-          "span": 4,
-          "editable": true,
-          "type": "timepicker",
-          "loadingEditor": false,
-          "status": "Stable",
-          "mode": "absolute",
-          "time_options": [
-            "5m",
-            "15m",
-            "1h",
-            "6h",
-            "12h",
-            "24h",
-            "2d",
-            "7d",
-            "30d"
-          ],
-          "timespan": "30d",
-          "timefield": "publishedDate",
-          "timeformat": "",
-          "spyable": true,
-          "refresh": {
-            "enable": false,
-            "interval": 30,
-            "min": 3
-          },
-          "filter_id": 0,
-          "time": {
-            "from": "12/22/2018 16:49:55",
-            "to": "01/20/2020 17:22:59"
-          }
+          "title": "About this Dashboard"
         }
       ]
     },
@@ -190,149 +80,109 @@
       "panels": [
         {
           "error": false,
-          "span": 12,
+          "span": 2,
           "editable": true,
-          "spyable": true,
-          "group": [
-            "default"
+          "type": "text",
+          "loadingEditor": false,
+          "status": "Stable",
+          "mode": "markdown",
+          "content": "Use the *timepicker* and/or *filter*s to the right to filter by time, topic, language, etc.",
+          "style": {},
+          "title": "Filter results"
+        },
+        {
+          "error": "",
+          "span": 4,
+          "editable": true,
+          "type": "timepicker",
+          "loadingEditor": false,
+          "status": "Stable",
+          "mode": "relative",
+          "time_options": [
+            "15m",
+            "1h",
+            "24h",
+            "7d",
+            "30d",
+            "180d",
+            "1y"
           ],
-          "type": "filtering"
+          "timespan": "180d",
+          "timefield": "publishedDate",
+          "timeformat": "",
+          "spyable": true,
+          "refresh": {
+            "enable": false,
+            "interval": 30,
+            "min": 3
+          },
+          "filter_id": 0,
+          "show_help_message": true,
+          "info_mode": "markdown",
+          "help_message": "Use this *timepicker* to restrict the dashboard to documents published in the selected time frame.",
+          "title": "Filter by published date"
+        },
+        {
+          "span": 5,
+          "editable": true,
+          "type": "facet",
+          "loadingEditor": false,
+          "status": "Stable",
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW/DAY-30DAY%20TO%20NOW/DAY%2B1DAY]&facet=true&facet.field=categories&facet.field=credibility_label&facet.field=source_id&wt=json",
+            "basic_query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW/DAY-30DAY%20TO%20NOW/DAY%2B1DAY]&facet=true&facet.field=categories&facet.field=credibility_label&facet.field=source_id",
+            "custom": ""
+          },
+          "group": "default",
+          "style": {
+            "font-size": "9pt"
+          },
+          "overflow": "min-height",
+          "fields": [
+            "categories",
+            "credibility_label",
+            "source_id"
+          ],
+          "spyable": true,
+          "facet_limit": 10,
+          "maxnum_facets": 5,
+          "foundResults": true,
+          "header_title": "Topics",
+          "toggle_element": null,
+          "show_queries": true,
+          "title": "Topics",
+          "exportSize": null,
+          "offset": 0
         }
       ]
     },
     {
-      "title": "Facets, Histogram and Table",
-      "height": "150px",
-      "editable": true,
+      "title": "Active Filters",
+      "height": "50px",
+      "editable": false,
       "collapse": true,
       "collapsable": true,
       "panels": [
         {
           "error": false,
-          "span": 12,
+          "span": 8,
           "editable": true,
+          "spyable": true,
           "group": [
             "default"
           ],
-          "type": "text",
-          "status": "Stable",
-          "mode": "markdown",
-          "content": "Without knowing about your data, I cannot fully configure the panels I have provided below. However, I have provided you with some starting points, assuming that your time field is \"event_timestamp\" and that there is a field called \"message\" that you wish to facet on in order to view the top terms that appear in the \"message\" field and their frequency. If there is no data, these panels will be empty, and may give an error.\n\nThe _histogram_ panel allows you to plot either _counts_ or a specific field's (integer) _values_ across time. If you go to  _Configure_, the panel allows you to set the type of chart and what variable is plotted (if choosing the _values_ option). Moreover, when plotting values, you can specify a _group by_ field which will produce multiple charts. You can modify the time window for the entire page from within the histogram panel.\n\nThe _terms_ panel is great for visualizing facets--as pie charts, bar charts or tables. Clicking on a term will create a global filter query restricting the result set (across all panels within the page) to the field value that is selected. You could have many such panels depending on the number of fields you choose to facet on.\n\nThe *table* panel at the bottom provides you a detailed view of search results. It has attempted to list your fields to the left; select a few to view them in the table. You can sort by any field. Click on a particular row to expand the resulting document that was returned.",
-          "style": {},
-          "title": "Facets, Histogram and Table"
-        }
-      ]
-    },
-    {
-      "title": "Graph",
-      "height": "250px",
-      "editable": true,
-      "collapse": false,
-      "collapsable": true,
-      "panels": [
-        {
-          "span": 4,
-          "editable": true,
-          "type": "bar",
-          "loadingEditor": false,
-          "queries": {
-            "mode": "all",
-            "query": "q=*%3A*&wt=json&rows=0&fq=publishedDate:[2018-12-22T15:49:55.000Z%20TO%202020-01-20T16:22:59.000Z]&facet=true&facet.field=taxonomy_crime_tax&facet.limit=10",
-            "custom": "",
-            "ids": [
-              0
-            ]
-          },
-          "field": "taxonomy_crime_tax",
-          "size": 10,
-          "spyable": true,
-          "show_queries": true,
-          "title": "crime"
+          "type": "filtering",
+          "title": "Overview of active filters",
+          "show_help_message": true,
+          "info_mode": "markdown",
+          "help_message": "### Overview of active filters for this dashboard\nAll other diagrams show data based on this set of filters."
         },
         {
           "span": 4,
-          "editable": true,
-          "type": "tagcloud",
-          "loadingEditor": false,
-          "queries": {
-            "mode": "all",
-            "ids": [
-              0
-            ],
-            "query": "q=*%3A*&wt=json&rows=0&fq=publishedDate:[2018-12-22T15:49:55.000Z%20TO%202020-01-20T16:22:59.000Z]&facet=true&facet.field=main_elements&facet.limit=20",
-            "custom": ""
-          },
-          "field": "main_elements",
-          "size": 20,
-          "alignment": "vertical and horizontal",
-          "fontScale": 7,
-          "ignoreStopWords": false,
-          "spyable": true,
-          "show_queries": true,
-          "title": "Main elements"
-        },
-        {
-          "span": 3,
-          "editable": true,
-          "type": "sunburst",
-          "loadingEditor": false,
-          "queries": {
-            "mode": "all",
-            "ids": [
-              0
-            ],
-            "query": "q=*%3A*&fq=publishedDate:[2018-12-22T15:49:55.000Z%20TO%202020-01-20T16:22:59.000Z]&wt=json&facet=true&facet.pivot=relations_actions&facet.limit=1000&rows=0",
-            "custom": ""
-          },
-          "facet_limit": 1000,
-          "spyable": true,
-          "show_queries": true,
-          "title": "Relations",
-          "facet_pivot_strings": [
-            "relations_actions"
-          ]
-        }
-      ]
-    },
-    {
-      "title": "Events",
-      "height": "250px",
-      "editable": true,
-      "collapse": false,
-      "collapsable": true,
-      "panels": [
-        {
-          "span": 5,
-          "editable": true,
-          "type": "multiseries",
-          "loadingEditor": false,
-          "queries": {
-            "mode": "all",
-            "ids": [],
-            "query": "q=*%3A*&fq=publishedDate:[2018-12-22T15:49:55.000Z%20TO%202020-01-20T16:22:59.000Z]&fl=publishedDate,contentLength,contentLength&wt=json&rows=1000&sort=publishedDate asc",
-            "custom": ""
-          },
-          "size": 1000,
-          "max_rows": 1000,
-          "field": "publishedDate",
-          "yAxis": "contentLength",
-          "right_yAxis": "content length",
-          "fl": "contentLength",
-          "right_fl": "contentLength",
-          "spyable": true,
-          "show_queries": true,
-          "interpolate": "monotone",
-          "right_interpolate": "basis",
-          "rightYEnabled": false,
-          "showLegend": true,
-          "showRightLegend": true,
-          "refresh": {
-            "enable": false,
-            "interval": 2
-          }
-        },
-        {
-          "span": 3,
           "editable": true,
           "type": "hits",
           "loadingEditor": false,
@@ -341,12 +191,12 @@
             "ids": [
               0
             ],
-            "query": "q=*%3A*&fq=publishedDate:[2018-12-22T15:49:55.000Z%20TO%202020-01-20T16:22:59.000Z]&stats=true&stats.field=organizations_os&stats.field=places_os&stats.field=medical_conditions_os&stats.field=medical_treatments_os&wt=json&rows=0\n",
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW/DAY-30DAY%20TO%20NOW/DAY%2B1DAY]&stats=true&stats.field=id&wt=json&rows=0\n",
             "basic_query": "",
             "custom": ""
           },
           "style": {
-            "font-size": "10pt"
+            "font-size": "16pt"
           },
           "arrangement": "horizontal",
           "chart": "total",
@@ -359,38 +209,386 @@
           "metrics": [
             {
               "type": "count",
-              "field": "organizations_os",
-              "decimalDigits": 2,
-              "label": "organizations",
-              "value": "235721.00"
-            },
-            {
-              "type": "count",
-              "field": "places_os",
-              "decimalDigits": 2,
-              "label": "places",
-              "value": "424731.00"
-            },
-            {
-              "type": "count",
-              "field": "medical_conditions_os",
-              "decimalDigits": 2,
-              "label": "medical conditions",
-              "value": "22975.00"
-            },
-            {
-              "type": "count",
-              "field": "medical_treatments_os",
-              "decimalDigits": 2,
-              "label": "medical treatments",
-              "value": "3448.00"
+              "field": "id",
+              "decimalDigits": 0,
+              "label": "number of documents",
+              "value": "1085"
             }
           ],
           "refresh": {
             "enable": false,
             "interval": 2
           },
-          "title": "Aggregates"
+          "title": "Overview"
+        }
+      ]
+    },
+    {
+      "title": "Events",
+      "height": "150px",
+      "editable": true,
+      "collapse": false,
+      "collapsable": true,
+      "panels": [
+        {
+          "span": 2,
+          "editable": true,
+          "type": "hits",
+          "loadingEditor": false,
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW/DAY-30DAY%20TO%20NOW/DAY%2B1DAY]&stats=true&stats.field=id&wt=json&rows=0\n",
+            "basic_query": "",
+            "custom": ""
+          },
+          "style": {
+            "font-size": "20pt"
+          },
+          "arrangement": "horizontal",
+          "chart": "total",
+          "counter_pos": "above",
+          "donut": false,
+          "tilt": false,
+          "labels": true,
+          "spyable": true,
+          "show_queries": true,
+          "metrics": [
+            {
+              "type": "count",
+              "field": "id",
+              "decimalDigits": 0,
+              "label": "# docs",
+              "value": "1085"
+            }
+          ],
+          "refresh": {
+            "enable": false,
+            "interval": 2
+          },
+          "title": "Collected documents"
+        },
+        {
+          "span": 2,
+          "editable": true,
+          "type": "hits",
+          "loadingEditor": false,
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW/DAY-30DAY%20TO%20NOW/DAY%2B1DAY]&stats=true&stats.field=id&wt=json&rows=0\n",
+            "basic_query": "",
+            "custom": "&fq=credibility_label:(\"not credible\" OR \"mostly not credible\")"
+          },
+          "style": {
+            "font-size": "20pt"
+          },
+          "arrangement": "horizontal",
+          "chart": "total",
+          "counter_pos": "above",
+          "donut": false,
+          "tilt": false,
+          "labels": true,
+          "spyable": true,
+          "show_queries": true,
+          "metrics": [
+            {
+              "type": "count",
+              "field": "id",
+              "decimalDigits": 0,
+              "label": "not credible",
+              "value": "0"
+            }
+          ],
+          "refresh": {
+            "enable": false,
+            "interval": 2
+          },
+          "title": "Not credible docs"
+        },
+        {
+          "span": 2,
+          "editable": true,
+          "type": "hits",
+          "loadingEditor": false,
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW/DAY-30DAY%20TO%20NOW/DAY%2B1DAY]&stats=true&stats.field=id&wt=json&rows=0\n",
+            "basic_query": "",
+            "custom": "&fq=credibility_label:(\"credible\" OR \"mostly credible\")"
+          },
+          "style": {
+            "font-size": "20pt"
+          },
+          "arrangement": "horizontal",
+          "chart": "total",
+          "counter_pos": "above",
+          "donut": false,
+          "tilt": false,
+          "labels": true,
+          "spyable": true,
+          "show_queries": true,
+          "metrics": [
+            {
+              "type": "count",
+              "field": "id",
+              "decimalDigits": 0,
+              "label": "Credible docs",
+              "value": "0"
+            }
+          ],
+          "refresh": {
+            "enable": false,
+            "interval": 2
+          },
+          "title": "Credible"
+        },
+        {
+          "span": 2,
+          "editable": true,
+          "type": "sunburst",
+          "loadingEditor": false,
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW/DAY-30DAY%20TO%20NOW/DAY%2B1DAY]&wt=json&facet=true&facet.pivot=credibility_label&facet.limit=1000&rows=0",
+            "custom": ""
+          },
+          "facet_limit": 1000,
+          "spyable": true,
+          "show_queries": true,
+          "title": "Credibility",
+          "facet_pivot_strings": [
+            "credibility_label"
+          ],
+          "show_help_message": true,
+          "info_mode": "markdown",
+          "help_message": "These credibilities have been randomly generated for now. Eventually we'll use our **misinformation analysis** modules to generate real assessments."
+        }
+      ]
+    },
+    {
+      "title": "Graph",
+      "height": "150px",
+      "editable": true,
+      "collapse": false,
+      "collapsable": true,
+      "panels": [
+        {
+          "span": 12,
+          "editable": true,
+          "type": "histogram",
+          "loadingEditor": false,
+          "mode": "count",
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&wt=json&rows=0&fq=publishedDate:[NOW/DAY-30DAY%20TO%20NOW/DAY%2B1DAY]&facet=true&facet.range=publishedDate&facet.range.start=NOW/DAY-30DAY&facet.range.end=NOW/DAY%2B1DAY&facet.range.gap=%2B12HOUR\n",
+            "custom": ""
+          },
+          "max_rows": 1000,
+          "value_field": null,
+          "group_field": null,
+          "sum_value": false,
+          "auto_int": true,
+          "resolution": 100,
+          "interval": "12h",
+          "intervals": [
+            "auto",
+            "1s",
+            "1m",
+            "5m",
+            "10m",
+            "30m",
+            "1h",
+            "3h",
+            "12h",
+            "1d",
+            "1w",
+            "1M",
+            "1y"
+          ],
+          "fill": 0,
+          "linewidth": 3,
+          "timezone": "browser",
+          "spyable": true,
+          "zoomlinks": true,
+          "bars": false,
+          "stack": false,
+          "points": false,
+          "lines": true,
+          "lines_smooth": false,
+          "legend": true,
+          "x-axis": true,
+          "y-axis": true,
+          "percentage": false,
+          "interactive": true,
+          "options": true,
+          "show_queries": true,
+          "tooltip": {
+            "value_type": "cumulative",
+            "query_as_alias": false
+          },
+          "refresh": {
+            "enable": false,
+            "interval": 2
+          },
+          "title": "Documents by published date"
+        }
+      ]
+    },
+    {
+      "title": "Not credible timeline",
+      "height": "150px",
+      "editable": true,
+      "collapse": false,
+      "collapsable": true,
+      "panels": [
+        {
+          "span": 12,
+          "editable": true,
+          "type": "histogram",
+          "loadingEditor": false,
+          "mode": "count",
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&wt=json&rows=0&fq=publishedDate:[NOW/DAY-30DAY%20TO%20NOW/DAY%2B1DAY]&facet=true&facet.range=publishedDate&facet.range.start=NOW/DAY-30DAY&facet.range.end=NOW/DAY%2B1DAY&facet.range.gap=%2B12HOUR\n",
+            "custom": "&fq=credibility_label:(\"not credible\" OR \"mostly not credible\")"
+          },
+          "max_rows": 100000,
+          "value_field": null,
+          "group_field": null,
+          "sum_value": false,
+          "auto_int": true,
+          "resolution": 100,
+          "interval": "12h",
+          "intervals": [
+            "auto",
+            "1s",
+            "1m",
+            "5m",
+            "10m",
+            "30m",
+            "1h",
+            "3h",
+            "12h",
+            "1d",
+            "1w",
+            "1M",
+            "1y"
+          ],
+          "fill": 0,
+          "linewidth": 3,
+          "timezone": "browser",
+          "spyable": true,
+          "zoomlinks": true,
+          "bars": true,
+          "stack": true,
+          "points": false,
+          "lines": false,
+          "lines_smooth": false,
+          "legend": true,
+          "x-axis": true,
+          "y-axis": true,
+          "percentage": false,
+          "interactive": true,
+          "options": true,
+          "show_queries": true,
+          "tooltip": {
+            "value_type": "cumulative",
+            "query_as_alias": false
+          },
+          "refresh": {
+            "enable": false,
+            "interval": 2
+          },
+          "title": "Not credible documents by published date"
+        }
+      ]
+    },
+    {
+      "title": "Not credible details",
+      "height": "350px",
+      "editable": true,
+      "collapse": false,
+      "collapsable": true,
+      "panels": [
+        {
+          "span": 4,
+          "editable": true,
+          "type": "tagcloud",
+          "loadingEditor": false,
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&wt=json&rows=0&fq=publishedDate:[NOW/DAY-30DAY%20TO%20NOW/DAY%2B1DAY]&facet=true&facet.field=main_elements&facet.limit=10",
+            "custom": "&fq=credibility_label:(\"not credible\" OR \"mostly not credible\")"
+          },
+          "field": "main_elements",
+          "size": 10,
+          "alignment": "vertical and horizontal",
+          "fontScale": 6,
+          "ignoreStopWords": false,
+          "spyable": true,
+          "show_queries": true,
+          "title": "Main words in not credible docs"
+        },
+        {
+          "span": 4,
+          "editable": true,
+          "type": "tagcloud",
+          "loadingEditor": false,
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&wt=json&rows=0&fq=publishedDate:[NOW/DAY-30DAY%20TO%20NOW/DAY%2B1DAY]&facet=true&facet.field=medical_conditions&facet.limit=10",
+            "custom": "&fq=credibility_label:(\"not credible\" OR \"mostly not credible\")"
+          },
+          "field": "medical_conditions",
+          "size": 10,
+          "alignment": "vertical and horizontal",
+          "fontScale": 6,
+          "ignoreStopWords": false,
+          "spyable": true,
+          "show_queries": true,
+          "title": "Medical conditions in not credible docs"
+        },
+        {
+          "span": 4,
+          "editable": true,
+          "type": "bar",
+          "loadingEditor": false,
+          "queries": {
+            "mode": "all",
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&wt=json&rows=0&fq=publishedDate:[NOW/DAY-30DAY%20TO%20NOW/DAY%2B1DAY]&facet=true&facet.field=medical_treatments&facet.limit=10",
+            "custom": "&fq=credibility_label:(\"not credible\" OR \"mostly not credible\")",
+            "ids": [
+              0
+            ]
+          },
+          "field": "medical_treatments",
+          "size": 10,
+          "spyable": true,
+          "show_queries": true,
+          "title": "Medical treatments in not credible docs"
         }
       ]
     }
@@ -422,27 +620,15 @@
   },
   "solr": {
     "server": "https://dashboard.coinform.eu/api/dboard/",
-    "core_name": "pilot-se",
+    "core_name": "pilot-gr",
     "core_list": [
-      "2bd20c89-9b70-46e2-aad7-108337db80e6_shard1_replica1",
-      "34f73d18-b494-45c7-8294-a5e43b7d9efe_shard1_replica1",
-      "37a0ab9f-d52d-450e-b83b-80610d9bef19_shard1_replica1",
-      "483f1002-969e-49d1-9bcd-f1d937617e32_shard1_replica1",
-      "4a9bd25d-b952-4704-b392-dbbdc1182203_shard1_replica1",
-      "70e9e133-52b5-4195-8b43-1aa737cd26de_shard1_replica1",
-      "b93eeaa2-ebd3-4dd2-b54a-4dacc742373b_shard1_replica1",
-      "bd764318-2ed9-4e9d-8ccd-632d68851280_shard1_replica1",
-      "c9d15399-799b-4d38-97ed-43cd628b6664_shard1_replica1",
-      "claims-dev_shard1_replica1",
-      "co-inform.aw.local_shard1_replica1",
-      "collection1",
-      "d0f3a6d6-080b-46b4-a33b-088be9cfb840_shard1_replica1",
-      "d33b99cf-131a-46a5-86e5-f583627998a7_shard1_replica1",
-      "ee429e0e-655a-4b18-abc5-3553c59b09bb_shard1_replica1",
-      "f493a9ed-da66-4a9d-9605-a5501195eeef_shard1_replica1",
-      "fd5b4a2f-45a7-4f72-8b76-9f7e8f96269f_shard1_replica1",
-      "inform.aw.local_shard1_replica1",
-      "public_sources_shard1_replica1"
+      "claims",
+      "factcheckers",
+      "fc-dev",
+      "generic",
+      "pilot-at",
+      "pilot-gr",
+      "pilot-se"
     ],
     "global_params": ""
   },
