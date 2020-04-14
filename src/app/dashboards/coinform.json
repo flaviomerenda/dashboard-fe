@@ -84,7 +84,7 @@
           "loadingEditor": false,
           "status": "Stable",
           "mode": "markdown",
-          "content": "## Changelog\n\n#### v20200414\nAdded a row at the botton with an example `table` component. This is the most logical component that can be used to let the user inspect individual documents. See [issue 9 on the github repo](https://github.com/co-inform/dashboard-fe/issues/9).",
+          "content": "## Changelog\n\n#### v20200414\nAdded a row at the botton with an example `table` component. This is the most logical component that can be used to let the user inspect individual documents. See [issue 9 on the github repo](https://github.com/co-inform/dashboard-fe/issues/9). ",
           "style": {},
           "title": "Development Notes"
         }
