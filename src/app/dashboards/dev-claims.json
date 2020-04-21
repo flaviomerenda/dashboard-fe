@@ -24,7 +24,6 @@
     },
     "filter": {
       "idQueue": [
-        1,
         2,
         3,
         4,
@@ -32,19 +31,26 @@
       ],
       "list": {
         "0": {
-          "from": "NOW-1YEAR",
-          "to": "NOW%2B1YEAR",
+          "from": "2019-04-20T19:03:21.000Z",
+          "to": "2020-04-20T19:03:21.000Z",
           "field": "publishedDate",
           "type": "time",
-          "fromDateObj": "2019-04-20T15:35:43.345Z",
-          "toDateObj": "2020-04-20T15:35:43.345Z",
           "mandate": "must",
           "active": true,
           "alias": "",
           "id": 0
+        },
+        "1": {
+          "type": "querystring",
+          "query": "claim:corona",
+          "mandate": "must",
+          "active": false,
+          "alias": "",
+          "id": 1
         }
       },
       "ids": [
+        1,
         0
       ]
     }
@@ -109,7 +115,7 @@
           "type": "timepicker",
           "loadingEditor": false,
           "status": "Stable",
-          "mode": "relative",
+          "mode": "absolute",
           "time_options": [
             "15m",
             "1h",
@@ -132,7 +138,11 @@
           "show_help_message": true,
           "info_mode": "markdown",
           "help_message": "Use this *timepicker* to restrict the dashboard to documents published in the selected time frame.",
-          "title": "Filter by published date"
+          "title": "Filter by published date",
+          "time": {
+            "from": "04/20/2019 21:03:21",
+            "to": "04/20/2020 21:03:21"
+          }
         },
         {
           "span": 5,
@@ -145,8 +155,8 @@
             "ids": [
               0
             ],
-            "query": "q=*%3A*&fq=publishedDate:[NOW-1YEAR%20TO%20NOW%2B1YEAR]&facet=true&facet.field=lang_orig&facet.field=lang&wt=json",
-            "basic_query": "q=*%3A*&fq=publishedDate:[NOW-1YEAR%20TO%20NOW%2B1YEAR]&facet=true&facet.field=lang_orig&facet.field=lang",
+            "query": "q=*%3A*&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&facet=true&facet.field=lang_orig&facet.field=lang&facet.field=websites&wt=json",
+            "basic_query": "q=*%3A*&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&facet=true&facet.field=lang_orig&facet.field=lang&facet.field=websites",
             "custom": ""
           },
           "group": "default",
@@ -156,7 +166,8 @@
           "overflow": "min-height",
           "fields": [
             "lang_orig",
-            "lang"
+            "lang",
+            "websites"
           ],
           "spyable": true,
           "facet_limit": 10,
@@ -202,7 +213,7 @@
             "ids": [
               0
             ],
-            "query": "q=*%3A*&fq=publishedDate:[NOW-1YEAR%20TO%20NOW%2B1YEAR]&stats=true&stats.field=id&wt=json&rows=0\n",
+            "query": "q=*%3A*&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&stats=true&stats.field=id&wt=json&rows=0\n",
             "basic_query": "",
             "custom": ""
           },
@@ -224,7 +235,7 @@
               "field": "id",
               "decimalDigits": 0,
               "label": "number of documents",
-              "value": "81365"
+              "value": "81363"
             }
           ],
           "refresh": {
@@ -252,7 +263,7 @@
             "ids": [
               0
             ],
-            "query": "q=*%3A*&fq=publishedDate:[NOW-1YEAR%20TO%20NOW%2B1YEAR]&stats=true&stats.field=id&wt=json&rows=0\n",
+            "query": "q=*%3A*&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&stats=true&stats.field=id&wt=json&rows=0\n",
             "basic_query": "",
             "custom": ""
           },
@@ -274,7 +285,7 @@
               "field": "id",
               "decimalDigits": 0,
               "label": "# claims",
-              "value": "81365"
+              "value": "81363"
             }
           ],
           "refresh": {
@@ -293,9 +304,9 @@
             "ids": [
               0
             ],
-            "query": "q=*%3A*&fq=publishedDate:[NOW-1YEAR%20TO%20NOW%2B1YEAR]&stats=true&stats.field=id&wt=json&rows=0\n",
+            "query": "q=*%3A*&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&stats=true&stats.field=id&wt=json&rows=0\n",
             "basic_query": "",
-            "custom": "&fq=schema_org_claimReviewed:*"
+            "custom": "&fq=fact-checked_as:*"
           },
           "style": {
             "font-size": "20pt",
@@ -315,7 +326,7 @@
               "field": "id",
               "decimalDigits": 0,
               "label": "fact-checked",
-              "value": "40399"
+              "value": "40397"
             }
           ],
           "refresh": {
@@ -334,9 +345,9 @@
             "ids": [
               0
             ],
-            "query": "q=*%3A*&fq=publishedDate:[NOW-1YEAR%20TO%20NOW%2B1YEAR]&stats=true&stats.field=id&wt=json&rows=0\n",
+            "query": "q=*%3A*&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&stats=true&stats.field=id&wt=json&rows=0\n",
             "basic_query": "",
-            "custom": "&fq=-schema_org_claimReviewed:*"
+            "custom": "&fq=-fact-checked_as:*"
           },
           "style": {
             "font-size": "20pt",
@@ -375,7 +386,7 @@
             "ids": [
               0
             ],
-            "query": "q=*%3A*&fq=publishedDate:[NOW-1YEAR%20TO%20NOW%2B1YEAR]&wt=json&facet=true&facet.pivot=lang_orig&facet.limit=1000&rows=0",
+            "query": "q=*%3A*&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&wt=json&facet=true&facet.pivot=lang_orig&facet.limit=1000&rows=0",
             "custom": ""
           },
           "facet_limit": 1000,
@@ -409,7 +420,7 @@
             "ids": [
               0
             ],
-            "query": "q=*%3A*&wt=json&rows=0&fq=publishedDate:[NOW-1YEAR%20TO%20NOW%2B1YEAR]&facet=true&facet.range=publishedDate&facet.range.start=NOW-1YEAR&facet.range.end=NOW%2B1YEAR&facet.range.gap=%2B1DAY\n",
+            "query": "q=*%3A*&wt=json&rows=0&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&facet=true&facet.range=publishedDate&facet.range.start=2019-04-20T19:03:21.000Z&facet.range.end=2020-04-20T19:03:21.000Z&facet.range.gap=%2B1DAY\n",
             "custom": ""
           },
           "max_rows": 1000,
@@ -481,8 +492,8 @@
             "ids": [
               0
             ],
-            "query": "q=*%3A*&wt=json&rows=0&fq=publishedDate:[NOW-1YEAR%20TO%20NOW%2B1YEAR]&facet=true&facet.range=publishedDate&facet.range.start=NOW-1YEAR&facet.range.end=NOW%2B1YEAR&facet.range.gap=%2B1DAY\n",
-            "custom": "&fq=schema_org_claimReviewed:*"
+            "query": "q=*%3A*&wt=json&rows=0&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&facet=true&facet.range=publishedDate&facet.range.start=2019-04-20T19:03:21.000Z&facet.range.end=2020-04-20T19:03:21.000Z&facet.range.gap=%2B1DAY\n",
+            "custom": "&fq=fact-checked_as:*"
           },
           "max_rows": 100000,
           "value_field": null,
@@ -552,10 +563,10 @@
             "ids": [
               0
             ],
-            "query": "q=*%3A*&wt=json&rows=0&fq=publishedDate:[NOW-1YEAR%20TO%20NOW%2B1YEAR]&facet=true&facet.field=schema_org_cr_rating_altName&facet.limit=15",
-            "custom": ""
+            "query": "q=*%3A*&wt=json&rows=0&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&facet=true&facet.field=fact-check_label&facet.limit=15",
+            "custom": "&facet.removeStopwords=true"
           },
-          "field": "schema_org_cr_rating_altName",
+          "field": "fact-check_label",
           "size": 15,
           "alignment": "vertical and horizontal",
           "fontScale": 13,
@@ -574,10 +585,10 @@
             "ids": [
               0
             ],
-            "query": "q=*%3A*&wt=json&rows=0&fq=publishedDate:[NOW-1YEAR%20TO%20NOW%2B1YEAR]&facet=true&facet.field=content_t&facet.limit=30",
-            "custom": "&fq=schema_org_claimReviewed:*"
+            "query": "q=*%3A*&wt=json&rows=0&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&facet=true&facet.field=claim&facet.limit=30",
+            "custom": "&fq=fact-checked_as:*&facet.removeStopwords=true"
           },
-          "field": "content_t",
+          "field": "claim",
           "size": 30,
           "alignment": "vertical and horizontal",
           "fontScale": 12,
@@ -596,11 +607,11 @@
             "ids": [
               0
             ],
-            "query": "q=*%3A*&wt=json&rows=0&fq=publishedDate:[NOW-1YEAR%20TO%20NOW%2B1YEAR]&fq=-content_t:the&fq=-content_t:in&fq=-content_t:and&fq=-content_t:a&fq=-content_t:to&fq=-content_t:of&fq=-content_t:is&fq=-content_t:for&fq=-content_t:at&fq=-content_t:with&fq=-content_t:or&facet=true&facet.field=content_t&facet.limit=10&facet.missing=true&f.content_t.facet.sort=count&fq=-schema_org_claimReviewed:*",
-            "custom": "&fq=-schema_org_claimReviewed:*"
+            "query": "q=*%3A*&wt=json&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&fq=-claim:the&fq=-claim:in&fq=-claim:and&fq=-claim:a&fq=-claim:to&fq=-claim:of&fq=-claim:is&fq=-claim:for&fq=-claim:at&fq=-claim:with&fq=-claim:or&facet=true&facet.field=claim&facet.limit=10&facet.missing=true&f.claim.facet.sort=count&fq=-fact-checked_as:*",
+            "custom": "&fq=-fact-checked_as:*"
           },
           "mode": "count",
-          "field": "content_t",
+          "field": "claim",
           "stats_field": "",
           "decimal_points": 0,
           "exclude": [
@@ -721,9 +732,9 @@
             "ids": [
               0
             ],
-            "query": "q=*%3A*&fq=publishedDate:[NOW-1YEAR%20TO%20NOW%2B1YEAR]&wt=json&rows=50",
-            "basic_query": "q=*%3A*&fq=publishedDate:[NOW-1YEAR%20TO%20NOW%2B1YEAR]",
-            "custom": "&fq=schema_org_claimReviewed:*"
+            "query": "q=*%3A*&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&wt=json&rows=50",
+            "basic_query": "q=*%3A*&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]",
+            "custom": "&fq=fact-checked_as:*"
           },
           "size": 10,
           "pages": 5,
@@ -738,42 +749,30 @@
           },
           "overflow": "min-height",
           "fields": [
-            "content_t",
+            "claim",
             "lang",
             "lang_orig"
           ],
           "important_fields": [
-            "claimspot_score_d",
-            "content_orig_t",
-            "content_t",
-            "domains_os",
-            "domains_ss",
-            "error_result",
+            "claimspot_score",
+            "claim",
+            "claim_orig",
+            "claim",
+            "websites",
             "id",
             "lang",
             "lang_orig",
-            "lang_orig_os",
-            "lang_orig_ss",
-            "lang_s",
-            "occurrences_l",
+            "occurrences",
             "publishedDate",
-            "published_dts",
-            "schema_org_claimReviewed",
-            "schema_org_cr_author_name",
-            "schema_org_cr_datePublished",
-            "schema_org_cr_itemReviewed_author_name_t",
-            "schema_org_cr_itemReviewed_datePublished_tdt",
+            "fact-checked_as",
+            "fact-checker",
+            "date-FactChecked",
+            "claimedBy",
+            "dateClaimed",
             "schema_org_cr_json-ld_s",
-            "schema_org_cr_rating_altName",
-            "schema_org_cr_url",
-            "size",
-            "submitted_time",
-            "taxonomy_categs",
-            "url_fl",
-            "url_os",
-            "url_ss",
-            "urls_os",
-            "urls_ss"
+            "fact-check_label",
+            "fact-check_url",
+            "appearances"
           ],
           "highlight": [],
           "header": true,
@@ -825,9 +824,9 @@
             "ids": [
               0
             ],
-            "query": "q=*%3A*&fq=publishedDate:[NOW-1YEAR%20TO%20NOW%2B1YEAR]&wt=json&rows=50",
-            "basic_query": "q=*%3A*&fq=publishedDate:[NOW-1YEAR%20TO%20NOW%2B1YEAR]",
-            "custom": "&fq=-schema_org_claimReviewed:*&sort=claimspot_score_d desc"
+            "query": "q=*%3A*&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&wt=json&rows=50",
+            "basic_query": "q=*%3A*&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]",
+            "custom": "&fq=-fact-checked_as:*&sort=claimspot_score_d desc"
           },
           "size": 10,
           "pages": 5,
@@ -842,54 +841,31 @@
           },
           "overflow": "min-height",
           "fields": [
-            "content_t",
+            "claim",
             "lang",
             "lang_orig",
-            "claimspot_score_d"
+            "claimspot_score"
           ],
           "important_fields": [
-            "_version_",
-            "claimspot_score_d",
-            "coinfo_solr_col_ids_os",
-            "coinfo_solr_col_ids_ss",
-            "content_en",
-            "content_orig_t",
-            "content_t",
-            "core_s",
-            "dl_update_date_dt",
-            "doc_pages_chunks",
-            "domains_os",
-            "domains_ss",
-            "elaboration_elapsedtime",
-            "error_result",
-            "essex_id",
+            "claimspot_score",
+            "claim",
+            "claim_orig",
+            "claim",
+            "websites",
             "id",
             "lang",
             "lang_orig",
-            "lang_orig_os",
-            "lang_orig_ss",
-            "lang_s",
-            "last_update",
-            "occurrences_l",
+            "occurrences",
             "publishedDate",
-            "published_dts",
-            "schema_org_claimReviewed",
-            "schema_org_cr_author_name",
-            "schema_org_cr_datePublished",
-            "schema_org_cr_itemReviewed_author_name_t",
-            "schema_org_cr_itemReviewed_datePublished_tdt",
+            "fact-checked_as",
+            "fact-checker",
+            "date-FactChecked",
+            "claimedBy",
+            "dateClaimed",
             "schema_org_cr_json-ld_s",
-            "schema_org_cr_rating_altName",
-            "schema_org_cr_url",
-            "size",
-            "status",
-            "submitted_time",
-            "taxonomy_categs",
-            "url_fl",
-            "url_os",
-            "url_ss",
-            "urls_os",
-            "urls_ss"
+            "fact-check_label",
+            "fact-check_url",
+            "appearances"
           ],
           "highlight": [],
           "header": true,
@@ -949,7 +925,9 @@
     "core_name": "claims",
     "core_list": [
       "claims",
+      "co-inform",
       "factcheckers",
+      "factchecks2",
       "fc-dev",
       "generic",
       "pilot-at",
