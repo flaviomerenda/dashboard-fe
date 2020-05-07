@@ -24,6 +24,7 @@
     },
     "filter": {
       "idQueue": [
+        1,
         2,
         3,
         4,
@@ -31,26 +32,19 @@
       ],
       "list": {
         "0": {
-          "from": "2019-04-20T19:03:21.000Z",
-          "to": "2020-04-20T19:03:21.000Z",
+          "from": "NOW-1YEAR",
+          "to": "NOW%2B1YEAR",
           "field": "publishedDate",
           "type": "time",
-          "mandate": "must",
-          "active": true,
-          "alias": "",
-          "id": 0
-        },
-        "1": {
-          "type": "querystring",
-          "query": "claim:corona",
+          "fromDateObj": "2019-04-20T15:15:25.501Z",
+          "toDateObj": "2020-04-20T15:15:25.501Z",
           "mandate": "must",
           "active": false,
           "alias": "",
-          "id": 1
+          "id": 0
         }
       },
       "ids": [
-        1,
         0
       ]
     }
@@ -115,7 +109,7 @@
           "type": "timepicker",
           "loadingEditor": false,
           "status": "Stable",
-          "mode": "absolute",
+          "mode": "relative",
           "time_options": [
             "15m",
             "1h",
@@ -138,11 +132,7 @@
           "show_help_message": true,
           "info_mode": "markdown",
           "help_message": "Use this *timepicker* to restrict the dashboard to documents published in the selected time frame.",
-          "title": "Filter by published date",
-          "time": {
-            "from": "04/20/2019 21:03:21",
-            "to": "04/20/2020 21:03:21"
-          }
+          "title": "Filter by published date"
         },
         {
           "span": 5,
@@ -155,8 +145,8 @@
             "ids": [
               0
             ],
-            "query": "q=*%3A*&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&facet=true&facet.field=lang_orig&facet.field=lang&facet.field=websites&wt=json",
-            "basic_query": "q=*%3A*&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&facet=true&facet.field=lang_orig&facet.field=lang&facet.field=websites",
+            "query": "facet=true&facet.field=lang_orig&facet.field=lang&wt=json",
+            "basic_query": "facet=true&facet.field=lang_orig&facet.field=lang",
             "custom": ""
           },
           "group": "default",
@@ -166,8 +156,7 @@
           "overflow": "min-height",
           "fields": [
             "lang_orig",
-            "lang",
-            "websites"
+            "lang"
           ],
           "spyable": true,
           "facet_limit": 10,
@@ -178,7 +167,8 @@
           "show_queries": true,
           "title": "Languages",
           "exportSize": null,
-          "offset": 0
+          "offset": 0,
+          "error": ""
         }
       ]
     },
@@ -213,7 +203,7 @@
             "ids": [
               0
             ],
-            "query": "q=*%3A*&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&stats=true&stats.field=id&wt=json&rows=0\n",
+            "query": "stats=true&stats.field=id&wt=json&rows=0\n",
             "basic_query": "",
             "custom": ""
           },
@@ -235,7 +225,7 @@
               "field": "id",
               "decimalDigits": 0,
               "label": "number of documents",
-              "value": "81363"
+              "value": "79"
             }
           ],
           "refresh": {
@@ -263,7 +253,7 @@
             "ids": [
               0
             ],
-            "query": "q=*%3A*&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&stats=true&stats.field=id&wt=json&rows=0\n",
+            "query": "stats=true&stats.field=id&wt=json&rows=0\n",
             "basic_query": "",
             "custom": ""
           },
@@ -284,15 +274,15 @@
               "type": "count",
               "field": "id",
               "decimalDigits": 0,
-              "label": "# claims",
-              "value": "81363"
+              "label": "# docs",
+              "value": "79"
             }
           ],
           "refresh": {
             "enable": false,
             "interval": 2
           },
-          "title": "Collected Claims"
+          "title": "Collected documents"
         },
         {
           "span": 2,
@@ -304,9 +294,9 @@
             "ids": [
               0
             ],
-            "query": "q=*%3A*&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&stats=true&stats.field=id&wt=json&rows=0\n",
+            "query": "stats=true&stats.field=id&wt=json&rows=0\n",
             "basic_query": "",
-            "custom": "&fq=fact-checked_as:*"
+            "custom": ""
           },
           "style": {
             "font-size": "20pt",
@@ -325,15 +315,15 @@
               "type": "count",
               "field": "id",
               "decimalDigits": 0,
-              "label": "fact-checked",
-              "value": "40397"
+              "label": "not credible",
+              "value": "6"
             }
           ],
           "refresh": {
             "enable": false,
             "interval": 2
           },
-          "title": "Fact-checked"
+          "title": "Not credible docs"
         },
         {
           "span": 2,
@@ -345,9 +335,9 @@
             "ids": [
               0
             ],
-            "query": "q=*%3A*&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&stats=true&stats.field=id&wt=json&rows=0\n",
+            "query": "stats=true&stats.field=id&wt=json&rows=0\n",
             "basic_query": "",
-            "custom": "&fq=-fact-checked_as:*"
+            "custom": ""
           },
           "style": {
             "font-size": "20pt",
@@ -367,14 +357,14 @@
               "field": "id",
               "decimalDigits": 0,
               "label": "Credible docs",
-              "value": "40966"
+              "value": "7"
             }
           ],
           "refresh": {
             "enable": false,
             "interval": 2
           },
-          "title": "Non fact-checked"
+          "title": "Credible"
         },
         {
           "span": 2,
@@ -386,7 +376,7 @@
             "ids": [
               0
             ],
-            "query": "q=*%3A*&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&wt=json&facet=true&facet.pivot=lang_orig&facet.limit=1000&rows=0",
+            "query": "wt=json&facet=true&facet.pivot=credibility_label&facet.limit=1000&rows=0",
             "custom": ""
           },
           "facet_limit": 1000,
@@ -420,7 +410,7 @@
             "ids": [
               0
             ],
-            "query": "q=*%3A*&wt=json&rows=0&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&facet=true&facet.range=publishedDate&facet.range.start=2019-04-20T19:03:21.000Z&facet.range.end=2020-04-20T19:03:21.000Z&facet.range.gap=%2B1DAY\n",
+            "query": "q=*:*&wt=json&rows=0&facet=true&facet.range=publishedDate&facet.range.start=NOW-1YEAR&facet.range.end=NOW%2B1YEAR&facet.range.gap=%2B1YEAR\n",
             "custom": ""
           },
           "max_rows": 1000,
@@ -429,7 +419,7 @@
           "sum_value": false,
           "auto_int": true,
           "resolution": 100,
-          "interval": "1d",
+          "interval": "1y",
           "intervals": [
             "auto",
             "1s",
@@ -470,7 +460,8 @@
             "enable": false,
             "interval": 2
           },
-          "title": "Claims by published date"
+          "title": "Claims by published date",
+          "error": ""
         }
       ]
     },
@@ -492,8 +483,8 @@
             "ids": [
               0
             ],
-            "query": "q=*%3A*&wt=json&rows=0&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&facet=true&facet.range=publishedDate&facet.range.start=2019-04-20T19:03:21.000Z&facet.range.end=2020-04-20T19:03:21.000Z&facet.range.gap=%2B1DAY\n",
-            "custom": "&fq=fact-checked_as:*"
+            "query": "q=*:*&wt=json&rows=0&facet=true&facet.range=publishedDate&facet.range.start=NOW-1YEAR&facet.range.end=NOW%2B1YEAR&facet.range.gap=%2B1YEAR\n",
+            "custom": "&fq=schema_org_claimReviewed:*"
           },
           "max_rows": 100000,
           "value_field": null,
@@ -501,7 +492,7 @@
           "sum_value": false,
           "auto_int": true,
           "resolution": 100,
-          "interval": "1d",
+          "interval": "1y",
           "intervals": [
             "auto",
             "1s",
@@ -547,174 +538,6 @@
       ]
     },
     {
-      "title": "Tag-clouds",
-      "height": "150px",
-      "editable": true,
-      "collapse": false,
-      "collapsable": true,
-      "panels": [
-        {
-          "span": 3,
-          "editable": true,
-          "type": "tagcloud",
-          "loadingEditor": false,
-          "queries": {
-            "mode": "all",
-            "ids": [
-              0
-            ],
-            "query": "q=*%3A*&wt=json&rows=0&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&facet=true&facet.field=fact-check_label&facet.limit=15",
-            "custom": "&facet.removeStopwords=true"
-          },
-          "field": "fact-check_label",
-          "size": 15,
-          "alignment": "vertical and horizontal",
-          "fontScale": 13,
-          "ignoreStopWords": false,
-          "spyable": true,
-          "show_queries": true,
-          "title": "Tag-cloud review outcomes"
-        },
-        {
-          "span": 4,
-          "editable": true,
-          "type": "tagcloud",
-          "loadingEditor": false,
-          "queries": {
-            "mode": "all",
-            "ids": [
-              0
-            ],
-            "query": "q=*%3A*&wt=json&rows=0&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&facet=true&facet.field=claim&facet.limit=30",
-            "custom": "&fq=fact-checked_as:*&facet.removeStopwords=true"
-          },
-          "field": "claim",
-          "size": 30,
-          "alignment": "vertical and horizontal",
-          "fontScale": 12,
-          "ignoreStopWords": false,
-          "spyable": true,
-          "show_queries": true,
-          "title": "Tag-cloud reviewed claims"
-        },
-        {
-          "span": 4,
-          "editable": true,
-          "type": "terms",
-          "loadingEditor": false,
-          "queries": {
-            "mode": "all",
-            "ids": [
-              0
-            ],
-            "query": "q=*%3A*&wt=json&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&fq=-claim:the&fq=-claim:in&fq=-claim:and&fq=-claim:a&fq=-claim:to&fq=-claim:of&fq=-claim:is&fq=-claim:for&fq=-claim:at&fq=-claim:with&fq=-claim:or&facet=true&facet.field=claim&facet.limit=10&facet.missing=true&f.claim.facet.sort=count&fq=-fact-checked_as:*",
-            "custom": "&fq=-fact-checked_as:*"
-          },
-          "mode": "count",
-          "field": "claim",
-          "stats_field": "",
-          "decimal_points": 0,
-          "exclude": [
-            "the",
-            "in",
-            "and",
-            "a",
-            "to",
-            "of",
-            "is",
-            "for",
-            "at",
-            "with",
-            "or"
-          ],
-          "missing": false,
-          "other": false,
-          "size": 10,
-          "pages": 10,
-          "sortBy": "count",
-          "order": "descending",
-          "style": {
-            "font-size": "10pt"
-          },
-          "donut": false,
-          "tilt": false,
-          "labels": true,
-          "logAxis": false,
-          "arrangement": "horizontal",
-          "chart": "bar",
-          "counter_pos": "above",
-          "exportSize": 100,
-          "lastColor": "",
-          "spyable": true,
-          "show_queries": true,
-          "bar_chart_arrangement": "vertical",
-          "chartColors": [
-            "#7EB26D",
-            "#EAB839",
-            "#6ED0E0",
-            "#EF843C",
-            "#E24D42",
-            "#1F78C1",
-            "#BA43A9",
-            "#705DA0",
-            "#508642",
-            "#CCA300",
-            "#447EBC",
-            "#C15C17",
-            "#890F02",
-            "#0A437C",
-            "#6D1F62",
-            "#584477",
-            "#B7DBAB",
-            "#F4D598",
-            "#70DBED",
-            "#F9BA8F",
-            "#F29191",
-            "#82B5D8",
-            "#E5A8E2",
-            "#AEA2E0",
-            "#629E51",
-            "#E5AC0E",
-            "#64B0C8",
-            "#E0752D",
-            "#BF1B00",
-            "#0A50A1",
-            "#962D82",
-            "#614D93",
-            "#9AC48A",
-            "#F2C96D",
-            "#65C5DB",
-            "#F9934E",
-            "#EA6460",
-            "#5195CE",
-            "#D683CE",
-            "#806EB7",
-            "#3F6833",
-            "#967302",
-            "#2F575E",
-            "#99440A",
-            "#58140C",
-            "#052B51",
-            "#511749",
-            "#3F2B5B",
-            "#E0F9D7",
-            "#FCEACA",
-            "#CFFAFF",
-            "#F9E2D2",
-            "#FCE2DE",
-            "#BADFF4",
-            "#F9D9F9",
-            "#DEDAF7"
-          ],
-          "refresh": {
-            "enable": false,
-            "interval": 2
-          },
-          "title": "Terms claims not reviewed"
-        }
-      ]
-    },
-    {
       "title": "Sample documents",
       "height": "150px",
       "editable": true,
@@ -732,9 +555,9 @@
             "ids": [
               0
             ],
-            "query": "q=*%3A*&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&wt=json&rows=50",
-            "basic_query": "q=*%3A*&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]",
-            "custom": "&fq=fact-checked_as:*"
+            "query": "q=*:*&wt=json&rows=50",
+            "basic_query": "q=*:*",
+            "custom": ""
           },
           "size": 10,
           "pages": 5,
@@ -749,30 +572,11 @@
           },
           "overflow": "min-height",
           "fields": [
-            "claim",
+            "content_t",
             "lang",
             "lang_orig"
           ],
           "important_fields": [
-            "claimspot_score",
-            "claim",
-            "claim_orig",
-            "claim",
-            "websites",
-            "id",
-            "lang",
-            "lang_orig",
-            "occurrences",
-            "publishedDate",
-            "fact-checked_as",
-            "fact-checker",
-            "date-FactChecked",
-            "claimedBy",
-            "dateClaimed",
-            "schema_org_cr_json-ld_s",
-            "fact-check_label",
-            "fact-check_url",
-            "appearances"
           ],
           "highlight": [],
           "header": true,
@@ -797,100 +601,12 @@
             "enable": false,
             "interval": 2
           },
-          "title": "Example Reviewed Claims/Sentences",
+          "title": "Example Claims/Sentences",
           "enableSubrow": false,
           "subrowField": "content",
           "enableHyperlink": false,
           "hyperlinkColumnHeader": "link",
           "hyperlinkColumnForURI": "url"
-        }
-      ]
-    },
-    {
-      "title": "Sample non-reviewed sentences",
-      "height": "150px",
-      "editable": true,
-      "collapse": false,
-      "collapsable": true,
-      "panels": [
-        {
-          "span": 10,
-          "editable": true,
-          "type": "table",
-          "loadingEditor": false,
-          "status": "Stable",
-          "queries": {
-            "mode": "all",
-            "ids": [
-              0
-            ],
-            "query": "q=*%3A*&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&wt=json&rows=50",
-            "basic_query": "q=*%3A*&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]",
-            "custom": "&fq=-fact-checked_as:*&sort=claimspot_score_d desc"
-          },
-          "size": 10,
-          "pages": 5,
-          "offset": 0,
-          "sort": [
-            "claimspot_score_d desc"
-          ],
-          "sortable": true,
-          "group": "default",
-          "style": {
-            "font-size": "9pt"
-          },
-          "overflow": "min-height",
-          "fields": [
-            "claim",
-            "lang",
-            "lang_orig",
-            "claimspot_score"
-          ],
-          "important_fields": [
-            "claimspot_score",
-            "claim",
-            "claim_orig",
-            "claim",
-            "websites",
-            "id",
-            "lang",
-            "lang_orig",
-            "occurrences",
-            "publishedDate",
-            "fact-checked_as",
-            "fact-checker",
-            "date-FactChecked",
-            "claimedBy",
-            "dateClaimed",
-            "schema_org_cr_json-ld_s",
-            "fact-check_label",
-            "fact-check_url",
-            "appearances"
-          ],
-          "highlight": [],
-          "header": true,
-          "paging": true,
-          "field_list": false,
-          "trimFactor": 300,
-          "normTimes": true,
-          "spyable": true,
-          "saveOption": "json",
-          "exportSize": 50,
-          "exportAll": true,
-          "displayLinkIcon": true,
-          "imageFields": [],
-          "imgFieldWidth": "auto",
-          "imgFieldHeight": "85px",
-          "show_queries": true,
-          "maxNumCalcTopFields": 20,
-          "calcTopFieldValuesFromAllData": false,
-          "subrowMaxChar": 300,
-          "subrowOffset": 0,
-          "refresh": {
-            "enable": false,
-            "interval": 2
-          },
-          "title": "Example non-reviewed sentences"
         }
       ]
     }
@@ -925,9 +641,7 @@
     "core_name": "claims",
     "core_list": [
       "claims",
-      "co-inform",
       "factcheckers",
-      "factchecks2",
       "fc-dev",
       "generic",
       "pilot-at",
