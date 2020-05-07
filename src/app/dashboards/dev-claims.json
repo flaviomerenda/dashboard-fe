@@ -1,5 +1,5 @@
 ﻿{
-  "title": "Document Level Dashboard v20200427",
+  "title": "Co-inform Claim Level Dashboard v20200420",
   "services": {
     "query": {
       "idQueue": [
@@ -10,7 +10,7 @@
       ],
       "list": {
         "0": {
-          "query": "-credibility_label:\"not verifiable\"",
+          "query": "*:*",
           "alias": "",
           "color": "#7EB26D",
           "id": 0,
@@ -31,8 +31,8 @@
       ],
       "list": {
         "0": {
-          "from": "2019-10-17T13:32:59.000Z",
-          "to": "2020-01-21T14:32:59.000Z",
+          "from": "2019-04-20T19:03:21.000Z",
+          "to": "2020-04-20T19:03:21.000Z",
           "field": "publishedDate",
           "type": "time",
           "mandate": "must",
@@ -41,10 +41,9 @@
           "id": 0
         },
         "1": {
-          "type": "terms",
-          "field": "credibility_label",
+          "type": "querystring",
+          "query": "claim:corona",
           "mandate": "must",
-          "value": "not%20credible",
           "active": false,
           "alias": "",
           "id": 1
@@ -72,7 +71,7 @@
           "loadingEditor": false,
           "status": "Stable",
           "mode": "markdown",
-          "content": "# About this Dashboard\n\nThis dashboard shows an overview of all the documents analysed for the Co-inform Greek pilot. It consist of documents gathered by our content collector. Until now, we have focused on collecting **political news** from the following popular news-sites:\n\n* [www.ert.gr](http://www.ert.gr) \n* [https://www.in.gr/politics}(https://www.in.gr/politics)\n* [SKAI](http://feeds.feedburner.com/skai/yinm)\n* [https://www.newsbomb.gr/politikh](https://www.newsbomb.gr/politikh)",
+          "content": "# About this Dashboard\n\nThis dashboard shows an overview of claims included in out `claims` database in Co-inform. This database contains claims that have either been:\n\n* reviewed by a fact-checker  \n* extracted from a web article or social media post by the Co-inform content collector (and seems to contain a claim that may be interesting to review).\n\n\nThe reviewed claims come from three sources:\n\n1. [ClaimsKG](https://data.gesis.org/claimskg/) a database of normalised, structured claim reviews from Snopes, Politifact, AfricaCheck, TurthOrFiction, Checkyoufact, FactsCan and AFP.\n1. [Datacommons Fact Check Markup Tool Data Feed](https://datacommons.org/factcheck) a collection of historical fact checks created via [Google Fact Check Markup Tool](https://toolbox.google.com/factcheck/markuptool)\n1. [ClaimReview](http://schema.org/ClaimReview)s published as part of fact-checker websites crawled by the Co-inform data collector",
           "style": {},
           "title": "About this Dashboard"
         },
@@ -84,7 +83,7 @@
           "loadingEditor": false,
           "status": "Stable",
           "mode": "markdown",
-          "content": "## Changelog\n\n#### v20200414\nAdded a row at the botton with an example `table` component. This is the most logical component that can be used to let the user inspect individual documents. See [issue 9 on the github repo](https://github.com/co-inform/dashboard-fe/issues/9). ",
+          "content": "## Changelog\n\n#### v20200420\nUpdated claim-level dashboard",
           "style": {},
           "title": "Development Notes"
         }
@@ -126,7 +125,7 @@
             "180d",
             "1y"
           ],
-          "timespan": "180d",
+          "timespan": "1y",
           "timefield": "publishedDate",
           "timeformat": "",
           "spyable": true,
@@ -141,8 +140,8 @@
           "help_message": "Use this *timepicker* to restrict the dashboard to documents published in the selected time frame.",
           "title": "Filter by published date",
           "time": {
-            "from": "10/17/2019 15:32:59",
-            "to": "01/21/2020 15:32:59"
+            "from": "04/20/2019 21:03:21",
+            "to": "04/20/2020 21:03:21"
           }
         },
         {
@@ -156,8 +155,8 @@
             "ids": [
               0
             ],
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[2019-10-17T13:32:59.000Z%20TO%202020-01-21T14:32:59.000Z]&facet=true&facet.field=categories&facet.field=credibility_label&facet.field=source_id&wt=json",
-            "basic_query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[2019-10-17T13:32:59.000Z%20TO%202020-01-21T14:32:59.000Z]&facet=true&facet.field=categories&facet.field=credibility_label&facet.field=source_id",
+            "query": "q=*%3A*&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&facet=true&facet.field=lang_orig&facet.field=lang&facet.field=websites&wt=json",
+            "basic_query": "q=*%3A*&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&facet=true&facet.field=lang_orig&facet.field=lang&facet.field=websites",
             "custom": ""
           },
           "group": "default",
@@ -166,9 +165,9 @@
           },
           "overflow": "min-height",
           "fields": [
-            "categories",
-            "credibility_label",
-            "source_id"
+            "lang_orig",
+            "lang",
+            "websites"
           ],
           "spyable": true,
           "facet_limit": 10,
@@ -177,7 +176,7 @@
           "header_title": "Topics",
           "toggle_element": null,
           "show_queries": true,
-          "title": "Topics",
+          "title": "Languages",
           "exportSize": null,
           "offset": 0
         }
@@ -187,7 +186,7 @@
       "title": "Active Filters",
       "height": "50px",
       "editable": false,
-      "collapse": true,
+      "collapse": false,
       "collapsable": true,
       "panels": [
         {
@@ -214,7 +213,7 @@
             "ids": [
               0
             ],
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[2019-10-17T13:32:59.000Z%20TO%202020-01-21T14:32:59.000Z]&stats=true&stats.field=id&wt=json&rows=0\n",
+            "query": "q=*%3A*&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&stats=true&stats.field=id&wt=json&rows=0\n",
             "basic_query": "",
             "custom": ""
           },
@@ -236,7 +235,7 @@
               "field": "id",
               "decimalDigits": 0,
               "label": "number of documents",
-              "value": "2679"
+              "value": "81363"
             }
           ],
           "refresh": {
@@ -264,7 +263,7 @@
             "ids": [
               0
             ],
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[2019-10-17T13:32:59.000Z%20TO%202020-01-21T14:32:59.000Z]&stats=true&stats.field=id&wt=json&rows=0\n",
+            "query": "q=*%3A*&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&stats=true&stats.field=id&wt=json&rows=0\n",
             "basic_query": "",
             "custom": ""
           },
@@ -285,15 +284,15 @@
               "type": "count",
               "field": "id",
               "decimalDigits": 0,
-              "label": "# docs",
-              "value": "2679"
+              "label": "# claims",
+              "value": "81363"
             }
           ],
           "refresh": {
             "enable": false,
             "interval": 2
           },
-          "title": "Collected documents"
+          "title": "Collected Claims"
         },
         {
           "span": 2,
@@ -305,9 +304,9 @@
             "ids": [
               0
             ],
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[2019-10-17T13:32:59.000Z%20TO%202020-01-21T14:32:59.000Z]&stats=true&stats.field=id&wt=json&rows=0\n",
+            "query": "q=*%3A*&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&stats=true&stats.field=id&wt=json&rows=0\n",
             "basic_query": "",
-            "custom": "&fq=credibility_label:(\"not credible\" OR \"mostly not credible\")"
+            "custom": "&fq=fact-checked_as:*"
           },
           "style": {
             "font-size": "20pt",
@@ -326,15 +325,15 @@
               "type": "count",
               "field": "id",
               "decimalDigits": 0,
-              "label": "not credible",
-              "value": "305"
+              "label": "fact-checked",
+              "value": "40397"
             }
           ],
           "refresh": {
             "enable": false,
             "interval": 2
           },
-          "title": "Not credible docs"
+          "title": "Fact-checked"
         },
         {
           "span": 2,
@@ -346,9 +345,9 @@
             "ids": [
               0
             ],
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[2019-10-17T13:32:59.000Z%20TO%202020-01-21T14:32:59.000Z]&stats=true&stats.field=id&wt=json&rows=0\n",
+            "query": "q=*%3A*&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&stats=true&stats.field=id&wt=json&rows=0\n",
             "basic_query": "",
-            "custom": "&fq=credibility_label:(\"credible\" OR \"mostly credible\")"
+            "custom": "&fq=-fact-checked_as:*"
           },
           "style": {
             "font-size": "20pt",
@@ -368,14 +367,14 @@
               "field": "id",
               "decimalDigits": 0,
               "label": "Credible docs",
-              "value": "367"
+              "value": "40966"
             }
           ],
           "refresh": {
             "enable": false,
             "interval": 2
           },
-          "title": "Credible"
+          "title": "Non fact-checked"
         },
         {
           "span": 2,
@@ -387,19 +386,19 @@
             "ids": [
               0
             ],
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[2019-10-17T13:32:59.000Z%20TO%202020-01-21T14:32:59.000Z]&wt=json&facet=true&facet.pivot=credibility_label&facet.limit=1000&rows=0",
+            "query": "q=*%3A*&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&wt=json&facet=true&facet.pivot=lang_orig&facet.limit=1000&rows=0",
             "custom": ""
           },
           "facet_limit": 1000,
           "spyable": true,
           "show_queries": true,
-          "title": "Credibility",
+          "title": "Langs",
           "facet_pivot_strings": [
-            "credibility_label"
+            "lang_orig"
           ],
           "show_help_message": true,
           "info_mode": "markdown",
-          "help_message": "These credibilities have been randomly generated for now. Eventually we'll use our **misinformation analysis** modules to generate real assessments."
+          "help_message": "Original languages of content."
         }
       ]
     },
@@ -421,7 +420,7 @@
             "ids": [
               0
             ],
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&wt=json&rows=0&fq=publishedDate:[2019-10-17T13:32:59.000Z%20TO%202020-01-21T14:32:59.000Z]&facet=true&facet.range=publishedDate&facet.range.start=2019-10-17T13:32:59.000Z&facet.range.end=2020-01-21T14:32:59.000Z&facet.range.gap=%2B12HOUR\n",
+            "query": "q=*%3A*&wt=json&rows=0&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&facet=true&facet.range=publishedDate&facet.range.start=2019-04-20T19:03:21.000Z&facet.range.end=2020-04-20T19:03:21.000Z&facet.range.gap=%2B1DAY\n",
             "custom": ""
           },
           "max_rows": 1000,
@@ -430,7 +429,7 @@
           "sum_value": false,
           "auto_int": true,
           "resolution": 100,
-          "interval": "12h",
+          "interval": "1d",
           "intervals": [
             "auto",
             "1s",
@@ -471,12 +470,12 @@
             "enable": false,
             "interval": 2
           },
-          "title": "Documents by published date"
+          "title": "Claims by published date"
         }
       ]
     },
     {
-      "title": "Not credible timeline",
+      "title": "Claims with reviews timeline",
       "height": "150px",
       "editable": true,
       "collapse": false,
@@ -493,8 +492,8 @@
             "ids": [
               0
             ],
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&wt=json&rows=0&fq=publishedDate:[2019-10-17T13:32:59.000Z%20TO%202020-01-21T14:32:59.000Z]&facet=true&facet.range=publishedDate&facet.range.start=2019-10-17T13:32:59.000Z&facet.range.end=2020-01-21T14:32:59.000Z&facet.range.gap=%2B12HOUR\n",
-            "custom": "&fq=credibility_label:(\"not credible\" OR \"mostly not credible\")"
+            "query": "q=*%3A*&wt=json&rows=0&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&facet=true&facet.range=publishedDate&facet.range.start=2019-04-20T19:03:21.000Z&facet.range.end=2020-04-20T19:03:21.000Z&facet.range.gap=%2B1DAY\n",
+            "custom": "&fq=fact-checked_as:*"
           },
           "max_rows": 100000,
           "value_field": null,
@@ -502,7 +501,7 @@
           "sum_value": false,
           "auto_int": true,
           "resolution": 100,
-          "interval": "12h",
+          "interval": "1d",
           "intervals": [
             "auto",
             "1s",
@@ -543,19 +542,19 @@
             "enable": false,
             "interval": 2
           },
-          "title": "Not credible documents by published date"
+          "title": "Claims with reviews by published date"
         }
       ]
     },
     {
-      "title": "Not credible details",
-      "height": "350px",
+      "title": "Tag-clouds",
+      "height": "150px",
       "editable": true,
       "collapse": false,
       "collapsable": true,
       "panels": [
         {
-          "span": 4,
+          "span": 3,
           "editable": true,
           "type": "tagcloud",
           "loadingEditor": false,
@@ -564,17 +563,17 @@
             "ids": [
               0
             ],
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&wt=json&rows=0&fq=publishedDate:[2019-10-17T13:32:59.000Z%20TO%202020-01-21T14:32:59.000Z]&facet=true&facet.field=main_elements&facet.limit=10",
-            "custom": "&fq=credibility_label:(\"not credible\" OR \"mostly not credible\")"
+            "query": "q=*%3A*&wt=json&rows=0&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&facet=true&facet.field=fact-check_label&facet.limit=15",
+            "custom": "&facet.removeStopwords=true"
           },
-          "field": "main_elements",
-          "size": 10,
+          "field": "fact-check_label",
+          "size": 15,
           "alignment": "vertical and horizontal",
-          "fontScale": 6,
+          "fontScale": 13,
           "ignoreStopWords": false,
           "spyable": true,
           "show_queries": true,
-          "title": "Main words in not credible docs"
+          "title": "Tag-cloud review outcomes"
         },
         {
           "span": 4,
@@ -586,36 +585,132 @@
             "ids": [
               0
             ],
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&wt=json&rows=0&fq=publishedDate:[2019-10-17T13:32:59.000Z%20TO%202020-01-21T14:32:59.000Z]&facet=true&facet.field=medical_conditions&facet.limit=10",
-            "custom": "&fq=credibility_label:(\"not credible\" OR \"mostly not credible\")"
+            "query": "q=*%3A*&wt=json&rows=0&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&facet=true&facet.field=claim&facet.limit=30",
+            "custom": "&fq=fact-checked_as:*&facet.removeStopwords=true"
           },
-          "field": "medical_conditions",
-          "size": 10,
+          "field": "claim",
+          "size": 30,
           "alignment": "vertical and horizontal",
-          "fontScale": 6,
+          "fontScale": 12,
           "ignoreStopWords": false,
           "spyable": true,
           "show_queries": true,
-          "title": "Medical conditions in not credible docs"
+          "title": "Tag-cloud reviewed claims"
         },
         {
           "span": 4,
           "editable": true,
-          "type": "bar",
+          "type": "terms",
           "loadingEditor": false,
           "queries": {
             "mode": "all",
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&wt=json&rows=0&fq=publishedDate:[2019-10-17T13:32:59.000Z%20TO%202020-01-21T14:32:59.000Z]&facet=true&facet.field=medical_treatments&facet.limit=10",
-            "custom": "&fq=credibility_label:(\"not credible\" OR \"mostly not credible\")",
             "ids": [
               0
-            ]
+            ],
+            "query": "q=*%3A*&wt=json&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&fq=-claim:the&fq=-claim:in&fq=-claim:and&fq=-claim:a&fq=-claim:to&fq=-claim:of&fq=-claim:is&fq=-claim:for&fq=-claim:at&fq=-claim:with&fq=-claim:or&facet=true&facet.field=claim&facet.limit=10&facet.missing=true&f.claim.facet.sort=count&fq=-fact-checked_as:*",
+            "custom": "&fq=-fact-checked_as:*"
           },
-          "field": "medical_treatments",
+          "mode": "count",
+          "field": "claim",
+          "stats_field": "",
+          "decimal_points": 0,
+          "exclude": [
+            "the",
+            "in",
+            "and",
+            "a",
+            "to",
+            "of",
+            "is",
+            "for",
+            "at",
+            "with",
+            "or"
+          ],
+          "missing": false,
+          "other": false,
           "size": 10,
+          "pages": 10,
+          "sortBy": "count",
+          "order": "descending",
+          "style": {
+            "font-size": "10pt"
+          },
+          "donut": false,
+          "tilt": false,
+          "labels": true,
+          "logAxis": false,
+          "arrangement": "horizontal",
+          "chart": "bar",
+          "counter_pos": "above",
+          "exportSize": 100,
+          "lastColor": "",
           "spyable": true,
           "show_queries": true,
-          "title": "Medical treatments in not credible docs"
+          "bar_chart_arrangement": "vertical",
+          "chartColors": [
+            "#7EB26D",
+            "#EAB839",
+            "#6ED0E0",
+            "#EF843C",
+            "#E24D42",
+            "#1F78C1",
+            "#BA43A9",
+            "#705DA0",
+            "#508642",
+            "#CCA300",
+            "#447EBC",
+            "#C15C17",
+            "#890F02",
+            "#0A437C",
+            "#6D1F62",
+            "#584477",
+            "#B7DBAB",
+            "#F4D598",
+            "#70DBED",
+            "#F9BA8F",
+            "#F29191",
+            "#82B5D8",
+            "#E5A8E2",
+            "#AEA2E0",
+            "#629E51",
+            "#E5AC0E",
+            "#64B0C8",
+            "#E0752D",
+            "#BF1B00",
+            "#0A50A1",
+            "#962D82",
+            "#614D93",
+            "#9AC48A",
+            "#F2C96D",
+            "#65C5DB",
+            "#F9934E",
+            "#EA6460",
+            "#5195CE",
+            "#D683CE",
+            "#806EB7",
+            "#3F6833",
+            "#967302",
+            "#2F575E",
+            "#99440A",
+            "#58140C",
+            "#052B51",
+            "#511749",
+            "#3F2B5B",
+            "#E0F9D7",
+            "#FCEACA",
+            "#CFFAFF",
+            "#F9E2D2",
+            "#FCE2DE",
+            "#BADFF4",
+            "#F9D9F9",
+            "#DEDAF7"
+          ],
+          "refresh": {
+            "enable": false,
+            "interval": 2
+          },
+          "title": "Terms claims not reviewed"
         }
       ]
     },
@@ -637,9 +732,9 @@
             "ids": [
               0
             ],
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[2019-10-17T13:32:59.000Z%20TO%202020-01-21T14:32:59.000Z]&wt=json&rows=50",
-            "basic_query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[2019-10-17T13:32:59.000Z%20TO%202020-01-21T14:32:59.000Z]",
-            "custom": "&hl=false"
+            "query": "q=*%3A*&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&wt=json&rows=50",
+            "basic_query": "q=*%3A*&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]",
+            "custom": "&fq=fact-checked_as:*"
           },
           "size": 10,
           "pages": 5,
@@ -654,59 +749,30 @@
           },
           "overflow": "min-height",
           "fields": [
-            "title",
-            "lang_orig",
-            "credibility_label",
-            "credibility_score"
+            "claim",
+            "lang",
+            "lang_orig"
           ],
           "important_fields": [
-            "biological_agents",
-            "chemical_agents",
-            "claims",
-            "collection",
-            "content",
-            "contentLength",
-            "content_language",
-            "credibility_assessor",
-            "credibility_confidence",
-            "credibility_explanation",
-            "credibility_label",
-            "credibility_score",
-            "credibility_score_date",
-            "critical_infrastructures",
-            "domain_credibility_confidence",
-            "domain_credibility_explanation",
-            "domain_credibility_label",
-            "domain_credibility_score",
-            "domain_credibility_score_date",
-            "illicit_drugs",
-            "influential_people",
-            "key_company_executives",
+            "claimspot_score",
+            "claim",
+            "claim_orig",
+            "claim",
+            "websites",
+            "id",
             "lang",
             "lang_orig",
-            "lastModified",
-            "last_update",
-            "main_elements",
-            "medical_conditions",
-            "medical_treatments",
-            "natural_disasters",
-            "non_governative_organisations",
-            "organizations",
-            "people",
-            "places",
-            "public_leading_companies",
+            "occurrences",
             "publishedDate",
-            "retrieved_on",
-            "sentiments",
-            "size",
-            "social_tags",
-            "source",
-            "source_id",
-            "status",
-            "title",
-            "url",
-            "vulnerabilities",
-            "world_leaders"
+            "fact-checked_as",
+            "fact-checker",
+            "date-FactChecked",
+            "claimedBy",
+            "dateClaimed",
+            "schema_org_cr_json-ld_s",
+            "fact-check_label",
+            "fact-check_url",
+            "appearances"
           ],
           "highlight": [],
           "header": true,
@@ -731,12 +797,100 @@
             "enable": false,
             "interval": 2
           },
-          "title": "Example Documents",
+          "title": "Example Reviewed Claims/Sentences",
           "enableSubrow": false,
           "subrowField": "content",
-          "enableHyperlink": true,
+          "enableHyperlink": false,
           "hyperlinkColumnHeader": "link",
           "hyperlinkColumnForURI": "url"
+        }
+      ]
+    },
+    {
+      "title": "Sample non-reviewed sentences",
+      "height": "150px",
+      "editable": true,
+      "collapse": false,
+      "collapsable": true,
+      "panels": [
+        {
+          "span": 10,
+          "editable": true,
+          "type": "table",
+          "loadingEditor": false,
+          "status": "Stable",
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=*%3A*&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]&wt=json&rows=50",
+            "basic_query": "q=*%3A*&fq=publishedDate:[2019-04-20T19:03:21.000Z%20TO%202020-04-20T19:03:21.000Z]",
+            "custom": "&fq=-fact-checked_as:*&sort=claimspot_score_d desc"
+          },
+          "size": 10,
+          "pages": 5,
+          "offset": 0,
+          "sort": [
+            "claimspot_score_d desc"
+          ],
+          "sortable": true,
+          "group": "default",
+          "style": {
+            "font-size": "9pt"
+          },
+          "overflow": "min-height",
+          "fields": [
+            "claim",
+            "lang",
+            "lang_orig",
+            "claimspot_score"
+          ],
+          "important_fields": [
+            "claimspot_score",
+            "claim",
+            "claim_orig",
+            "claim",
+            "websites",
+            "id",
+            "lang",
+            "lang_orig",
+            "occurrences",
+            "publishedDate",
+            "fact-checked_as",
+            "fact-checker",
+            "date-FactChecked",
+            "claimedBy",
+            "dateClaimed",
+            "schema_org_cr_json-ld_s",
+            "fact-check_label",
+            "fact-check_url",
+            "appearances"
+          ],
+          "highlight": [],
+          "header": true,
+          "paging": true,
+          "field_list": false,
+          "trimFactor": 300,
+          "normTimes": true,
+          "spyable": true,
+          "saveOption": "json",
+          "exportSize": 50,
+          "exportAll": true,
+          "displayLinkIcon": true,
+          "imageFields": [],
+          "imgFieldWidth": "auto",
+          "imgFieldHeight": "85px",
+          "show_queries": true,
+          "maxNumCalcTopFields": 20,
+          "calcTopFieldValuesFromAllData": false,
+          "subrowMaxChar": 300,
+          "subrowOffset": 0,
+          "refresh": {
+            "enable": false,
+            "interval": 2
+          },
+          "title": "Example non-reviewed sentences"
         }
       ]
     }
@@ -747,7 +901,7 @@
     "pattern": "[logstash-]YYYY.MM.DD",
     "default": "_all"
   },
-  "style": "ci",
+  "style": "light",
   "failover": false,
   "panel_hints": true,
   "loader": {
@@ -768,10 +922,12 @@
   },
   "solr": {
     "server": "https://dashboard.coinform.eu/api/dboard/",
-    "core_name": "pilot-gr",
+    "core_name": "claims",
     "core_list": [
       "claims",
+      "co-inform",
       "factcheckers",
+      "factchecks2",
       "fc-dev",
       "generic",
       "pilot-at",
