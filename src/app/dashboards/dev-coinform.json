@@ -35,8 +35,8 @@
           "to": "NOW%2B1DAY",
           "field": "publishedDate",
           "type": "time",
-          "fromDateObj": "2019-11-16T17:41:17.204Z",
-          "toDateObj": "2020-05-14T16:41:17.204Z",
+          "fromDateObj": "2019-11-16T19:11:01.513Z",
+          "toDateObj": "2020-05-14T18:11:01.514Z",
           "mandate": "must",
           "active": true,
           "alias": "",
@@ -74,7 +74,7 @@
           "loadingEditor": false,
           "status": "Stable",
           "mode": "markdown",
-          "content": "# About this Dashboard\n\nThis dashboard shows an overview of all the documents analysed for the Co-inform Greek pilot. It consist of documents gathered by our content collector. Until now, we have focused on collecting **political news** from the following popular news-sites:\n\n* [www.ert.gr](http://www.ert.gr) \n* [https://www.in.gr/politics}(https://www.in.gr/politics)\n* [SKAI](http://feeds.feedburner.com/skai/yinm)\n* [https://www.newsbomb.gr/politikh](https://www.newsbomb.gr/politikh)",
+          "content": "# Dashboard on covid-19 (dis)information\n\nThis dashboard shows an overview of documents, mainly tweets and news articles related to corona virus and covid-19, collected and analysed by the [Co-inform](https://coinform.eu) platform. \n\nThis dashboard allows you to:\n\n* select a subset of documents by defining *filters*\n*  get an overview of how many documents have been collected over time and how many of those have been assessed to have low **credibility**\n* **explore correlations** between low credibility documents and:\n** main words in those documents\n** medical conditions mentioned in the documents\n** organizations mentioned in the documents\n** people mentioned in the documents\n* Inspect details about example documents\n\n## Main document sources \n\n* **[Twitter](https://twitter.com)**: mainly tweets with hashtags `#coronavirus`, `#covid-19`, `#bioweapon`\n* [https://www.in.gr/politics}(https://www.in.gr/politics)\n* Various news sources (not corona virus related)\n** [The Sun](https://www.thesun.co.uk)\n** [Buzzfeed](https://www.buzzfeed.com/)\n** [news.com.au](https://www.news.com.au/)\n** [Seattle Times](https://www.seattletimes.com/)\n** [Sputnik News](https://sputniknews.com/)\n** [Daily Mail](https://www.dailymail.co.uk)\n** [Daily Caller](https://dailycaller.com/)\n** many others",
           "style": {},
           "title": "About this Dashboard",
           "show_help_message": true,
@@ -116,7 +116,7 @@
         },
         {
           "error": "",
-          "span": 4,
+          "span": 3,
           "editable": true,
           "type": "timepicker",
           "loadingEditor": false,
@@ -240,7 +240,7 @@
               "field": "id",
               "decimalDigits": 0,
               "label": "documents matching active filters",
-              "value": "2197599"
+              "value": "2199207"
             }
           ],
           "refresh": {
@@ -293,7 +293,7 @@
               "field": "id",
               "decimalDigits": 0,
               "label": "# docs matching the active filters",
-              "value": "2197599"
+              "value": "2199207"
             }
           ],
           "refresh": {
