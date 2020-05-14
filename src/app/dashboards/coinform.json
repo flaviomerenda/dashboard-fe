@@ -644,14 +644,14 @@
           "spheres": true,
           "spyable": true,
           "show_queries": false,
-          "title": "People by doc credibility",
+          "title": "Medical Conditions by doc credibility",
           "facet_pivot_strings": [
             "credibility_label",
             "medical_conditions"
           ],
           "show_help_message": true,
           "info_mode": "markdown",
-          "help_message": "Shows **people** linked to different **credibility labels**. People are associated to credibilities if they are mentioned in a document that seems (not) credible.\n\nThe size of the circles corresponds to the number of documents."
+          "help_message": "Shows **medical conditions** linked to different **credibility labels**. Medical conditions are associated to credibilities if they are mentioned in a document that seems (not) credible.\n\nThe size of the circles corresponds to the number of documents."
         }
       ]
     },
