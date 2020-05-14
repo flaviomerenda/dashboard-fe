@@ -1,5 +1,5 @@
 ﻿{
-  "title": "Document Level Dashboard v20200514",
+  "title": "COVID-19 (dis)information Dashboard v20200514",
   "services": {
     "query": {
       "idQueue": [
@@ -31,12 +31,10 @@
       ],
       "list": {
         "0": {
-          "from": "NOW-180DAY",
-          "to": "NOW%2B1DAY",
+          "from": "2019-11-16T19:36:15.000Z",
+          "to": "2020-05-14T18:36:15.000Z",
           "field": "publishedDate",
           "type": "time",
-          "fromDateObj": "2019-11-16T19:11:01.513Z",
-          "toDateObj": "2020-05-14T18:11:01.514Z",
           "mandate": "must",
           "active": true,
           "alias": "",
@@ -62,14 +60,14 @@
     {
       "title": "About this Dashboard",
       "height": "50px",
-      "editable": true,
-      "collapse": false,
+      "editable": false,
+      "collapse": true,
       "collapsable": true,
       "panels": [
         {
           "error": false,
-          "span": 6,
-          "editable": true,
+          "span": 10,
+          "editable": false,
           "type": "text",
           "loadingEditor": false,
           "status": "Stable",
@@ -80,48 +78,36 @@
           "show_help_message": true,
           "info_mode": "markdown",
           "help_message": "Provides a short description about the dashboard, its goals and the sources used to populate the collection of documents."
-        },
-        {
-          "error": false,
-          "span": 4,
-          "editable": true,
-          "type": "text",
-          "loadingEditor": false,
-          "status": "Stable",
-          "mode": "markdown",
-          "content": "## Changelog\n\n#### v20200514\n* Adding heatmap and force components to show off new `facet.pivot` queries implemented in backend\n* By default, use the `generic` collection, which contains content related to corona virus. \n\n#### v20200414\nAdded a row at the botton with an example `table` component. This is the most logical component that can be used to let the user inspect individual documents. See [issue 9 on the github repo](https://github.com/co-inform/dashboard-fe/issues/9).",
-          "style": {},
-          "title": "Development Notes"
         }
       ]
     },
     {
       "title": "Filters",
       "height": "50px",
-      "editable": true,
+      "editable": false,
       "collapse": false,
       "collapsable": true,
       "panels": [
         {
           "error": false,
           "span": 2,
-          "editable": true,
+          "editable": false,
           "type": "text",
           "loadingEditor": false,
           "status": "Stable",
           "mode": "markdown",
-          "content": "Use the *timepicker* and/or *filter*s to the right to filter by time, topic, language, etc.",
+          "content": "Use the *timepicker* and/or *filter*s to the right to filter by time, category (topic), credibility label, etc.",
           "style": {},
           "title": "Filter results"
         },
         {
           "error": "",
           "span": 3,
-          "editable": true,
+          "editable": false,
           "type": "timepicker",
           "loadingEditor": false,
           "status": "Stable",
-          "mode": "relative",
+          "mode": "absolute",
           "time_options": [
             "15m",
             "1h",
@@ -144,11 +130,15 @@
           "show_help_message": true,
           "info_mode": "markdown",
           "help_message": "Use this *timepicker* to restrict the dashboard to documents published in the selected time frame.",
-          "title": "Filter by published date"
+          "title": "Filter by published date",
+          "time": {
+            "from": "11/16/2019 20:36:15",
+            "to": "05/14/2020 20:36:15"
+          }
         },
         {
           "span": 5,
-          "editable": true,
+          "editable": false,
           "type": "facet",
           "loadingEditor": false,
           "status": "Stable",
@@ -157,8 +147,8 @@
             "ids": [
               0
             ],
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW-180DAY%20TO%20NOW%2B1DAY]&facet=true&facet.field=categories&facet.field=credibility_label&facet.field=source_id&wt=json",
-            "basic_query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW-180DAY%20TO%20NOW%2B1DAY]&facet=true&facet.field=categories&facet.field=credibility_label&facet.field=source_id",
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[2019-11-16T19:36:15.000Z%20TO%202020-05-14T18:36:15.000Z]&facet=true&facet.field=categories&facet.field=credibility_label&facet.field=source_id&wt=json",
+            "basic_query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[2019-11-16T19:36:15.000Z%20TO%202020-05-14T18:36:15.000Z]&facet=true&facet.field=categories&facet.field=credibility_label&facet.field=source_id",
             "custom": ""
           },
           "group": "default",
@@ -218,7 +208,7 @@
             "ids": [
               0
             ],
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW-180DAY%20TO%20NOW%2B1DAY]&stats=true&stats.field=id&wt=json&rows=0\n",
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[2019-11-16T19:36:15.000Z%20TO%202020-05-14T18:36:15.000Z]&stats=true&stats.field=id&wt=json&rows=0\n",
             "basic_query": "",
             "custom": ""
           },
@@ -240,7 +230,7 @@
               "field": "id",
               "decimalDigits": 0,
               "label": "documents matching active filters",
-              "value": "2199207"
+              "value": "2200566"
             }
           ],
           "refresh": {
@@ -257,13 +247,13 @@
     {
       "title": "Events",
       "height": "150px",
-      "editable": true,
-      "collapse": false,
+      "editable": false,
+      "collapse": true,
       "collapsable": true,
       "panels": [
         {
-          "span": 2,
-          "editable": true,
+          "span": 3,
+          "editable": false,
           "type": "hits",
           "loadingEditor": false,
           "queries": {
@@ -271,7 +261,7 @@
             "ids": [
               0
             ],
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW-180DAY%20TO%20NOW%2B1DAY]&stats=true&stats.field=id&wt=json&rows=0\n",
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[2019-11-16T19:36:15.000Z%20TO%202020-05-14T18:36:15.000Z]&stats=true&stats.field=id&wt=json&rows=0\n",
             "basic_query": "",
             "custom": ""
           },
@@ -293,7 +283,7 @@
               "field": "id",
               "decimalDigits": 0,
               "label": "# docs matching the active filters",
-              "value": "2199207"
+              "value": "2200566"
             }
           ],
           "refresh": {
@@ -304,7 +294,7 @@
         },
         {
           "span": 2,
-          "editable": true,
+          "editable": false,
           "type": "hits",
           "loadingEditor": false,
           "queries": {
@@ -312,7 +302,7 @@
             "ids": [
               0
             ],
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW-180DAY%20TO%20NOW%2B1DAY]&stats=true&stats.field=id&wt=json&rows=0\n",
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[2019-11-16T19:36:15.000Z%20TO%202020-05-14T18:36:15.000Z]&stats=true&stats.field=id&wt=json&rows=0\n",
             "basic_query": "",
             "custom": "&fq=credibility_label:(\"not credible\" OR \"mostly not credible\")"
           },
@@ -341,11 +331,11 @@
             "enable": false,
             "interval": 2
           },
-          "title": "Not credible docs"
+          "title": "Not credible"
         },
         {
           "span": 2,
-          "editable": true,
+          "editable": false,
           "type": "hits",
           "loadingEditor": false,
           "queries": {
@@ -353,7 +343,7 @@
             "ids": [
               0
             ],
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW-180DAY%20TO%20NOW%2B1DAY]&stats=true&stats.field=id&wt=json&rows=0\n",
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[2019-11-16T19:36:15.000Z%20TO%202020-05-14T18:36:15.000Z]&stats=true&stats.field=id&wt=json&rows=0\n",
             "basic_query": "",
             "custom": "&fq=credibility_label:(\"credible\" OR \"mostly credible\")"
           },
@@ -386,7 +376,7 @@
         },
         {
           "span": 2,
-          "editable": true,
+          "editable": false,
           "type": "sunburst",
           "loadingEditor": false,
           "queries": {
@@ -394,7 +384,7 @@
             "ids": [
               0
             ],
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW-180DAY%20TO%20NOW%2B1DAY]&wt=json&facet=true&facet.pivot=credibility_label&facet.limit=1000&rows=0",
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[2019-11-16T19:36:15.000Z%20TO%202020-05-14T18:36:15.000Z]&wt=json&facet=true&facet.pivot=credibility_label&facet.limit=1000&rows=0",
             "custom": ""
           },
           "facet_limit": 1000,
@@ -413,13 +403,13 @@
     {
       "title": "Graph",
       "height": "150px",
-      "editable": true,
+      "editable": false,
       "collapse": false,
       "collapsable": true,
       "panels": [
         {
           "span": 12,
-          "editable": true,
+          "editable": false,
           "type": "histogram",
           "loadingEditor": false,
           "mode": "count",
@@ -428,7 +418,7 @@
             "ids": [
               0
             ],
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&wt=json&rows=0&fq=publishedDate:[NOW-180DAY%20TO%20NOW%2B1DAY]&facet=true&facet.range=publishedDate&facet.range.start=NOW-180DAY&facet.range.end=NOW%2B1DAY&facet.range.gap=%2B1DAY\n",
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&wt=json&rows=0&fq=publishedDate:[2019-11-16T19:36:15.000Z%20TO%202020-05-14T18:36:15.000Z]&facet=true&facet.range=publishedDate&facet.range.start=2019-11-16T19:36:15.000Z&facet.range.end=2020-05-14T18:36:15.000Z&facet.range.gap=%2B1DAY\n",
             "custom": ""
           },
           "max_rows": 1000,
@@ -485,13 +475,13 @@
     {
       "title": "Not credible timeline",
       "height": "150px",
-      "editable": true,
+      "editable": false,
       "collapse": false,
       "collapsable": true,
       "panels": [
         {
           "span": 12,
-          "editable": true,
+          "editable": false,
           "type": "histogram",
           "loadingEditor": false,
           "mode": "count",
@@ -500,7 +490,7 @@
             "ids": [
               0
             ],
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&wt=json&rows=0&fq=publishedDate:[NOW-180DAY%20TO%20NOW%2B1DAY]&facet=true&facet.range=publishedDate&facet.range.start=NOW-180DAY&facet.range.end=NOW%2B1DAY&facet.range.gap=%2B1DAY\n",
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&wt=json&rows=0&fq=publishedDate:[2019-11-16T19:36:15.000Z%20TO%202020-05-14T18:36:15.000Z]&facet=true&facet.range=publishedDate&facet.range.start=2019-11-16T19:36:15.000Z&facet.range.end=2020-05-14T18:36:15.000Z&facet.range.gap=%2B1DAY\n",
             "custom": "&fq=credibility_label:(\"not credible\" OR \"mostly not credible\")"
           },
           "max_rows": 100000,
@@ -563,7 +553,7 @@
       "panels": [
         {
           "span": 3,
-          "editable": true,
+          "editable": false,
           "type": "tagcloud",
           "loadingEditor": false,
           "queries": {
@@ -571,7 +561,7 @@
             "ids": [
               0
             ],
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&wt=json&rows=0&fq=publishedDate:[NOW-180DAY%20TO%20NOW%2B1DAY]&facet=true&facet.field=main_elements&facet.limit=10",
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&wt=json&rows=0&fq=publishedDate:[2019-11-16T19:36:15.000Z%20TO%202020-05-14T18:36:15.000Z]&facet=true&facet.field=main_elements&facet.limit=10",
             "custom": "&fq=credibility_label:(\"not credible\" OR \"mostly not credible\")"
           },
           "field": "main_elements",
@@ -585,7 +575,7 @@
         },
         {
           "span": 3,
-          "editable": true,
+          "editable": false,
           "type": "tagcloud",
           "loadingEditor": false,
           "queries": {
@@ -593,7 +583,7 @@
             "ids": [
               0
             ],
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&wt=json&rows=0&fq=publishedDate:[NOW-180DAY%20TO%20NOW%2B1DAY]&facet=true&facet.field=medical_conditions&facet.limit=10",
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&wt=json&rows=0&fq=publishedDate:[2019-11-16T19:36:15.000Z%20TO%202020-05-14T18:36:15.000Z]&facet=true&facet.field=medical_conditions&facet.limit=10",
             "custom": "&fq=credibility_label:(\"not credible\" OR \"mostly not credible\")"
           },
           "field": "medical_conditions",
@@ -607,7 +597,7 @@
         },
         {
           "span": 3,
-          "editable": true,
+          "editable": false,
           "type": "heatmap",
           "loadingEditor": false,
           "queries": {
@@ -615,7 +605,7 @@
             "ids": [
               0
             ],
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW-180DAY%20TO%20NOW%2B1DAY]&wt=json&rows=0&facet=true&facet.pivot=credibility_label,organizations&facet.limit=5&facet.pivot.mincount=0",
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[2019-11-16T19:36:15.000Z%20TO%202020-05-14T18:36:15.000Z]&wt=json&rows=0&facet=true&facet.pivot=credibility_label,organizations&facet.limit=5&facet.pivot.mincount=0",
             "custom": ""
           },
           "size": 0,
@@ -631,7 +621,7 @@
         },
         {
           "span": 3,
-          "editable": true,
+          "editable": false,
           "type": "force",
           "loadingEditor": false,
           "queries": {
@@ -639,7 +629,7 @@
             "ids": [
               0
             ],
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW-180DAY%20TO%20NOW%2B1DAY]&wt=json&facet=true&facet.pivot=credibility_label,medical_conditions&f.credibility_label.facet.limit=4&f.medical_conditions.facet.limit=20&rows=0",
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[2019-11-16T19:36:15.000Z%20TO%202020-05-14T18:36:15.000Z]&wt=json&facet=true&facet.pivot=credibility_label,medical_conditions&f.credibility_label.facet.limit=4&f.medical_conditions.facet.limit=20&rows=0",
             "custom": ""
           },
           "facet_limit": "4,20",
@@ -653,25 +643,28 @@
           "mute_category_2": true,
           "spheres": true,
           "spyable": true,
-          "show_queries": true,
+          "show_queries": false,
           "title": "People by doc credibility",
           "facet_pivot_strings": [
             "credibility_label",
             "medical_conditions"
-          ]
+          ],
+          "show_help_message": true,
+          "info_mode": "markdown",
+          "help_message": "Shows **people** linked to different **credibility labels**. People are associated to credibilities if they are mentioned in a document that seems (not) credible.\n\nThe size of the circles corresponds to the number of documents."
         }
       ]
     },
     {
       "title": "Sample documents",
       "height": "150px",
-      "editable": true,
+      "editable": false,
       "collapse": false,
       "collapsable": true,
       "panels": [
         {
           "span": 10,
-          "editable": true,
+          "editable": false,
           "type": "table",
           "loadingEditor": false,
           "status": "Stable",
@@ -680,8 +673,8 @@
             "ids": [
               0
             ],
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW-180DAY%20TO%20NOW%2B1DAY]&wt=json&rows=50",
-            "basic_query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW-180DAY%20TO%20NOW%2B1DAY]",
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[2019-11-16T19:36:15.000Z%20TO%202020-05-14T18:36:15.000Z]&wt=json&rows=50",
+            "basic_query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[2019-11-16T19:36:15.000Z%20TO%202020-05-14T18:36:15.000Z]",
             "custom": "&hl=false&fq=credibility_label:*"
           },
           "size": 10,
@@ -792,21 +785,21 @@
   },
   "style": "ci",
   "failover": false,
-  "panel_hints": true,
+  "panel_hints": false,
   "loader": {
-    "save_gist": true,
-    "save_elasticsearch": true,
+    "save_gist": false,
+    "save_elasticsearch": false,
     "save_local": true,
-    "save_default": true,
+    "save_default": false,
     "save_temp": true,
     "save_temp_ttl_enable": true,
     "save_temp_ttl": "30d",
-    "load_gist": true,
-    "load_elasticsearch": true,
+    "load_gist": false,
+    "load_elasticsearch": false,
     "load_elasticsearch_size": 20,
-    "load_local": true,
+    "load_local": false,
     "hide": false,
-    "dropdown_collections": true,
+    "dropdown_collections": false,
     "save_as_public": false
   },
   "solr": {
@@ -825,5 +818,5 @@
     "global_params": ""
   },
   "username": "guest",
-  "home": true
+  "home": false
 }
