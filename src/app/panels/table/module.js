@@ -23,10 +23,11 @@ define([
     'underscore',
     'kbn',
     'moment'
+    //'showdown'
     // 'text!./pagination.html',
     // 'text!partials/querySelect.html'
 ],
-function (angular, app, _, kbn, moment) {
+       function (angular, app, _, kbn, moment) {
     'use strict';
 
     var module = angular.module('kibana.panels.table', []);
@@ -92,6 +93,7 @@ function (angular, app, _, kbn, moment) {
             exportAll: true,
             displayLinkIcon: true,
             imageFields: [],      // fields to be displayed as <img>
+            markdownFields: ['credibility_explanation'],
             imgFieldWidth: 'auto', // width of <img> (if enabled)
             imgFieldHeight: '85px', // height of <img> (if enabled)
             show_queries: true,
@@ -261,6 +263,12 @@ function (angular, app, _, kbn, moment) {
             filterSrv.set({type: 'exists', field: field, mandate: mandate});
             dashboard.refresh();
         };
+
+        $scope.isMarkdownField = function (field) {
+            var result = (typeof field !== 'undefined' && $scope.panel.markdownFields.length > 0 && _.contains($scope.panel.markdownFields, field));
+            if (result) console.log('Field', field, 'is in markdownFields', $scope.panel.markdownFields);
+            return result;
+        }
 
         $scope.get_data = function (segment, query_id) {
             $scope.panel.error = false;
@@ -545,6 +553,21 @@ function (angular, app, _, kbn, moment) {
                 return '<img style="width:' + width + '; height:' + height + ';" src="' + data + '">';
             }
             return data;
+        };
+    });
+
+    // This filter will check the input field to see if it should be displayed as html from markdown
+    module.filter('tableDisplayMarkdownField', function () {
+        return function (text, field, markdownFields) {
+            
+            if (typeof field !== 'undefined' && markdownFields.length > 0 && _.contains(markdownFields, field)) {
+                var converter = new Showdown.converter();
+                var textConverted = text.replace(/&/g, '&amp;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/</g, '&lt;');
+                return converter.makeHtml(textConverted);
+            }
+            return text;
         };
     });
 });
