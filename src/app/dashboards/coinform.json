@@ -68,19 +68,34 @@
       "panels": [
         {
           "error": false,
-          "span": 10,
+          "span": 8,
           "editable": false,
           "type": "text",
           "loadingEditor": false,
           "status": "Stable",
           "mode": "markdown",
-          "content": "# Dashboard on covid-19 (dis)information\n\nThis dashboard shows an overview of documents, mainly tweets and news articles related to corona virus and covid-19, collected and analysed by the [Co-inform](https://coinform.eu) platform. \n\nThis dashboard allows you to:\n\n* select a subset of documents by defining *filters*\n*  get an overview of how many documents have been collected over time and how many of those have been assessed to have low **credibility**\n* **explore correlations** between low credibility documents and:\n** main words in those documents\n** medical conditions mentioned in the documents\n** organizations mentioned in the documents\n** people mentioned in the documents\n* Inspect details about example documents\n\n## Main document sources \n\n* **[Twitter](https://twitter.com)**: mainly tweets with hashtags `#coronavirus`, `#covid-19`, `#bioweapon`\n* Various news sources (not corona virus related)\n  * [The Sun](https://www.thesun.co.uk)\n  * [Buzzfeed](https://www.buzzfeed.com/)\n  * [news.com.au](https://www.news.com.au/)\n  * [Seattle Times](https://www.seattletimes.com/)\n  * [Sputnik News](https://sputniknews.com/)\n  * [Daily Mail](https://www.dailymail.co.uk)\n  * [Daily Caller](https://dailycaller.com/)\n  * many others",
+          "content": "# Dashboard on covid-19 (dis)information\n\nThis dashboard shows an overview of documents, mainly tweets and news articles related to corona virus and covid-19, collected and analysed by the [Co-inform](https://coinform.eu) platform. \n\nThis dashboard allows you to:\n\n* select a subset of documents by defining *filters*\n*  get an overview of how many documents have been collected over time and how many of those have been assessed to have low **credibility**\n* **explore correlations** between low credibility documents and:\n  * main words in those documents\n  * medical conditions mentioned in the documents\n  * organizations mentioned in the documents\n  * people mentioned in the documents\n* Inspect details about example documents\n\n## Main document sources \n\n* **[Twitter](https://twitter.com)**: mainly tweets with hashtags `#coronavirus`, `#covid-19`, `#bioweapon`\n* Various news sources (not corona virus related)\n  * [The Sun](https://www.thesun.co.uk)\n  * [Buzzfeed](https://www.buzzfeed.com/)\n  * [news.com.au](https://www.news.com.au/)\n  * [Seattle Times](https://www.seattletimes.com/)\n  * [Sputnik News](https://sputniknews.com/)\n  * [Daily Mail](https://www.dailymail.co.uk)\n  * [Daily Caller](https://dailycaller.com/)\n  * many others",
           "style": {},
           "title": "About this Dashboard",
           "show_help_message": true,
           "info_mode": "markdown",
           "help_message": "Provides a short description about the dashboard, its goals and the sources used to populate the collection of documents."
-        }
+        },
+        {
+          "error": false,
+          "span": 4,
+          "editable": false,
+          "type": "text",
+          "loadingEditor": false,
+          "status": "Stable",
+          "mode": "markdown",
+          "content": "## Under development\nThe following dashboards are under development:\n\n* [FakeNewsNet](/#/dashboard/file/dev-fakeNewsNet.json): shows results for a set of 960 news articles that were previoulsy fact-checked by PolitiFact;\n* [COVID-19](/#/dashboard/file/dev-coinform.json): development version of the covid-19 dashboard;\n* [claims](/#/dashboard/file/dev-claims.json): dashboard for about 85K claims extrated from `ClaimReview`s or crawled news sources;\n* [Pilot Greece](/#/dashboard/file/pilot-gr.json): focused on news sources in Greece",
+          "style": {},
+          "title": "Other Co-inform Dashboard",
+          "show_help_message": true,
+          "info_mode": "markdown",
+          "help_message": "Provides links to other Co-inform dashboards."
+        }          
       ]
     },
     {
@@ -677,14 +692,14 @@
           },
           "facet_limit": "4,20",
           "node_size_weight": 0.1,
-          "link_width_weight": 1,
+          "link_width_weight": 0.3,
           "link_strength_weight": 0,
           "link_distance_weight": 0,
           "strength": -200,
           "colors": "#693C5E, #1f77b4, #ff7f0e, #2ca02c, #d62728, #9467bd, #8c564b, #e377c2, #7f7f7f, #bcbd22",
           "mute_category_1": false,
           "mute_category_2": true,
-          "spheres": true,
+          "spheres": false,
           "spyable": true,
           "show_queries": false,
           "title": "Medical Conditions by doc credibility",
