@@ -266,7 +266,7 @@ define([
 
         $scope.isMarkdownField = function (field) {
             var result = (typeof field !== 'undefined' && $scope.panel.markdownFields.length > 0 && _.contains($scope.panel.markdownFields, field));
-            if (result) console.log('Field', field, 'is in markdownFields', $scope.panel.markdownFields);
+            //if (result) console.log('Field', field, 'is in markdownFields', $scope.panel.markdownFields);
             return result;
         }
 
