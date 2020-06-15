@@ -92,13 +92,13 @@
                 <a class="link" ng-class="{'strong':event.kibana.view == 'raw'}" ng-click="event.kibana.view = 'raw'">Raw</a>
                 <i class="link pull-right icon-chevron-up" ng-click="toggle_details(event)"></i>
               </span>
-              <table class='table table-bordered table-condensed' ng-switch-when="table">
+              <table class='table table-fixed table-bordered table-condensed' ng-switch-when="table">
                 <thead>
-                  <th>Field</th>
+                  <th class='narrowCol'>Field</th>
                   <!-- Disable action since it's not useful for most field types/values
                   <th>Action</th>
                   -->
-                  <th>Value</th>
+                  <th class='wideCol'>Value</th>
                 </thead>
                 <tr ng-repeat="(key,value) in event.kibana._source" ng-class-odd="'odd'">
                   <td>{{key}}</td>
@@ -110,7 +110,12 @@
                   </td>
                   -->
                   <!-- At some point we need to create a more efficient way of applying the filter pipeline -->
-                  <td style="white-space:pre-wrap" ng-bind-html-unsafe="value|noXml|urlLink|stringify"></td>
+                  <td ng-show="isMarkdownField(key)" ng-bind-html-unsafe="value
+                               | tableDisplayMarkdownField:key:panel.markdownFields
+                               "></td>
+                  <td ng-show="!isMarkdownField(key)"
+                      style="white-space:pre-wrap" ng-bind-html-unsafe="value
+                             |noXml|urlLink|stringify"></td>
                 </tr>
               </table>
               <pre style="white-space:pre-wrap"  ng-bind-html="without_kibana(event)|tableJson:2" ng-switch-when="json"></pre>

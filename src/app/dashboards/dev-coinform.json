@@ -1,5 +1,5 @@
 ﻿{
-  "title": "Document Level Dashboard v20200514",
+  "title": "Document Level Dashboard v20200615",
   "services": {
     "query": {
       "idQueue": [
@@ -31,12 +31,12 @@
       ],
       "list": {
         "0": {
-          "from": "NOW-180DAY",
+          "from": "NOW-90DAY",
           "to": "NOW%2B1DAY",
           "field": "publishedDate",
           "type": "time",
-          "fromDateObj": "2019-11-16T19:11:01.513Z",
-          "toDateObj": "2020-05-14T18:11:01.514Z",
+          "fromDateObj": "2020-03-17T13:01:53.271Z",
+          "toDateObj": "2020-06-15T12:01:53.271Z",
           "mandate": "must",
           "active": true,
           "alias": "",
@@ -74,7 +74,7 @@
           "loadingEditor": false,
           "status": "Stable",
           "mode": "markdown",
-          "content": "# Dashboard on covid-19 (dis)information\n\nThis dashboard shows an overview of documents, mainly tweets and news articles related to corona virus and covid-19, collected and analysed by the [Co-inform](https://coinform.eu) platform. \n\nThis dashboard allows you to:\n\n* select a subset of documents by defining *filters*\n*  get an overview of how many documents have been collected over time and how many of those have been assessed to have low **credibility**\n* **explore correlations** between low credibility documents and:\n** main words in those documents\n** medical conditions mentioned in the documents\n** organizations mentioned in the documents\n** people mentioned in the documents\n* Inspect details about example documents\n\n## Main document sources \n\n* **[Twitter](https://twitter.com)**: mainly tweets with hashtags `#coronavirus`, `#covid-19`, `#bioweapon`\n* [https://www.in.gr/politics}(https://www.in.gr/politics)\n* Various news sources (not corona virus related)\n** [The Sun](https://www.thesun.co.uk)\n** [Buzzfeed](https://www.buzzfeed.com/)\n** [news.com.au](https://www.news.com.au/)\n** [Seattle Times](https://www.seattletimes.com/)\n** [Sputnik News](https://sputniknews.com/)\n** [Daily Mail](https://www.dailymail.co.uk)\n** [Daily Caller](https://dailycaller.com/)\n** many others",
+          "content": "# Dashboard on covid-19 (dis)information\n\nThis dashboard shows an overview of documents, mainly tweets and news articles related to corona virus and covid-19, collected and analysed by the [Co-inform](https://coinform.eu) platform. \n\nThis dashboard allows you to:\n\n* select a subset of documents by defining *filters*\n*  get an overview of how many documents have been collected over time and how many of those have been assessed to have low **credibility**\n* **explore correlations** between low credibility documents and:\n** main words in those documents\n** medical conditions mentioned in the documents\n** organizations mentioned in the documents\n** people mentioned in the documents\n* Inspect details about example documents\n\n## Main document sources \n\n* **[Twitter](https://twitter.com)**: mainly tweets with hashtags `#coronavirus`, `#covid-19`, `#bioweapon`\n* Various news sources (not corona virus related)\n  * [The Sun](https://www.thesun.co.uk)\n  * [Buzzfeed](https://www.buzzfeed.com/)\n  * [news.com.au](https://www.news.com.au/)\n  * [Seattle Times](https://www.seattletimes.com/)\n  * [Sputnik News](https://sputniknews.com/)\n  * [Daily Mail](https://www.dailymail.co.uk)\n  * [Daily Caller](https://dailycaller.com/)\n  * many others",
           "style": {},
           "title": "About this Dashboard",
           "show_help_message": true,
@@ -89,7 +89,7 @@
           "loadingEditor": false,
           "status": "Stable",
           "mode": "markdown",
-          "content": "## Changelog\n\n#### v20200514\n* Adding heatmap and force components to show off new `facet.pivot` queries implemented in backend\n* By default, use the `generic` collection, which contains content related to corona virus. \n\n#### v20200414\nAdded a row at the botton with an example `table` component. This is the most logical component that can be used to let the user inspect individual documents. See [issue 9 on the github repo](https://github.com/co-inform/dashboard-fe/issues/9).",
+          "content": "## Changelog\n\n#### v20200615\n* Fixed name of *Event* row\n* Filter by published date now has more useful values by default\n* Added `organizations` and `people` to the *facet filters* component\n* Tweaked values in the `force` component as the bubbles were too big now that we have around 30K rated documents\n* Added a counter for **Rated Docs** in the row of overviews and tweaked labels\n\n#### v20200514\n* Adding heatmap and force components to show off new `facet.pivot` queries implemented in backend\n* By default, use the `generic` collection, which contains content related to corona virus. \n\n#### v20200414\nAdded a row at the botton with an example `table` component. This is the most logical component that can be used to let the user inspect individual documents. See [issue 9 on the github repo](https://github.com/co-inform/dashboard-fe/issues/9).",
           "style": {},
           "title": "Development Notes"
         }
@@ -123,15 +123,14 @@
           "status": "Stable",
           "mode": "relative",
           "time_options": [
-            "15m",
             "1h",
             "24h",
             "7d",
             "30d",
-            "180d",
-            "1y"
+            "90d",
+            "180d"
           ],
-          "timespan": "180d",
+          "timespan": "90d",
           "timefield": "publishedDate",
           "timeformat": "",
           "spyable": true,
@@ -157,8 +156,8 @@
             "ids": [
               0
             ],
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW-180DAY%20TO%20NOW%2B1DAY]&facet=true&facet.field=categories&facet.field=credibility_label&facet.field=source_id&wt=json",
-            "basic_query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW-180DAY%20TO%20NOW%2B1DAY]&facet=true&facet.field=categories&facet.field=credibility_label&facet.field=source_id",
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW-90DAY%20TO%20NOW%2B1DAY]&facet=true&facet.field=categories&facet.field=credibility_label&facet.field=source_id&facet.field=organizations&facet.field=people&wt=json",
+            "basic_query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW-90DAY%20TO%20NOW%2B1DAY]&facet=true&facet.field=categories&facet.field=credibility_label&facet.field=source_id&facet.field=organizations&facet.field=people",
             "custom": ""
           },
           "group": "default",
@@ -169,7 +168,9 @@
           "fields": [
             "categories",
             "credibility_label",
-            "source_id"
+            "source_id",
+            "organizations",
+            "people"
           ],
           "spyable": true,
           "facet_limit": 10,
@@ -183,7 +184,7 @@
           "offset": 0,
           "show_help_message": true,
           "info_mode": "markdown",
-          "help_message": "Use this component to see (and define filters for) the main;\n\n* `topics` these are topics identified automatically using [Expert System](http://expertsystem.com)'s [Cogito](https://expertsystem.com/products/cogito-intelligence-platform/) natural language processing. \n* `credibility labels`: these are automatically assigned to documents based on a state-of-the-art misinformation detection algorithm that tries to link sentences in documents to previously fact-checked claims.  \n* `source_id`: name of the source of documents, this is typically the website or twitter hashtag used to collect documents."
+          "help_message": "Use this component to see (and define filters for) the main;\n\n* `categories` these are topics identified automatically using [Expert System](http://expertsystem.com)'s [Cogito](https://expertsystem.com/products/cogito-intelligence-platform/) natural language processing. \n* `credibility label`s: these are automatically assigned to documents based on a state-of-the-art misinformation detection algorithm that tries to link sentences in documents to previously fact-checked claims.  \n* `source_id`: name of the source of documents, this is typically the website or twitter hashtag used to collect documents.\n* `organizations`: which have been identified as being mentioned in the text\n* `people`: who have been mentioned in the text"
         }
       ]
     },
@@ -218,7 +219,7 @@
             "ids": [
               0
             ],
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW-180DAY%20TO%20NOW%2B1DAY]&stats=true&stats.field=id&wt=json&rows=0\n",
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW-90DAY%20TO%20NOW%2B1DAY]&stats=true&stats.field=id&wt=json&rows=0\n",
             "basic_query": "",
             "custom": ""
           },
@@ -240,7 +241,7 @@
               "field": "id",
               "decimalDigits": 0,
               "label": "documents matching active filters",
-              "value": "2199207"
+              "value": "3141139"
             }
           ],
           "refresh": {
@@ -255,7 +256,7 @@
       ]
     },
     {
-      "title": "Events",
+      "title": "Overview of Rated Documents",
       "height": "150px",
       "editable": true,
       "collapse": false,
@@ -271,7 +272,7 @@
             "ids": [
               0
             ],
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW-180DAY%20TO%20NOW%2B1DAY]&stats=true&stats.field=id&wt=json&rows=0\n",
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW-90DAY%20TO%20NOW%2B1DAY]&stats=true&stats.field=id&wt=json&rows=0\n",
             "basic_query": "",
             "custom": ""
           },
@@ -293,14 +294,17 @@
               "field": "id",
               "decimalDigits": 0,
               "label": "# docs matching the active filters",
-              "value": "2199207"
+              "value": "3141139"
             }
           ],
           "refresh": {
             "enable": false,
             "interval": 2
           },
-          "title": "Collected documents"
+          "title": "Collected",
+          "show_help_message": true,
+          "info_mode": "markdown",
+          "help_message": "This is the number of documents matching the *active filters* (set above)"
         },
         {
           "span": 2,
@@ -312,7 +316,48 @@
             "ids": [
               0
             ],
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW-180DAY%20TO%20NOW%2B1DAY]&stats=true&stats.field=id&wt=json&rows=0\n",
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW-90DAY%20TO%20NOW%2B1DAY]&stats=true&stats.field=id&wt=json&rows=0\n",
+            "basic_query": "",
+            "custom": "&fq=credibility_label:*"
+          },
+          "style": {
+            "font-size": "20pt",
+            "flex-direction": "row"
+          },
+          "arrangement": "horizontal",
+          "chart": "total",
+          "counter_pos": "above",
+          "donut": false,
+          "tilt": false,
+          "labels": true,
+          "spyable": true,
+          "show_queries": true,
+          "metrics": [
+            {
+              "type": "count",
+              "field": "id",
+              "decimalDigits": 0,
+              "label": "# docs with an automated credibility rating",
+              "value": "26064"
+            }
+          ],
+          "refresh": {
+            "enable": false,
+            "interval": 2
+          },
+          "title": "Rated Docs"
+        },
+        {
+          "span": 2,
+          "editable": true,
+          "type": "hits",
+          "loadingEditor": false,
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW-90DAY%20TO%20NOW%2B1DAY]&stats=true&stats.field=id&wt=json&rows=0\n",
             "basic_query": "",
             "custom": "&fq=credibility_label:(\"not credible\" OR \"mostly not credible\")"
           },
@@ -333,15 +378,15 @@
               "type": "count",
               "field": "id",
               "decimalDigits": 0,
-              "label": "not credible",
-              "value": "527"
+              "label": "# (mostly) not credible docs",
+              "value": "11657"
             }
           ],
           "refresh": {
             "enable": false,
             "interval": 2
           },
-          "title": "Not credible docs"
+          "title": "Not credible"
         },
         {
           "span": 2,
@@ -353,7 +398,7 @@
             "ids": [
               0
             ],
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW-180DAY%20TO%20NOW%2B1DAY]&stats=true&stats.field=id&wt=json&rows=0\n",
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW-90DAY%20TO%20NOW%2B1DAY]&stats=true&stats.field=id&wt=json&rows=0\n",
             "basic_query": "",
             "custom": "&fq=credibility_label:(\"credible\" OR \"mostly credible\")"
           },
@@ -374,8 +419,8 @@
               "type": "count",
               "field": "id",
               "decimalDigits": 0,
-              "label": "Credible docs",
-              "value": "141"
+              "label": "# (mostly) Credible docs",
+              "value": "1989"
             }
           ],
           "refresh": {
@@ -394,7 +439,7 @@
             "ids": [
               0
             ],
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW-180DAY%20TO%20NOW%2B1DAY]&wt=json&facet=true&facet.pivot=credibility_label&facet.limit=1000&rows=0",
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW-90DAY%20TO%20NOW%2B1DAY]&wt=json&facet=true&facet.pivot=credibility_label&facet.limit=1000&rows=0",
             "custom": ""
           },
           "facet_limit": 1000,
@@ -406,7 +451,7 @@
           ],
           "show_help_message": true,
           "info_mode": "markdown",
-          "help_message": "### Shows the distribution of *credibility labels* for the documents. \nThese have been **automatically** calculated using a state-of-the-art artificial intelligence system by trying to link documents with *credibility signals* such as:\n\n* **previously fact-checked claims** similar to sentences in the document\n* the **reputation of the sites** where similar sentences have been published\n\n### Understanding credibility labels\nAs part of [Co-inform](https://coinform.eu) we have defined the following set of credibility labels:\n\n* **credible**\n* **mostly credible**\n* **credibility uncertain**\n* **mostly not credible**\n* **not credible**\n\nWe also have a sixth label, which is not really about *credibility*:\n* **not verifiable** indicates that our AI had trouble assessing the credibility for some reason\n\n#### Credibility vs accuracy\nNote that our AI predicts **credibility** of a document, not **accuracy**. This is because we do not believe current AI systems are capable of assessing the accuracy of an article, only humans can do this."
+          "help_message": "### Shows the distribution of *credibility labels* for the documents. \nThese have been **automatically** calculated using a state-of-the-art artificial intelligence system by trying to link documents with *credibility signals* such as:\n\n* **previously fact-checked claims** similar to sentences in the document\n* the **reputation of the sites** where similar sentences have been published\n\n### Understanding credibility labels\nAs part of [Co-inform](https://coinform.eu) we have defined the following set of credibility labels:\n\n* **credible**\n* **mostly credible**\n* **credibility uncertain**\n* **mostly not credible**\n* **not credible**\n\nWe also have a sixth label, which is not really about *credibility*:\n\n* **not verifiable** indicates that our AI had trouble assessing the credibility for some reason\n\n#### Credibility vs accuracy\nNote that our AI predicts **credibility** of a document, not **accuracy**. This is because we do not believe current AI systems are capable of assessing the accuracy of an article, only humans can do this."
         }
       ]
     },
@@ -428,7 +473,7 @@
             "ids": [
               0
             ],
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&wt=json&rows=0&fq=publishedDate:[NOW-180DAY%20TO%20NOW%2B1DAY]&facet=true&facet.range=publishedDate&facet.range.start=NOW-180DAY&facet.range.end=NOW%2B1DAY&facet.range.gap=%2B1DAY\n",
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&wt=json&rows=0&fq=publishedDate:[NOW-90DAY%20TO%20NOW%2B1DAY]&facet=true&facet.range=publishedDate&facet.range.start=NOW-90DAY&facet.range.end=NOW%2B1DAY&facet.range.gap=%2B12HOUR\n",
             "custom": ""
           },
           "max_rows": 1000,
@@ -437,7 +482,7 @@
           "sum_value": false,
           "auto_int": true,
           "resolution": 100,
-          "interval": "1d",
+          "interval": "12h",
           "intervals": [
             "auto",
             "1s",
@@ -500,7 +545,7 @@
             "ids": [
               0
             ],
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&wt=json&rows=0&fq=publishedDate:[NOW-180DAY%20TO%20NOW%2B1DAY]&facet=true&facet.range=publishedDate&facet.range.start=NOW-180DAY&facet.range.end=NOW%2B1DAY&facet.range.gap=%2B1DAY\n",
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&wt=json&rows=0&fq=publishedDate:[NOW-90DAY%20TO%20NOW%2B1DAY]&facet=true&facet.range=publishedDate&facet.range.start=NOW-90DAY&facet.range.end=NOW%2B1DAY&facet.range.gap=%2B12HOUR\n",
             "custom": "&fq=credibility_label:(\"not credible\" OR \"mostly not credible\")"
           },
           "max_rows": 100000,
@@ -509,7 +554,7 @@
           "sum_value": false,
           "auto_int": true,
           "resolution": 100,
-          "interval": "1d",
+          "interval": "12h",
           "intervals": [
             "auto",
             "1s",
@@ -571,7 +616,7 @@
             "ids": [
               0
             ],
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&wt=json&rows=0&fq=publishedDate:[NOW-180DAY%20TO%20NOW%2B1DAY]&facet=true&facet.field=main_elements&facet.limit=10",
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&wt=json&rows=0&fq=publishedDate:[NOW-90DAY%20TO%20NOW%2B1DAY]&facet=true&facet.field=main_elements&facet.limit=10",
             "custom": "&fq=credibility_label:(\"not credible\" OR \"mostly not credible\")"
           },
           "field": "main_elements",
@@ -593,7 +638,7 @@
             "ids": [
               0
             ],
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&wt=json&rows=0&fq=publishedDate:[NOW-180DAY%20TO%20NOW%2B1DAY]&facet=true&facet.field=medical_conditions&facet.limit=10",
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&wt=json&rows=0&fq=publishedDate:[NOW-90DAY%20TO%20NOW%2B1DAY]&facet=true&facet.field=medical_conditions&facet.limit=10",
             "custom": "&fq=credibility_label:(\"not credible\" OR \"mostly not credible\")"
           },
           "field": "medical_conditions",
@@ -615,7 +660,7 @@
             "ids": [
               0
             ],
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW-180DAY%20TO%20NOW%2B1DAY]&wt=json&rows=0&facet=true&facet.pivot=credibility_label,organizations&facet.limit=5&facet.pivot.mincount=0",
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW-90DAY%20TO%20NOW%2B1DAY]&wt=json&rows=0&facet=true&facet.pivot=credibility_label,organizations&facet.limit=5&facet.pivot.mincount=0",
             "custom": ""
           },
           "size": 0,
@@ -639,22 +684,22 @@
             "ids": [
               0
             ],
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW-180DAY%20TO%20NOW%2B1DAY]&wt=json&facet=true&facet.pivot=credibility_label,medical_conditions&f.credibility_label.facet.limit=4&f.medical_conditions.facet.limit=20&rows=0",
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW-90DAY%20TO%20NOW%2B1DAY]&wt=json&facet=true&facet.pivot=credibility_label,medical_conditions&f.credibility_label.facet.limit=4&f.medical_conditions.facet.limit=20&rows=0",
             "custom": ""
           },
           "facet_limit": "4,20",
-          "node_size_weight": 1,
+          "node_size_weight": 0.1,
           "link_width_weight": 1,
           "link_strength_weight": 0,
           "link_distance_weight": 0,
-          "strength": -100,
-          "colors": "#1f77b4, #ff7f0e, #2ca02c, #d62728, #9467bd, #8c564b, #e377c2, #7f7f7f, #bcbd22, #17becf",
+          "strength": -200,
+          "colors": "#693C5E, #1f77b4, #ff7f0e, #2ca02c, #d62728, #9467bd, #8c564b, #e377c2, #7f7f7f, #bcbd22",
           "mute_category_1": false,
           "mute_category_2": true,
           "spheres": true,
           "spyable": true,
           "show_queries": true,
-          "title": "People by doc credibility",
+          "title": "Medical Conditions by doc credibility",
           "facet_pivot_strings": [
             "credibility_label",
             "medical_conditions"
@@ -680,8 +725,8 @@
             "ids": [
               0
             ],
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW-180DAY%20TO%20NOW%2B1DAY]&wt=json&rows=50",
-            "basic_query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW-180DAY%20TO%20NOW%2B1DAY]",
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW-90DAY%20TO%20NOW%2B1DAY]&wt=json&rows=50",
+            "basic_query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW-90DAY%20TO%20NOW%2B1DAY]",
             "custom": "&hl=false&fq=credibility_label:*"
           },
           "size": 10,
