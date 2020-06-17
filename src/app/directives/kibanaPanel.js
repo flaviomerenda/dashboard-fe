@@ -13,7 +13,7 @@ function (angular) {
 
         '<div class="row-fluid panel-extra"><div class="panel-extra-container">' +
 
-          '<span class="extra row-button" ng-hide="panel.draggable == false">' +
+          '<span class="extra row-button" ng-hide="panel.draggable == false && row.editable == false">' +
             '<span class="row-text pointer" bs-tooltip="\'Drag here to move\'"' +
             'data-drag=true data-jqyoui-options="{revert: \'invalid\',helper:\'clone\'}"'+
             ' jqyoui-draggable="'+
@@ -25,7 +25,7 @@ function (angular) {
               'onStop:\'panelMoveStop\''+
               '}"  ng-model="row.panels">{{panel.type}}</span>'+
           '</span>' +
-          '<span class="extra row-button" ng-show="panel.draggable == false">' +
+          '<span class="extra row-button" ng-show="panel.draggable == false && panel.editable == true">' +
             '<span class="row-text">{{panel.type}}</span>'+
           '</span>' +
 
@@ -46,7 +46,7 @@ function (angular) {
 
           '<span ng-repeat="task in panelMeta.modals" class="row-button extra" ng-show="panel.spyable">' +
             '<span bs-modal="task.partial"class="pointer">' +
-            '<a title="Inspect" alt="Inspect" href="" bs-tooltip="Inspect" ng-class="task.icon" class="pointer"></a></span>'+
+            '<a title="Show more information" alt="Info" href="" bs-tooltip="Inspect" ng-class="task.icon" class="pointer"></a></span>'+
           '</span>' +
 
           '<span class="row-button extra" ng-show="panel.fitBoundsAuto != undefined && !panel.fitBoundsAuto">' +

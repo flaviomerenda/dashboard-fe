@@ -310,7 +310,7 @@ function (angular, app, _, $, kbn) {
           k++;
         });
 
-        if ($scope.panel.field && $scope.fields.typeList[$scope.panel.field] && $scope.fields.typeList[$scope.panel.field].schema.indexOf("T") > -1) {
+        if ($scope.panel.field && $scope.fields.typeList[$scope.panel.field] /*&& $scope.fields.typeList[$scope.panel.field].schema.indexOf("T") > -1*/) {
           $scope.hits = sum;
         }
 

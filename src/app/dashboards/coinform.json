@@ -24,6 +24,7 @@
     },
     "filter": {
       "idQueue": [
+        1,
         2,
         3,
         4,
@@ -41,19 +42,9 @@
           "active": true,
           "alias": "",
           "id": 0
-        },
-        "1": {
-          "type": "terms",
-          "field": "credibility_label",
-          "mandate": "must",
-          "value": "not%20credible",
-          "active": false,
-          "alias": "",
-          "id": 1
         }
       },
       "ids": [
-        1,
         0
       ]
     }
@@ -70,6 +61,7 @@
           "error": false,
           "span": 8,
           "editable": false,
+          "draggable": false,            
           "type": "text",
           "loadingEditor": false,
           "status": "Stable",
@@ -85,13 +77,14 @@
           "error": false,
           "span": 4,
           "editable": false,
+          "draggable": false,            
           "type": "text",
           "loadingEditor": false,
           "status": "Stable",
           "mode": "markdown",
           "content": "## Under development\nThe following dashboards are under development:\n\n* [FakeNewsNet](/#/dashboard/file/dev-fakeNewsNet.json): shows results for a set of 960 news articles that were previoulsy fact-checked by PolitiFact;\n* [COVID-19](/#/dashboard/file/dev-coinform.json): development version of the covid-19 dashboard;\n* [claims](/#/dashboard/file/dev-claims.json): dashboard for about 85K claims extrated from `ClaimReview`s or crawled news sources;\n* [Pilot Greece](/#/dashboard/file/pilot-gr.json): focused on news sources in Greece",
           "style": {},
-          "title": "Other Co-inform Dashboard",
+          "title": "Other Co-inform Dashboards",
           "show_help_message": true,
           "info_mode": "markdown",
           "help_message": "Provides links to other Co-inform dashboards."
@@ -102,13 +95,14 @@
       "title": "Filters",
       "height": "50px",
       "editable": false,
-      "collapse": false,
+      "collapse": true,
       "collapsable": true,
       "panels": [
         {
           "error": false,
           "span": 2,
           "editable": false,
+          "draggable": false,
           "type": "text",
           "loadingEditor": false,
           "status": "Stable",
@@ -121,6 +115,7 @@
           "error": "",
           "span": 3,
           "editable": false,
+          "draggable": false,
           "type": "timepicker",
           "loadingEditor": false,
           "status": "Stable",
@@ -151,6 +146,7 @@
         {
           "span": 5,
           "editable": false,
+          "draggable": false,
           "type": "facet",
           "loadingEditor": false,
           "status": "Stable",
@@ -179,82 +175,15 @@
           "facet_limit": 10,
           "maxnum_facets": 5,
           "foundResults": true,
-          "header_title": "Filters",
+          "header_title": "",
           "toggle_element": null,
           "show_queries": false,
           "title": "Filters",
-          "exportSize": null,
+          "exportSize": 50,
           "offset": 0,
           "show_help_message": true,
           "info_mode": "markdown",
           "help_message": "Use this component to see (and define filters for) the main;\n\n* `categories` these are topics identified automatically using [Expert System](http://expertsystem.com)'s [Cogito](https://expertsystem.com/products/cogito-intelligence-platform/) natural language processing. \n* `credibility label`s: these are automatically assigned to documents based on a state-of-the-art misinformation detection algorithm that tries to link sentences in documents to previously fact-checked claims.  \n* `source_id`: name of the source of documents, this is typically the website or twitter hashtag used to collect documents.\n* `organizations`: which have been identified as being mentioned in the text\n* `people`: who have been mentioned in the text"
-        }
-      ]
-    },
-    {
-      "title": "Active Filters",
-      "height": "50px",
-      "editable": false,
-      "collapse": true,
-      "collapsable": true,
-      "panels": [
-        {
-          "error": false,
-          "span": 8,
-          "editable": true,
-          "spyable": true,
-          "group": [
-            "default"
-          ],
-          "type": "filtering",
-          "title": "Overview of active filters",
-          "show_help_message": true,
-          "info_mode": "markdown",
-          "help_message": "### Overview of active filters for this dashboard\nThe *active filters* define which documents are shown in this dashboard. All other components in this dashboard (diagrams, tables, etc.) show data based on this set of filters.\n\nYou typically define this filters by using the filter components above (although some of the components below also allow you to click on specific values to define a new filter).\n\nYou can use this component to:\n\n*  **toggle** temporarily disable/enable a filter \n* **remove** a filter\n* **edit** a filter (mainly for more advanced users)\n\nYou can always reload the page to go back to the default set of filters."
-        },
-        {
-          "span": 2,
-          "editable": true,
-          "type": "hits",
-          "loadingEditor": false,
-          "queries": {
-            "mode": "all",
-            "ids": [
-              0
-            ],
-            "query": "q=*&fq=publishedDate:[NOW-90DAY%20TO%20NOW%2B1DAY]&stats=true&stats.field=id&wt=json&rows=0\n",
-            "basic_query": "",
-            "custom": ""
-          },
-          "style": {
-            "font-size": "16pt",
-            "flex-direction": "row"
-          },
-          "arrangement": "horizontal",
-          "chart": "total",
-          "counter_pos": "above",
-          "donut": false,
-          "tilt": false,
-          "labels": true,
-          "spyable": true,
-          "show_queries": false,
-          "metrics": [
-            {
-              "type": "count",
-              "field": "id",
-              "decimalDigits": 0,
-              "label": "documents matching active filters",
-              "value": "2200566"
-            }
-          ],
-          "refresh": {
-            "enable": false,
-            "interval": 2
-          },
-          "title": "Overview",
-          "show_help_message": true,
-          "info_mode": "markdown",
-          "help_message": "Shows the total number of documents that match the currently *active filters*. This is useful to receive feedback when you are manually toggling or editing filters."
         }
       ]
     },
@@ -266,8 +195,9 @@
       "collapsable": true,
       "panels": [
         {
-          "span": 3,
+          "span": 2,
           "editable": false,
+          "draggable": false,            
           "type": "hits",
           "loadingEditor": false,
           "queries": {
@@ -290,7 +220,7 @@
           "tilt": false,
           "labels": true,
           "spyable": true,
-          "show_queries": true,
+          "show_queries": false,
           "metrics": [
             {
               "type": "count",
@@ -311,7 +241,8 @@
         },
         {
           "span": 2,
-          "editable": true,
+          "editable": false,
+          "draggable": false,            
           "type": "hits",
           "loadingEditor": false,
           "queries": {
@@ -334,7 +265,7 @@
           "tilt": false,
           "labels": true,
           "spyable": true,
-          "show_queries": true,
+          "show_queries": false,
           "metrics": [
             {
               "type": "count",
@@ -348,11 +279,15 @@
             "enable": false,
             "interval": 2
           },
-          "title": "Rated Docs"
+            "title": "Rated Docs",
+          "show_help_message": true,
+          "info_mode": "markdown",
+          "help_message": "This is the number of documents matching the *active filters* (set above) that also have an automatically calculated credibility rating."
         },
         {
           "span": 2,
           "editable": false,
+          "draggable": false,
           "type": "hits",
           "loadingEditor": false,
           "queries": {
@@ -375,7 +310,7 @@
           "tilt": false,
           "labels": true,
           "spyable": true,
-          "show_queries": true,
+          "show_queries": false,
           "metrics": [
             {
               "type": "count",
@@ -389,11 +324,15 @@
             "enable": false,
             "interval": 2
           },
-          "title": "Not credible"
+            "title": "Not credible",
+          "show_help_message": true,
+          "info_mode": "markdown",
+          "help_message": "Shows the number of documents matching the *active filters* (set above) that have been  automatically assessed to be either **not credible** or **mostly not credible**. You can use the table at the bottom of this dashboard to inspect the *credibility explanation* for some example documents."
         },
         {
           "span": 2,
           "editable": false,
+          "draggable": false,
           "type": "hits",
           "loadingEditor": false,
           "queries": {
@@ -416,7 +355,7 @@
           "tilt": false,
           "labels": true,
           "spyable": true,
-          "show_queries": true,
+          "show_queries": false,
           "metrics": [
             {
               "type": "count",
@@ -430,28 +369,114 @@
             "enable": false,
             "interval": 2
           },
-          "title": "Credible"
+            "title": "Credible",
+          "show_help_message": true,
+          "info_mode": "markdown",
+          "help_message": "Shows the number of documents matching the *active filters* (set above) that have been  automatically assessed to be either **credible** or **mostly credible**. You can use the table at the bottom of this dashboard to inspect the *credibility explanation* for some example documents."            
         },
         {
           "span": 2,
           "editable": false,
-          "type": "sunburst",
+          "draggable": false,
+          "type": "terms",
           "loadingEditor": false,
           "queries": {
             "mode": "all",
             "ids": [
               0
             ],
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[NOW-90DAY%20TO%20NOW%2B1DAY]&wt=json&facet=true&facet.pivot=credibility_label&facet.limit=1000&rows=0",
+            "query": "q=*&wt=json&rows=0&facet=true&facet.field=credibility_label&facet.limit=10&facet.missing=true&f.credibility_label.facet.sort=count",
             "custom": ""
           },
-          "facet_limit": 1000,
+          "mode": "count",
+          "field": "credibility_label",
+          "stats_field": "",
+          "decimal_points": 0,
+          "exclude": [],
+          "missing": false,
+          "other": false,
+          "size": 10,
+          "pages": 10,
+          "sortBy": "count",
+          "order": "descending",
+          "style": {
+            "font-size": "10pt"
+          },
+          "donut": false,
+          "tilt": false,
+          "labels": true,
+          "logAxis": false,
+          "arrangement": "vertical",
+          "chart": "pie",
+          "counter_pos": "none",
+          "exportSize": 100,
+          "lastColor": "",
           "spyable": true,
           "show_queries": false,
-          "title": "Credibility",
-          "facet_pivot_strings": [
-            "credibility_label"
+          "bar_chart_arrangement": "vertical",
+          "chartColors": [
+            "#E0752D",
+            "#BA43A9",
+            "#7EB26D",
+            "#0A437C",
+            "#EAB839",
+            "#508642",
+            "#6ED0E0",
+            "#EF843C",
+            "#E24D42",
+            "#1F78C1",
+            "#705DA0",
+            "#CCA300",
+            "#447EBC",
+            "#C15C17",
+            "#890F02",
+            "#6D1F62",
+            "#584477",
+            "#B7DBAB",
+            "#F4D598",
+            "#70DBED",
+            "#F9BA8F",
+            "#F29191",
+            "#82B5D8",
+            "#E5A8E2",
+            "#AEA2E0",
+            "#629E51",
+            "#E5AC0E",
+            "#64B0C8",
+            "#BF1B00",
+            "#0A50A1",
+            "#962D82",
+            "#614D93",
+            "#9AC48A",
+            "#F2C96D",
+            "#65C5DB",
+            "#F9934E",
+            "#EA6460",
+            "#5195CE",
+            "#D683CE",
+            "#806EB7",
+            "#3F6833",
+            "#967302",
+            "#2F575E",
+            "#99440A",
+            "#58140C",
+            "#052B51",
+            "#511749",
+            "#3F2B5B",
+            "#E0F9D7",
+            "#FCEACA",
+            "#CFFAFF",
+            "#F9E2D2",
+            "#FCE2DE",
+            "#BADFF4",
+            "#F9D9F9",
+            "#DEDAF7"
           ],
+          "refresh": {
+            "enable": false,
+            "interval": 2
+          },
+          "title": "Credibility",
           "show_help_message": true,
           "info_mode": "markdown",
           "help_message": "### Shows the distribution of *credibility labels* for the documents. \nThese have been **automatically** calculated using a state-of-the-art artificial intelligence system by trying to link documents with *credibility signals* such as:\n\n* **previously fact-checked claims** similar to sentences in the document\n* the **reputation of the sites** where similar sentences have been published\n\n### Understanding credibility labels\nAs part of [Co-inform](https://coinform.eu) we have defined the following set of credibility labels:\n\n* **credible**\n* **mostly credible**\n* **credibility uncertain**\n* **mostly not credible**\n* **not credible**\n\nWe also have a sixth label, which is not really about *credibility*:\n\n* **not verifiable** indicates that our AI had trouble assessing the credibility for some reason\n\n#### Credibility vs accuracy\nNote that our AI predicts **credibility** of a document, not **accuracy**. This is because we do not believe current AI systems are capable of assessing the accuracy of an article, only humans can do this."
@@ -468,6 +493,7 @@
         {
           "span": 12,
           "editable": false,
+          "draggable": false,
           "type": "histogram",
           "loadingEditor": false,
           "mode": "count",
@@ -517,7 +543,7 @@
           "percentage": false,
           "interactive": true,
           "options": true,
-          "show_queries": true,
+          "show_queries": false,
           "tooltip": {
             "value_type": "cumulative",
             "query_as_alias": false
@@ -526,7 +552,10 @@
             "enable": false,
             "interval": 2
           },
-          "title": "Documents by published date"
+            "title": "Documents by published date",
+          "show_help_message": true,
+          "info_mode": "markdown",
+          "help_message": "### Shows when documents were published. \nOnly the documents which match the **active filters** are shown. In some cases, collected documents may not provide the original publish date, in such cases the date when we collected the document is reported."            
         }
       ]
     },
@@ -540,6 +569,7 @@
         {
           "span": 12,
           "editable": false,
+          "draggable": false,
           "type": "histogram",
           "loadingEditor": false,
           "mode": "count",
@@ -589,7 +619,7 @@
           "percentage": false,
           "interactive": true,
           "options": true,
-          "show_queries": true,
+          "show_queries": false,
           "tooltip": {
             "value_type": "cumulative",
             "query_as_alias": false
@@ -598,20 +628,24 @@
             "enable": false,
             "interval": 2
           },
-          "title": "Not credible documents by published date"
+            "title": "Not credible documents by published date",
+          "show_help_message": true,
+          "info_mode": "markdown",
+          "help_message": "### Shows when **not credible** documents were published. \nOnly the documents which match the **active filters** and are either **not credible** or **mostly not credible** are shown. In some cases, collected documents may not provide the original publish date, in such cases the date when we collected the document is reported."                        
         }
       ]
     },
     {
       "title": "Not credible details",
       "height": "350px",
-      "editable": true,
+      "editable": false,
       "collapse": false,
       "collapsable": true,
       "panels": [
         {
           "span": 3,
           "editable": false,
+          "draggable": false,
           "type": "tagcloud",
           "loadingEditor": false,
           "queries": {
@@ -623,17 +657,21 @@
             "custom": "&fq=credibility_label:(\"not credible\" OR \"mostly not credible\")"
           },
           "field": "main_elements",
-          "size": 10,
+          "size": 15,
           "alignment": "vertical and horizontal",
-          "fontScale": 6,
+          "fontScale": 10,
           "ignoreStopWords": false,
           "spyable": true,
-          "show_queries": true,
-          "title": "Main words in not credible docs"
+          "show_queries": false,
+          "title": "Main words in not credible docs",
+          "show_help_message": true,
+          "info_mode": "markdown",
+          "help_message": "Shows the *main words* identified in documents which have also been identified as either **not credible** or **mostly not credible**.\nThis should give you an idea of *what are the (potentially) misinforming documents about*."
         },
         {
           "span": 3,
           "editable": false,
+          "draggable": false,
           "type": "tagcloud",
           "loadingEditor": false,
           "queries": {
@@ -650,12 +688,16 @@
           "fontScale": 6,
           "ignoreStopWords": false,
           "spyable": true,
-          "show_queries": true,
-          "title": "Medical conditions in not credible docs"
+          "show_queries": false,
+          "title": "Medical conditions in not credible docs",
+          "show_help_message": true,
+          "info_mode": "markdown",
+          "help_message": "Shows the *medical conditions* mentioned in documents which have also been identified as either **not credible** or **mostly not credible**.\nThis should give you an idea of *what medical conditions are associated with (potentially) misinforming documents*."            
         },
         {
           "span": 3,
           "editable": false,
+          "draggable": false,
           "type": "heatmap",
           "loadingEditor": false,
           "queries": {
@@ -674,12 +716,16 @@
           "spyable": true,
           "transpose_show": true,
           "transposed": true,
-          "show_queries": true,
-          "title": "Organizations by doc credibility"
+          "show_queries": false,
+            "title": "Organizations by doc credibility",
+          "show_help_message": true,
+          "info_mode": "markdown",
+          "help_message": "Shows which **organization** are mentioned in articles which have various **credibility labels**.\nThe **organizations** have been found automatically via textual analysis\nThe **credibility labels** have also been found automatically via credibility analysis.\nThe idea of the table is to be able to identify which organizations are associated with (mis)information."            
         },
         {
           "span": 3,
           "editable": false,
+          "draggable": false,
           "type": "force",
           "loadingEditor": false,
           "queries": {
@@ -688,17 +734,17 @@
               0
             ],
             "query": "q=*&fq=publishedDate:[NOW-90DAY%20TO%20NOW%2B1DAY]&wt=json&facet=true&facet.pivot=credibility_label,medical_conditions&f.credibility_label.facet.limit=4&f.medical_conditions.facet.limit=20&rows=0",
-            "custom": ""
+            "custom": "&fq=credibility_label:(NOT \"not verfiable\")"
           },
-          "facet_limit": "4,20",
+          "facet_limit": "5,10",
           "node_size_weight": 0.1,
-          "link_width_weight": 0.3,
+          "link_width_weight": 0.2,
           "link_strength_weight": 0,
           "link_distance_weight": 0,
-          "strength": -200,
-          "colors": "#693C5E, #1f77b4, #ff7f0e, #2ca02c, #d62728, #9467bd, #8c564b, #e377c2, #7f7f7f, #bcbd22",
+          "strength": -300,
+          "colors": "#693C5E, #ff7f0e, #1f77b4,  #2ca02c, #d62728, #9467bd, #8c564b, #e377c2, #7f7f7f, #bcbd22",
           "mute_category_1": false,
-          "mute_category_2": true,
+          "mute_category_2": false,
           "spheres": false,
           "spyable": true,
           "show_queries": false,
@@ -717,12 +763,13 @@
       "title": "Sample documents",
       "height": "150px",
       "editable": false,
-      "collapse": false,
+      "collapse": true,
       "collapsable": true,
       "panels": [
         {
           "span": 10,
           "editable": false,
+          "draggable": false,
           "type": "table",
           "loadingEditor": false,
           "status": "Stable",
@@ -816,7 +863,7 @@
           "imageFields": [],
           "imgFieldWidth": "auto",
           "imgFieldHeight": "85px",
-          "show_queries": true,
+          "show_queries": false,
           "maxNumCalcTopFields": 20,
           "calcTopFieldValuesFromAllData": false,
           "subrowMaxChar": 300,
@@ -833,7 +880,76 @@
           "hyperlinkColumnForURI": "url"
         }
       ]
-    }
+    },
+    {
+      "title": "Active Filters (advanced)",
+      "height": "50px",
+      "editable": false,
+      "collapse": true,
+      "collapsable": true,
+      "panels": [
+        {
+          "error": false,
+          "span": 8,
+          "editable": true,
+          "draggable": false,
+          "spyable": true,
+          "group": [
+            "default"
+          ],
+          "type": "filtering",
+          "title": "Overview of active filters",
+          "show_help_message": true,
+          "info_mode": "markdown",
+          "help_message": "### Overview of active filters for this dashboard\nThe *active filters* define which documents are shown in this dashboard. All other components in this dashboard (diagrams, tables, etc.) show data based on this set of filters.\n\nYou typically define this filters by using the filter components above (although some of the components below also allow you to click on specific values to define a new filter).\n\nYou can use this component to:\n\n*  **toggle** temporarily disable/enable a filter \n* **remove** a filter\n* **edit** a filter (mainly for more advanced users)\n\nYou can always reload the page to go back to the default set of filters."
+        },
+        {
+          "span": 2,
+          "editable": true,
+          "draggable": false,
+          "type": "hits",
+          "loadingEditor": false,
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=*&fq=publishedDate:[NOW-90DAY%20TO%20NOW%2B1DAY]&stats=true&stats.field=id&wt=json&rows=0\n",
+            "basic_query": "",
+            "custom": ""
+          },
+          "style": {
+            "font-size": "16pt",
+            "flex-direction": "row"
+          },
+          "arrangement": "horizontal",
+          "chart": "total",
+          "counter_pos": "above",
+          "donut": false,
+          "tilt": false,
+          "labels": true,
+          "spyable": true,
+          "show_queries": false,
+          "metrics": [
+            {
+              "type": "count",
+              "field": "id",
+              "decimalDigits": 0,
+              "label": "documents matching active filters",
+              "value": "2200566"
+            }
+          ],
+          "refresh": {
+            "enable": false,
+            "interval": 2
+          },
+          "title": "Overview",
+          "show_help_message": true,
+          "info_mode": "markdown",
+          "help_message": "Shows the total number of documents that match the currently *active filters*. This is useful to receive feedback when you are manually toggling or editing filters."
+        }
+      ]
+    }      
   ],
   "editable": true,
   "index": {

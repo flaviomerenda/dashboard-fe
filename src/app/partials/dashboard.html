@@ -12,7 +12,7 @@
                     <span class="row-button" ng-click="toggle_row(row)" ng-show="row.collapsable">
                         <a alt="Expand row" bs-tooltip="'Expand row'" data-placement="right" ng-show="row.editable" class="nolink small icon-expand pointer" ></a>
                     </span>
-                    <span class="row-button row-text" ng-click="toggle_row(row)" ng-class="{'pointer':row.collapsable}">{{row.title || 'Row '+$index}}</span>
+                    <span class="row-button row-text" ng-click="toggle_row(row)" ng-class="{'pointer':row.collapsable}">{{row.title || 'Row '+$index}} <it style="font-size: 0.6em">(click to expand)</it></span>
                 </div>
                 <div style="text-align:left" class="row-open" ng-show="!row.collapse">
                     <span ng-show="row.collapsable">
