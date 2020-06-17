@@ -55,6 +55,7 @@ define([
         },
         overflow: 'min-height',
         fields: [],
+        numFilters: 0,  
         spyable: true,
         facet_limit: 10,
         maxnum_facets: 5,  // Max number of facet fields that can be specified.
@@ -207,12 +208,23 @@ define([
               }
             }
             var facet_results = results.facet_counts.facet_fields;
+            var facetValue2Label = function(value) {
+                if (value.includes("/")) {
+                    var n = value.lastIndexOf("/") + 1;
+                    var result = value.substr(n);
+                    if (result.length == 0) return value;
+                    return result;
+                } else {
+                    return value;
+                }
+            };
             var facet_data = {};
             _.each($scope.panel.fields, function(field) {
               facet_data[field] = [];
               for (var i = 0; i < facet_results[field].length; i += 2) {
                 facet_data[field].push({
                   value: facet_results[field][i],
+                  label: facetValue2Label(facet_results[field][i]),  
                   count: facet_results[field][i + 1]
                 });
               }
@@ -261,6 +273,7 @@ define([
           field: field,
           value: value
         });
+          $scope.panel.numFilters += 1;  
         dashboard.refresh();
       };
 
@@ -270,11 +283,22 @@ define([
         return filterSrv.idsByTypeAndField('terms', field).length > 0;
       };
 
+        $scope.countSelectedFilters = function() {
+            return filterSrv.getByType('terms', false).length ;
+        };
+        
       // call close filter when click in close icon
       $scope.delete_filter = function(type, field) {
-        filterSrv.removeByTypeAndField(type, field);
+         filterSrv.removeByTypeAndField(type, field);
+         $scope.panel.numFilters -= 1;  
         dashboard.refresh();
       };
+
+        $scope.delete_all_terms_filters = function() {
+            filterSrv.removeByType('terms');
+            $scope.panel.numFilters = 0;
+            dashboard.refresh();
+        }  
 
       // TODO Refactor this jquery code
       // jquery code used to toggle the arrow from up to down when facet is opened
