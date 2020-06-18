@@ -50,7 +50,7 @@ h2,h3,p{orphans:3;widows:3}
 h2,h3{page-break-after:avoid}
 }
 .dropdown-menu,.modal{-webkit-background-clip:padding-box}
-body{margin:0;font-family:"Open Sans",Helvetica,Arial,Lucida,sans-serif;font-size:14px;line-height:23.8px;color:#58334f;background-color:#6BBBAE
+body{margin:0;font-family:'Roboto',Arial,"Open Sans",Helvetica,Lucida,sans-serif;font-size:14px;line-height:23.8px;color:#58334f;background-color:#6BBBAE
 }
 .row-fluid:after,.row-fluid:before,.row:after,.row:before{display:table;content:"";line-height:0}
 a{color:#0077b3;text-decoration:none}
@@ -184,7 +184,7 @@ blockquote.pull-right small:before{content:''}
 blockquote.pull-right small:after{content:'\00A0 \2014'}
 blockquote:after,blockquote:before,q:after,q:before{content:""}
 code,pre{padding:0 3px 2px;font-family:Monaco,Menlo,Consolas,"Courier New",monospace;font-size:12px;color:#333;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px}
-.navbar-search .search-query,button,input,select,textarea{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif}
+.navbar-search .search-query,button,input,select,textarea{font-family:'Roboto',"Helvetica Neue",Helvetica,Arial,sans-serif}
 code{padding:2px 4px;color:#d14;background-color:#f7f7f9;border:1px solid #e1e1e8;white-space:nowrap}
 pre{padding:9.5px;margin:0 0 10px;font-size:13px;word-break:break-all;word-wrap:break-word;white-space:pre-wrap;background-color:#f5f5f5;border:1px solid #ccc;border:1px solid rgba(0,0,0,.15);-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
 fieldset,legend,pre code{padding:0;border:0}
@@ -692,7 +692,7 @@ button.btn::-moz-focus-inner,input[type=submit].btn::-moz-focus-inner{padding:0;
 .navbar-inner:after,.navbar-inner:before{display:table;content:"";line-height:0}
 .navbar .container{width:auto}
 .nav-collapse.collapse{height:auto;overflow:visible}
-.navbar .brand{float:left;display:block;padding:10px 20px;margin-left:-20px;font-size:20px;font-weight:200;color:#eee;text-shadow:0 1px 0 #333}
+.navbar .brand{float:left;display:block;padding:10px 20px;margin-left:-20px;font-family:'Capriola',sans-serif;font-size:20px;font-weight:200;color:#eee;text-shadow:0 1px 0 #333}
 .navbar .brand:focus,.navbar .brand:hover{text-decoration:none}
 .navbar-text{margin-bottom:0;line-height:40px;color:#fff}
 .navbar-link,.navbar-link:focus,.navbar-link:hover{color:#fff}
@@ -950,7 +950,7 @@ to{background-position:0 0}
 .navbar-inner{border-width:0;padding-left:0;padding-right:0}
 .kibana-row{margin-bottom:10px}
 .row-button{border-left:1px solid #fff;border-right:1px solid #e6e6e6;padding:2px 7px 0;float:left}
-.row-text{text-transform:uppercase;font-weight:700;font-size:1.2em}
+.row-text{text-transform:uppercase;font-weight:700;font-size:1.2em;font-family:'Capriola',sans-serif;}
 .row-close{border-top:1px solid #fff;padding:0;margin:0;min-height:24px!important;line-height:24px;background-color:#693C5E;color:#fff}
 .row-open{text-align:right;left:-18px;font-size:13pt;font-weight:200}
 .row-open i{font-size:10pt}

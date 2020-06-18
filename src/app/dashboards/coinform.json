@@ -1,5 +1,6 @@
 ﻿{
-  "title": "COVID-19 (dis)information Dashboard v20200615",
+    "title": "COVID-19 (dis)information Dashboard",
+    "version": "v20200617",
   "services": {
     "query": {
       "idQueue": [
@@ -12,7 +13,7 @@
         "0": {
           "query": "*",
           "alias": "",
-          "color": "#7EB26D",
+          "color": "#6BBBAE",
           "id": 0,
           "pin": false,
           "type": "lucene"
@@ -485,7 +486,7 @@
     },
     {
       "title": "Graph",
-      "height": "150px",
+      "height": "100px",
       "editable": false,
       "collapse": false,
       "collapsable": true,
@@ -527,7 +528,7 @@
             "1M",
             "1y"
           ],
-          "fill": 0,
+          "fill": 1,
           "linewidth": 3,
           "timezone": "browser",
           "spyable": true,
@@ -537,12 +538,12 @@
           "points": false,
           "lines": true,
           "lines_smooth": false,
-          "legend": true,
-          "x-axis": true,
+          "legend": false,
+          "x-axis": false,
           "y-axis": true,
           "percentage": false,
           "interactive": true,
-          "options": true,
+          "options": false,
           "show_queries": false,
           "tooltip": {
             "value_type": "cumulative",
@@ -561,7 +562,7 @@
     },
     {
       "title": "Not credible timeline",
-      "height": "150px",
+      "height": "100px",
       "editable": false,
       "collapse": false,
       "collapsable": true,
@@ -607,18 +608,18 @@
           "linewidth": 3,
           "timezone": "browser",
           "spyable": true,
-          "zoomlinks": true,
+          "zoomlinks": false,
           "bars": true,
           "stack": true,
           "points": false,
           "lines": false,
           "lines_smooth": false,
-          "legend": true,
-          "x-axis": true,
+          "legend": false,
+          "x-axis": false,
           "y-axis": true,
           "percentage": false,
           "interactive": true,
-          "options": true,
+          "options": false,
           "show_queries": false,
           "tooltip": {
             "value_type": "cumulative",
@@ -635,6 +636,82 @@
         }
       ]
     },
+    {
+      "title": "Credible timeline",
+      "height": "130px",
+      "editable": false,
+      "collapse": false,
+      "collapsable": true,
+      "panels": [
+        {
+          "span": 12,
+          "editable": false,
+          "draggable": false,
+          "type": "histogram",
+          "loadingEditor": false,
+          "mode": "count",
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=*&wt=json&rows=0&fq=publishedDate:[NOW-90DAY%20TO%20NOW%2B1DAY]&facet=true&facet.range=publishedDate&facet.range.start=NOW-90DAY&facet.range.end=NOW%2B1DAY&facet.range.gap=%2B12HOUR\n",
+            "custom": "&fq=credibility_label:(\"credible\" OR \"mostly credible\")"
+          },
+          "max_rows": 100000,
+          "value_field": null,
+          "group_field": null,
+          "sum_value": false,
+          "auto_int": true,
+          "resolution": 100,
+          "interval": "12h",
+          "intervals": [
+            "auto",
+            "1s",
+            "1m",
+            "5m",
+            "10m",
+            "30m",
+            "1h",
+            "3h",
+            "12h",
+            "1d",
+            "1w",
+            "1M",
+            "1y"
+          ],
+          "fill": 0,
+          "linewidth": 3,
+          "timezone": "browser",
+          "spyable": true,
+          "zoomlinks": false,
+          "bars": true,
+          "stack": true,
+          "points": false,
+          "lines": false,
+          "lines_smooth": false,
+          "legend": false,
+          "x-axis": true,
+          "y-axis": true,
+          "percentage": false,
+          "interactive": true,
+          "options": false,
+          "show_queries": false,
+          "tooltip": {
+            "value_type": "cumulative",
+            "query_as_alias": false
+          },
+          "refresh": {
+            "enable": false,
+            "interval": 2
+          },
+            "title": "Credible documents by published date",
+          "show_help_message": true,
+          "info_mode": "markdown",
+          "help_message": "### Shows when **credible** documents were published. \nOnly the documents which match the **active filters** and are either **credible** or **mostly credible** are shown. In some cases, collected documents may not provide the original publish date, in such cases the date when we collected the document is reported."                        
+        }
+      ]
+},      
     {
       "title": "Not credible details",
       "height": "350px",
