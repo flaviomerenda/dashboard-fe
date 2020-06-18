@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="css/animate.min.css">
     <link rel="stylesheet" href="css/normalize.min.css">
     <link rel="stylesheet" href="css/rotate.css">
+    <link href="https://fonts.googleapis.com/css2?family=Capriola&family=Roboto&display=swap" rel="stylesheet">
     <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
     <!-- load the root require context -->
     <script src="vendor/require/require.js"></script>
@@ -49,7 +50,7 @@
         <div class="container-fluid">
           <span class="brand">
             <img src="img/00_CO_INFORM_LOGO_OK-59.png" data-placement="bottom" style="height:37px;">
-            {{dashboard.current.title}}
+            {{dashboard.current.title}} <it style="font-size: 70%;">{{dashboard.current.version}}</it>
           </span>
           <ul class="nav pull-right" ng-controller='dashLoader' ng-init="init()" ng-include="'app/partials/dashLoader.html'">
           </ul>
