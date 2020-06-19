@@ -137,7 +137,11 @@ function (angular, $, kbn, _, config, moment, Modernizr) {
                     self.dash_load(dashboard);
                     // No? Ok, grab default.json, its all we have now
                 } else {
+<<<<<<< HEAD
                     self.file_load('coinform');
+=======
+                    self.file_load('rev-graph-dash.json');
+>>>>>>> mock review graph
                 }
             }
         };
