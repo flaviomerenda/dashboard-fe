@@ -118,7 +118,7 @@ function (angular, app, _, moment) {
             function fixMultilineCode(text) {
                 var spans = findMDCodeSpans(text, 0);
                 var mlSpans = findMultilineCode(text, spans);
-                console.debug("Found markdown code spans", mlSpans);
+                // console.debug("Found markdown code spans", mlSpans);
                 if (mlSpans.length == 0) {
                     return text;
                 }
