@@ -5,9 +5,13 @@
     <script src="vendor/xhr-xdr-adapter.js" type="text/javascript"></script>
     <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE; chrome=1" />
     <meta charset="utf-8">
+    <!--
     <meta name="viewport" content="width=device-width">
+    -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
 
     <title>Co-inform Dashboards</title>
+    <link rel="icon" href="https://coinform.eu/wp-content/uploads/2018/11/CO_INFORM_SYMBOL_PURPLE_LI_TW-150x150.jpg" sizes="32x32" />
     <link rel="stylesheet" href="css/bootstrap.light.min.css" title="Light">
     <link rel="stylesheet" href="css/timepicker.css">
     <link rel="stylesheet" href="css/animate.min.css">
@@ -25,19 +29,21 @@
     <!-- Hotjar Tracking Code for dashboard.coinform.eu -->
     <script>
      (function(h,o,t,j,a,r){
-        h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-        h._hjSettings={hjid:1828450,hjsv:6};
-        a=o.getElementsByTagName('head')[0];
-        r=o.createElement('script');r.async=1;
-        r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
-        a.appendChild(r);
+         h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+         h._hjSettings={hjid:1828450,hjsv:6};
+         a=o.getElementsByTagName('head')[0];
+         r=o.createElement('script');r.async=1;
+         r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+         a.appendChild(r);
      })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
     </script>
+
+    <script src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
   </head>
 
   <body ng-cloak>
 
-    <link rel="stylesheet" ng-href="css/bootstrap.{{dashboard.current.style||'dark'}}.min.css">
+    <link rel="stylesheet" ng-href="css/bootstrap.{{dashboard.current.style||'ci'}}.min.css">
     <link rel="stylesheet" href="css/bootstrap-responsive.min.css">
     <link rel="stylesheet" href="css/font-awesome.min.css">
 
@@ -57,11 +63,91 @@
         </div>
       </div>
     </div>
-    <div class="container-fluid main">
+    <div id="mySidebar" class="sidebar" ng-show="dashboard.current.sideColumn.panels.length > 0">
+      <span class="closebtn" title="Hide sidebar" onclick="closeNav()">
+        <i class="icon-remove"></i>
+      </span>
+      <!--
+      <a href="javascript:void(0)" class="closebtn" title="Hide sidebar" onclick="closeNav()">×</a>
+      -->
+      &nbsp;
+      <div class="sidebar-filters" ng-controller='SideColumnCtrl' ng-init="init()">
+        <!-- TODO: honor span? -->
+        <div ng-repeat="(name, panel) in dashboard.current.sideColumn.panels|filter:isPanel"
+             ng-hide="panel.span == 0 || panel.hide"
+             class="row-fluid panel"
+             style="min-width:{{dashboard.current.sideColumn.width}}; position:relative">
+          <!-- Error Panel -->
+          <div class="row-fluid">
+            <div class="span12 alert alert-error panel-error" ng-hide="!panel.error">
+              <a class="close" ng-click="panel.error=false">&times;</a>
+              <i class="icon-exclamation-sign"></i> <strong>Oops!</strong> {{panel.error}}
+            </div>
+          </div>
+          <!-- Content Panel -->
+          <div class="row-fluid">
+            <kibana-panel type="panel.type" ng-cloak></kibana-panel>
+          </div>          
+        </div>
+      </div>
+    </div>
+    <button class="openbtn" onclick="openNav()" title="Open sidebar"
+            ng-show="dashboard.current.sideColumn.panels.length > 0">☰</button>  
+    <div id="main" class="container-fluid main">
       <div class="row-fluid">
         <div ng-view></div>
       </div>
     </div>
+
+    <div class="main-footer">
+      <div class="main-footer-inner"'>
+        Built for Co-inform by Expert System Iberia <span style="font-weight: normal; vertical-align: middle; font-size: 14px;"><em>Copyright 2019<br></em><a href="https://coinform.eu/disclaimer/"><span style="color: #eaeaea;">Disclaimer</span></a></span>
+      </div>
+      <div class="social-media">
+				<ul class="" style="float:right;margin:0 0 22px;" data-animation-style="slide" data-animation-repeat="" data-animation-duration="1000ms" data-animation-delay="0ms" data-animation-intensity="50%" data-animation-starting-opacity="0%" data-animation-speed-curve="ease-in-out">
+				  <li class="social-media-follow">
+            <a href="https://www.facebook.com/Coinform" class="icon-facebook" title="Follow on Facebook" target="_blank">
+              <span class="" style="display: none" aria-hidden="true">Follow</span></a></li>
+          <li class="social-media-follow">
+            <a href="https://twitter.com/Co_Inform" class="icon-twitter" title="Follow on Twitter" target="_blank">
+              <span class="" style="display: none" aria-hidden="true">Follow</span></a></li>
+          <li class="social-media-follow">
+            <a href="https://www.linkedin.com/company/coinform/" class="icon-linkedin" title="Follow on LinkedIn" target="_blank">
+              <span class="" style="display: none" aria-hidden="true">Follow</span></a></li>
+			  </ul> <!-- .et_pb_counters -->
+			</div>
+    </div>
+
+    <div class="main-footer-funding">
+      <div class="funding-divider"></div>
+      <div class="funding-inner">
+        <div class="ec-logos">
+				  <div class="" style="" data-animation-style="slide" data-animation-repeat="" data-animation-duration="1000ms" data-animation-delay="0ms" data-animation-intensity="50%" data-animation-starting-opacity="0%" data-animation-speed-curve="ease-in-out">
+				    <span class="image_wrap "><img src="https://coinform.eu/wp-content/uploads/2018/06/EC-H2020.png"></span>
+			    </div>
+			  </div>
+        <div class="funding-text">
+				  <div class="" style="" data-animation-style="slide" data-animation-repeat="" data-animation-duration="1000ms" data-animation-delay="0ms" data-animation-intensity="50%" data-animation-starting-opacity="0%" data-animation-speed-curve="ease-in-out">
+				    <div class=""><p>Co-inform project is co-funded by Horizon 2020  the Framework Programme for Research and Innovation (2014-2020)<br>H2020-SC6-CO-CREATION-2016-2017 (CO-CREATION FOR GROWTH AND INCLUSION)<br>Type of action: RIA (Research and Innovation action)<br>Proposal number: 770302</p></div>
+			    </div> 
+			  </div>
+      </div>
+      <div ></div>
+    </div>
+    
+    <script>
+     function openNav() {
+         document.getElementById("mySidebar").style.width = "250px";
+         document.getElementById("main").style.marginLeft = "250px";
+     }
+
+     function closeNav() {
+         document.getElementById("mySidebar").style.width = "0";
+         document.getElementById("main").style.marginLeft= "0";
+     }
+    </script>
+    
   </body>
 
+  
 </html>

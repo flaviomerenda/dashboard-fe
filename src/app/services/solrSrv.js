@@ -18,6 +18,51 @@ function (angular, _) {
       return self.topFieldValues[field];
     };
 
+    this.fetchReviewGraph = function(doc) {
+        let doc_id = doc['id'];
+        let baseUrl = dashboard.current.solr.server
+        let collection = dashboard.current.solr.core_name;
+        var request = $http({
+            method: 'GET',
+            url: baseUrl + "/reviewGraph/" + collection + "?id=" + doc_id
+        }).error(function(data, status) {
+            if(status === 0) {
+                alertSrv.set('Error', 'Could not retrieve Review Graph at '+baseUrl+
+                             '. Please ensure that the server is reachable from your system.' ,'error');
+            } else {
+                alertSrv.set('Error','Could not retrieve Review Graph data from server (Error status = '+status+')','error');
+            }     
+        }).success(function(data, status) {
+            var result = data['results'][0]
+            //console.log('Got response back from server for doc_id: ', result['doc_id'], result);
+            var graph = result['reviewGraph'];
+            if (graph == null) {
+                alertSrv.set('Warning', 'No review available for this document. Sorry.');
+            } else {
+                console.log('Retrieved review graph with', graph['nodes'].length, 'nodes and', graph['links'].length, 'links');
+                //TODO: trigger display of graph
+            }            
+        });
+
+        // request.then(function(response){
+        //     if (typeof response === 'undefined') {
+        //         alertSrv.set('Error', 'Could not retrieve Review Graph for unkown reasons')
+        //     } else if (response['status'] == 200){
+        //         var result = response['data']['results'][0]
+        //         console.log('Got response back from server for doc_id: ', result['doc_id'], result);
+        //         var graph = result['reviewGraph'];
+        //         if (graph == null) {
+        //             alertSrv.set('Warning', 'No review available for this document. Sorry.');
+        //         } else {
+        //             console.log('Retrieved review graph with', graph['nodes'].length, 'nodes and', graph['links'].length, 'links');
+        //         }
+        //     } else {
+        //         alertSrv.set('Error',
+        //                      'Could not retrieve Review Graph from server (Error status ='+response['status']+')')
+        //     }
+        // });
+    };
+      
     // Calculate each field top 10 values using facet query
     this.calcTopFieldValues = function(fields) {
       // Check if we are calculating too many fields and show warning

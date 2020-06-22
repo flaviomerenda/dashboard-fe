@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   width="19.002228mm"
+   height="15.059771mm"
+   viewBox="0 0 19.002228 15.059771"
+   version="1.1"
+   id="svg1962">
+  <title
+     id="title1988">bot</title>
+  <defs
+     id="defs1956" />
+  <metadata
+     id="metadata1959">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>bot</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <path
+     id="path16394"
+     style="fill:#ffffff;fill-rule:evenodd;stroke:#000000;stroke-width:1.28339362;stroke-linecap:round;stroke-linejoin:round"
+     d="m 3.5992751,2.4202048 c -0.281102,0 -0.507402,0.2128 -0.507402,0.47716 V 13.964185 c 0,0.26429 0.2263,0.47705 0.507402,0.47705 H 15.458238 c 0.281255,0 0.50758,-0.21275 0.50758,-0.47705 V 2.8973648 c 0,-0.26426 -0.226325,-0.47707 -0.50758,-0.47707 H 3.5992751 Z" />
+  <circle
+     style="opacity:0.98999999;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.1;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     id="path16402"
+     cx="6.9878783"
+     cy="6.3425813"
+     r="1.6063988" />
+  <circle
+     style="opacity:0.98999999;fill:#000000;fill-opacity:1;stroke:#ffffff;stroke-width:0.1;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     id="circle16406"
+     cx="12.06861"
+     cy="6.4036775"
+     r="1.6063988" />
+  <rect
+     style="opacity:0.98999999;fill:#000000;fill-opacity:1;stroke:#ffffff;stroke-width:0.09470218;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     id="rect16408"
+     width="2.477541"
+     height="1.4084628"
+     x="4.909986"
+     y="10.229605" />
+  <rect
+     y="10.196196"
+     x="8.3176699"
+     height="1.4084628"
+     width="2.477541"
+     id="rect16410"
+     style="opacity:0.98999999;fill:#000000;fill-opacity:1;stroke:#ffffff;stroke-width:0.09470218;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+  <rect
+     style="opacity:0.98999999;fill:#000000;fill-opacity:1;stroke:#ffffff;stroke-width:0.09470218;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     id="rect16412"
+     width="2.477541"
+     height="1.4084628"
+     x="11.725356"
+     y="10.196196" />
+  <path
+     d="m 15.952179,5.0299448 c -0.05976,0 -0.107877,0.11 -0.107877,0.24665 v 5.7205102 c 0,0.13661 0.04811,0.24659 0.107877,0.24659 h 2.521292 c 0.0598,0 0.107915,-0.10998 0.107915,-0.24659 V 5.2765948 c 0,-0.1366 -0.04812,-0.2466 -0.107915,-0.2466 h -2.521292 z"
+     style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.93055552;stroke-linecap:round;stroke-linejoin:round"
+     id="path16414" />
+  <path
+     id="path16416"
+     style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.93055552;stroke-linecap:round;stroke-linejoin:round"
+     d="m 0.61759007,4.8629048 c -0.05976,0 -0.107877,0.11 -0.107877,0.24665 v 5.7205102 c 0,0.13661 0.04811,0.24658 0.107877,0.24658 H 3.1388821 c 0.0598,0 0.107915,-0.10997 0.107915,-0.24658 V 5.1095548 c 0,-0.1366 -0.04812,-0.2466 -0.107915,-0.2466 H 0.61759007 Z" />
+  <rect
+     style="opacity:0.98999999;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.09470218;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     id="rect16418"
+     width="2.5720332"
+     height="1.5502055"
+     x="0.070509419"
+     y="-10.44966"
+     transform="rotate(90)"
+     ry="0.77510273" />
+</svg>

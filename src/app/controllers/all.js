@@ -1,5 +1,7 @@
 define([
   './dash',
   './dashLoader',
-  './row',
+    './row',
+    './sideColumn',
+    './ciDocument',
 ], function () {});

@@ -22,12 +22,19 @@ function (angular, $, kbn, _, config, moment, Modernizr) {
         // A hash of defaults to use when loading a dashboard
         var _dash = {
             title: "",
+            version: "",
             username: "guest", // default
-            style: "dark",
+            style: "ci",
             editable: true,
             home: true,
             failover: false,
             panel_hints: true,
+            sideColumn: {
+                title: "Filters",
+                width: "250px",
+                editable: true,
+                panels: [],
+            },
             rows: [],
             services: {},
             loader: {
@@ -117,7 +124,7 @@ function (angular, $, kbn, _, config, moment, Modernizr) {
                         self.script_load(_id);
                         break;
                     default:
-                        self.file_load('default.json');
+                        self.file_load('coinform');
                 }
 
                 // No dashboard in the URL
@@ -130,7 +137,7 @@ function (angular, $, kbn, _, config, moment, Modernizr) {
                     self.dash_load(dashboard);
                     // No? Ok, grab default.json, its all we have now
                 } else {
-                    self.file_load('coinform.json');
+                    self.file_load('coinform');
                 }
             }
         };
@@ -308,8 +315,9 @@ function (angular, $, kbn, _, config, moment, Modernizr) {
         };
 
         this.file_load = function (file) {
+            let jFile = file.endsWith('.json') ? file : file+".json";
             return $http({
-                url: "app/dashboards/" + file + '?' + new Date().getTime(),
+                url: "app/dashboards/" + jFile + '?' + new Date().getTime(),
                 method: "GET",
                 transformResponse: function (response) {
                     return renderTemplate(response, $routeParams);
@@ -321,7 +329,7 @@ function (angular, $, kbn, _, config, moment, Modernizr) {
                 self.dash_load(dash_defaults(result.data));
                 return true;
             }, function () {
-                alertSrv.set('Error', "Could not load <i>dashboards/" + file + "</i>. Please make sure it exists", 'error');
+                alertSrv.set('Error', "Could not load <i>dashboards/" + jFile + "</i>. Please make sure it exists", 'error');
                 return false;
             });
         };
