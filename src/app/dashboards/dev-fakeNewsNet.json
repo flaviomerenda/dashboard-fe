@@ -1,50 +1,84 @@
 ﻿{
-  "title": "on Politifact FakeNewsNet v20200615",
+  "title": "on PolitiFact FakeNewsNet",
+  "version": "v20200615",
   "services": {
     "query": {
       "idQueue": [
+        0,
         1,
         2,
         3,
         4
       ],
       "list": {
-        "0": {
-          "query": "-credibility_label:\"not verifiable\"",
-          "alias": "",
-          "color": "#7EB26D",
-          "id": 0,
-          "pin": false,
-          "type": "lucene"
-        }
       },
       "ids": [
-        0
       ]
     },
     "filter": {
       "idQueue": [
         0,
+        1,  
         2,
         3,
         4,
         5
       ],
       "list": {
-        "1": {
-          "type": "terms",
-          "field": "credibility_label",
-          "mandate": "must",
-          "value": "not%20credible",
-          "active": false,
-          "alias": "",
-          "id": 1
-        }
       },
       "ids": [
-        1
       ]
     }
+  },
+  "sideColumn"  : {
+      "title": "Filters",
+      "width": "50px",
+      "editable": true,
+      "collapse": true,
+      "collapsable": true,
+      "panels": [
+        {
+          "span": 5,
+          "editable": true,
+          "type": "facet",
+          "loadingEditor": false,
+          "status": "Stable",
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&facet=true&facet.field=categories&facet.field=credibility_label&facet.field=source_id&facet.field=organizations&facet.field=people&wt=json",
+            "basic_query": "q=-credibility_label%3A%22not%20verifiable%22&facet=true&facet.field=categories&facet.field=credibility_label&facet.field=source_id&facet.field=organizations&facet.field=people",
+            "custom": ""
+          },
+          "group": "default",
+          "style": {
+            "font-size": "9pt"
+          },
+          "overflow": "min-height",
+          "fields": [
+            "categories",
+            "credibility_label",
+            "source_id",
+            "organizations",
+            "people"
+          ],
+          "spyable": true,
+          "facet_limit": 10,
+          "maxnum_facets": 6,
+          "foundResults": true,
+          "header_title": "",
+          "toggle_element": null,
+          "show_queries": false,
+          "title": "Filters",
+          "exportSize": null,
+          "offset": 0,
+          "show_help_message": true,
+          "info_mode": "markdown",
+          "help_message": "Use this component to see (and define filters for) the main;\n\n* `categories` these are topics identified automatically using [Expert System](http://expertsystem.com)'s [Cogito](https://expertsystem.com/products/cogito-intelligence-platform/) natural language processing. \n* `credibility label`s: these are automatically assigned to documents based on a state-of-the-art misinformation detection algorithm that tries to link sentences in documents to previously fact-checked claims.  \n* `source_id`: name of the source of documents, this is typically the website or twitter hashtag used to collect documents.\n* `organizations`: which have been identified as being mentioned in the text\n* `people`: who have been mentioned in the text"
+        }
+      ]
   },
   "rows": [
     {
@@ -80,68 +114,6 @@
           "content": "## Changelog\n\n#### v20200615\n* First version",
           "style": {},
           "title": "Development Notes"
-        }
-      ]
-    },
-    {
-      "title": "Filters",
-      "height": "50px",
-      "editable": true,
-      "collapse": true,
-      "collapsable": true,
-      "panels": [
-        {
-          "error": false,
-          "span": 2,
-          "editable": true,
-          "type": "text",
-          "loadingEditor": false,
-          "status": "Stable",
-          "mode": "markdown",
-          "content": "Use the *timepicker* and/or *filter*s to the right to filter by time, topic, language, etc.",
-          "style": {},
-          "title": "Filter results"
-        },
-        {
-          "span": 5,
-          "editable": true,
-          "type": "facet",
-          "loadingEditor": false,
-          "status": "Stable",
-          "queries": {
-            "mode": "all",
-            "ids": [
-              0
-            ],
-            "query": "q=-credibility_label%3A%22not%20verifiable%22&facet=true&facet.field=categories&facet.field=credibility_label&facet.field=source_id&facet.field=organizations&facet.field=people&wt=json",
-            "basic_query": "q=-credibility_label%3A%22not%20verifiable%22&facet=true&facet.field=categories&facet.field=credibility_label&facet.field=source_id&facet.field=organizations&facet.field=people",
-            "custom": ""
-          },
-          "group": "default",
-          "style": {
-            "font-size": "9pt"
-          },
-          "overflow": "min-height",
-          "fields": [
-            "categories",
-            "credibility_label",
-            "source_id",
-            "organizations",
-            "people"
-          ],
-          "spyable": true,
-          "facet_limit": 10,
-          "maxnum_facets": 6,
-          "foundResults": true,
-          "header_title": "Filters",
-          "toggle_element": null,
-          "show_queries": false,
-          "title": "Filters",
-          "exportSize": null,
-          "offset": 0,
-          "show_help_message": true,
-          "info_mode": "markdown",
-          "help_message": "Use this component to see (and define filters for) the main;\n\n* `categories` these are topics identified automatically using [Expert System](http://expertsystem.com)'s [Cogito](https://expertsystem.com/products/cogito-intelligence-platform/) natural language processing. \n* `credibility label`s: these are automatically assigned to documents based on a state-of-the-art misinformation detection algorithm that tries to link sentences in documents to previously fact-checked claims.  \n* `source_id`: name of the source of documents, this is typically the website or twitter hashtag used to collect documents.\n* `organizations`: which have been identified as being mentioned in the text\n* `people`: who have been mentioned in the text"
         }
       ]
     },
@@ -720,7 +692,7 @@
             ],
             "query": "q=-credibility_label%3A%22not%20verifiable%22&wt=json&rows=50",
             "basic_query": "q=-credibility_label%3A%22not%20verifiable%22",
-            "custom": "&hl=false&fq=credibility_label:*&fl=content,contentLength,content_language,credibility_assessor,credibility_confidence,credibility_explanation,credibility_label,credibility_score,credibility_score_date,domain_credibility_confidence,domain_credibility_explanation,domain_credibility_label,domain_credibility_score,domain_credibility_score_date,lang,lang_orig,lastModified,last_update,publishedDate,retrieved_on,size,source,source_id,title,url"
+            "custom": "&hl=false&fq=credibility_label:*&fl=id,content,contentLength,content_language,credibility_assessor,credibility_confidence,credibility_explanation,credibility_label,credibility_score,credibility_score_date,domain_credibility_confidence,domain_credibility_explanation,domain_credibility_label,domain_credibility_score,domain_credibility_score_date,lang,lang_orig,lastModified,last_update,publishedDate,retrieved_on,size,source,source_id,title,url"
           },
           "size": 10,
           "pages": 5,
@@ -798,7 +770,8 @@
           "hyperlinkColumnForURI": "url",
           "markdownFields": [
             "credibility_explanation"
-          ]
+          ],
+            "withReviewGraph": true
         }
       ]
     }

@@ -251,8 +251,14 @@ define([
 
             $scope.build_search = function(x, y) {
                 if (x && y) {
-                  filterSrv.set({type: 'terms', field: $scope.panel.row_field, value: x, mandate: 'must'});
-                  filterSrv.set({type: 'terms', field: $scope.panel.col_field, value: y, mandate: 'must'});
+                    var rowVal = x;
+                    var colVal = y;
+                    if ($scope.panel.transposed) {
+                        rowVal = y;
+                        colVal = x;
+                    };
+                  filterSrv.set({type: 'terms', field: $scope.panel.row_field, value: rowVal, mandate: 'must'});
+                  filterSrv.set({type: 'terms', field: $scope.panel.col_field, value: colVal, mandate: 'must'});
                 } else {
                   return;
                 }

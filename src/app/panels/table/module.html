@@ -56,9 +56,9 @@
         </thead>
 
         <!-- Table Content -->
-        <tbody ng-repeat="event in data | slice:panel.offset:panel.offset+panel.size" ng-class-odd="'odd'">
+        <tbody  ng-repeat="event in data | slice:panel.offset:panel.offset+panel.size" ng-class-odd="'odd'">
           <!-- Main Row -->
-          <tr ng-click="toggle_details(event)" class="pointer">
+          <tr ng-click="toggle_details(event)" class="pointer table-row">
             <td ng-show="panel.fields.length<1">{{event.kibana._source|stringify|tableTruncate:panel.trimFactor:1}}</td>
 
             <!-- Column Values -->
@@ -83,15 +83,24 @@
           </tr>
 
           <!-- Show full details of the row when clicked -->
-          <tr ng-show="event.kibana.details">
+          <tr class="tr-details" ng-show="event.kibana.details">
             <td colspan={{panel.fields.length}} ng-switch="event.kibana.view">
               <span>
                 View:
+                <a class="link" ng-class="{'strong':event.kibana.view == 'custom'}" ng-click="event.kibana.view = 'custom'">Doc+Review</a> /
                 <a class="link" ng-class="{'strong':event.kibana.view == 'table'}" ng-click="event.kibana.view = 'table'">Table</a> /
+                <!--
                 <a class="link" ng-class="{'strong':event.kibana.view == 'json'}" ng-click="event.kibana.view = 'json'">JSON</a> /
                 <a class="link" ng-class="{'strong':event.kibana.view == 'raw'}" ng-click="event.kibana.view = 'raw'">Raw</a>
+                -->
+                <button type="button" class="btn btn-primary"
+                        ng-show="panel.withReviewGraph"
+                        ng-click="displayReviewGraph(event)">Display Review Graph</button>
                 <i class="link pull-right icon-chevron-up" ng-click="toggle_details(event)"></i>
               </span>
+              <div class='' ng-switch-when="custom">
+                <div ng-controller='CiDocumentCtrl' ng-init="init(event.kibana._source)" ng-include="'app/partials/ciDocument.html'"></div>
+              </div>
               <table class='table table-fixed table-bordered table-condensed' ng-switch-when="table">
                 <thead>
                   <th class='narrowCol'>Field</th>
@@ -118,9 +127,12 @@
                              |noXml|urlLink|stringify"></td>
                 </tr>
               </table>
+              
               <pre style="white-space:pre-wrap"  ng-bind-html="without_kibana(event)|tableJson:2" ng-switch-when="json"></pre>
               <pre ng-bind-html="without_kibana(event)|tableJson:1" ng-switch-when="raw"></pre>
             </td>
+            <td>
+              </td>
           </tr>
         </tbody>
       </table>

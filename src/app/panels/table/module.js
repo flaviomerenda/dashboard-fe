@@ -228,9 +228,14 @@ define([
 
         $scope.toggle_details = function (row) {
             row.kibana.details = row.kibana.details ? false : true;
-            row.kibana.view = row.kibana.view || 'table';
+            row.kibana.view = row.kibana.view || 'custom';
             //row.kibana.details = !row.kibana.details ? $scope.without_kibana(row) : false;
         };
+
+        $scope.displayReviewGraph = function(row) {
+            console.log('TODO: displayReviewGraph for', row.kibana._source);
+            solrSrv.fetchReviewGraph(row.kibana._source)
+        }
 
         $scope.page = function (page) {
             $scope.panel.offset = page * $scope.panel.size;
