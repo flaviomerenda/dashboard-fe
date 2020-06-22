@@ -40,9 +40,9 @@ function (angular, _) {
                 alertSrv.set('Warning', 'No review available for this document. Sorry.');
             } else {
                 console.log('Retrieved review graph with', graph['nodes'].length, 'nodes and', graph['links'].length, 'links');
-                //TODO: trigger display of graph
             }            
         });
+        return request;
 
         // request.then(function(response){
         //     if (typeof response === 'undefined') {

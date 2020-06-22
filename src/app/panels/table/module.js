@@ -32,7 +32,8 @@ define([
 
     var module = angular.module('kibana.panels.table', []);
     app.useModule(module);
-    module.controller('table', function ($rootScope, $scope, $timeout, timer, fields, querySrv, dashboard, filterSrv, solrSrv) {
+           module.controller('table', function ($rootScope, $scope, $timeout, timer, fields,
+                                                querySrv, dashboard, filterSrv, solrSrv, alertSrv) {
         $scope.panelMeta = {
             modals: [
                 {
@@ -233,8 +234,21 @@ define([
         };
 
         $scope.displayReviewGraph = function(row) {
-            console.log('TODO: displayReviewGraph for', row.kibana._source);
-            solrSrv.fetchReviewGraph(row.kibana._source)
+            // console.log('TODO: displayReviewGraph for', row.kibana._source);
+            let rg = solrSrv.fetchReviewGraph(row.kibana._source);
+            rg.success(function(data, status) {
+                var result = data['results'][0]
+                //console.log('Got response back from server for doc_id: ', result['doc_id'], result);
+                var graph = result['reviewGraph'];
+                if (graph == null) {
+                    alertSrv.set('Warning', 'No review available for this document. Sorry.');
+                } else {
+                    alertSrv.set(
+                        'Not implemented yet',
+                        'This will trigger the display of a reviewGraph with ' + graph['nodes'].length +
+                            ' nodes and ' + graph['links'].length + ' links.');
+                }            
+            })
         }
 
         $scope.page = function (page) {
