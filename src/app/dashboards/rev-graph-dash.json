@@ -31,9 +31,9 @@
       ],
       "list": {
         "0": {
-          "from": "2015-10-17T13:32:59.000Z",
-          "to": "2020-01-21T14:32:59.000Z",
-          "field": "publishedDate",
+          "from": "",
+          "to": "",
+          "field": "",
           "type": "time",
           "mandate": "must",
           "active": true,
@@ -57,6 +57,127 @@
     }
   },
   "rows": [
+    {
+      "title": "Sample documents",
+      "height": "150px",
+      "editable": true,
+      "collapse": false,
+      "collapsable": true,
+      "panels": [
+        {
+          "span": 10,
+          "editable": true,
+          "type": "table",
+          "loadingEditor": false,
+          "status": "Stable",
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[2019-10-17T13:32:59.000Z%20TO%202020-01-21T14:32:59.000Z]&wt=json&rows=50",
+            "basic_query": "q=-credibility_label%3A%22not%20verifiable%22&fq=publishedDate:[2019-10-17T13:32:59.000Z%20TO%202020-01-21T14:32:59.000Z]",
+            "custom": "&hl=false"
+          },
+          "size": 10,
+          "pages": 5,
+          "offset": 0,
+          "sort": [
+            "publishedDate"
+          ],
+          "sortable": true,
+          "group": "default",
+          "style": {
+            "font-size": "9pt"
+          },
+          "overflow": "min-height",
+          "fields": [
+            "title",
+            "lang_orig",
+            "credibility_label",
+            "credibility_score"
+          ],
+          "important_fields": [
+            "biological_agents",
+            "chemical_agents",
+            "claims",
+            "collection",
+            "content",
+            "contentLength",
+            "content_language",
+            "credibility_assessor",
+            "credibility_confidence",
+            "credibility_explanation",
+            "credibility_label",
+            "credibility_score",
+            "credibility_score_date",
+            "critical_infrastructures",
+            "domain_credibility_confidence",
+            "domain_credibility_explanation",
+            "domain_credibility_label",
+            "domain_credibility_score",
+            "domain_credibility_score_date",
+            "illicit_drugs",
+            "influential_people",
+            "key_company_executives",
+            "lang",
+            "lang_orig",
+            "lastModified",
+            "last_update",
+            "main_elements",
+            "medical_conditions",
+            "medical_treatments",
+            "natural_disasters",
+            "non_governative_organisations",
+            "organizations",
+            "people",
+            "places",
+            "public_leading_companies",
+            "publishedDate",
+            "retrieved_on",
+            "sentiments",
+            "size",
+            "social_tags",
+            "source",
+            "source_id",
+            "status",
+            "title",
+            "url",
+            "vulnerabilities",
+            "world_leaders"
+          ],
+          "highlight": [],
+          "header": true,
+          "paging": true,
+          "field_list": false,
+          "trimFactor": 300,
+          "normTimes": true,
+          "spyable": true,
+          "saveOption": "json",
+          "exportSize": 50,
+          "exportAll": true,
+          "displayLinkIcon": true,
+          "imageFields": [],
+          "imgFieldWidth": "auto",
+          "imgFieldHeight": "85px",
+          "show_queries": true,
+          "maxNumCalcTopFields": 20,
+          "calcTopFieldValuesFromAllData": false,
+          "subrowMaxChar": 300,
+          "subrowOffset": 0,
+          "refresh": {
+            "enable": false,
+            "interval": 2
+          },
+          "title": "Example Documents",
+          "enableSubrow": false,
+          "subrowField": "content",
+          "enableHyperlink": true,
+          "hyperlinkColumnHeader": "link",
+          "hyperlinkColumnForURI": "url"
+        }
+      ]
+    },
     {
       "title": "Review Graph Diagram",
       "height": "600px",
@@ -118,7 +239,7 @@
   },
   "solr": {
     "server": "https://dashboard.coinform.eu/api/dboard/",
-    "core_name": "generic",
+    "core_name": "fakeNewsNet",
     "core_list": [
       "claims",
       "factcheckers",
@@ -126,7 +247,8 @@
       "generic",
       "pilot-at",
       "pilot-gr",
-      "pilot-se"
+      "pilot-se",
+      "fakeNewsNet"
     ],
     "global_params": ""
   },
