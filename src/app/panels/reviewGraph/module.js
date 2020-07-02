@@ -184,7 +184,7 @@ define([
                   if (revNode) {  
                     return calcNodeOpacity(revNode);
                   } else {
-                    minOpacity;
+                      minOpacity;
                   }
                 } else {
                   // assume it's some content that was reviewed
@@ -192,10 +192,12 @@ define([
                   if (revNode) {
                     return calcNodeOpacity(revNode);
                   }
-                  else minOpacity;
+                  else {
+                    minOpacity;
+                  }
                 }
               }
-            
+
               var calcLinkOpacity = function(link) {
                 var rel = link['rel'];
                 var sent = ['sentA', 'sentB'];
@@ -231,7 +233,7 @@ define([
                 }
                 if (dt.endsWith('Review')) {
                   var rating = d['reviewRating'] || {};
-                  var revCnt = Math.min(maxReviewCount, rating['reviewCount'], 1);
+                  var revCnt = Math.min(maxReviewCount, rating['reviewCount'] || 1);
                   var rate = revCnt / maxReviewCount;
                   return minSize + Number((maxSize - minSize) * rate)
                 }
@@ -250,16 +252,18 @@ define([
                 }
                 if (dt.endsWith('Review')) {
                   var rating = d['reviewRating'] || {};
-                  var revCnt = Math.min(maxReviewCount, rating['reviewCount'], 1);
+                  var revCnt = Math.min(maxReviewCount, rating['reviewCount'] || 1);
                   var rate = revCnt / maxReviewCount;
                   return Math.max(1.0, maxScale*rate);
                 }
                 else if (dt == 'CreativeWork') {
                   var revN = lookupSubject(d, 'itemReviewed');
-                  if (revN) {
-                    return calcNodeScale(revN);
-                  }
-                    else 1.0
+                    if (revN) {
+                      return calcNodeScale(revN);
+                    }
+                    else {
+                      return 1.0
+                    }
                   } 
                 else {
                   return 1.0
@@ -285,10 +289,9 @@ define([
                   var resRole = 'source';
                 }
                 var qnodeId = qnode['id'];
-                var resIds = graph['links'].filter(link => link[resRole] == link['rel'] == qrel && qnodeId == link[qnodeRole]);
-                // var resIds = [for (link of graph['links']) if ( link['rel'] == qrel && qnodeId == link[qnodeRole]) link[res_role]];
-                // [link[res_role] for link in graph.get('links', []) if link.get('rel', '') == qrel and qnode_id == link.get(qnode_role)]
-                return [resIds.filter(nid => nodeById(nid))];
+                var resIds = graph['links'].filter(link => link['rel'] == qrel && qnodeId == link[qnodeRole]).map(link => link[resRole])
+                //console.log('risultati nodi: ', resIds.map(n => nodeById(n)))
+                return resIds.map(n => nodeById(n));
               }
             
               var lookupSubject = function(node, rel) {
@@ -297,7 +300,8 @@ define([
                   return;
                 } 
                  else {
-                  matchingNodes[0];
+                  //console.log('subjs',  matchingNodes[0])
+                  return matchingNodes[0];
                  }
               }
             
@@ -307,6 +311,7 @@ define([
                   return;
                 }
                 else {
+                  //console.log('objs',  matchingNodes[0])
                   return matchingNodes[0];
                 }
               }
@@ -524,6 +529,8 @@ define([
             }
 
             console.log("Creating svg node")
+            console.log("svg element: ", element[0])
+            console.log('d3: ', d3)
 
             var svg = d3.select(element[0]).append("svg")
               .attr("width", width + margin.left + margin.right)
@@ -545,6 +552,8 @@ define([
                 return d.id;
               })
               .distance(calcLinkDistance) // let distance depend on the type of relation?
+
+            //console.log('scope panel:', scope.panel)
 
             if (scope.panel.link_strength_weight !== 0) {
               link_force.strength(function (d) {
@@ -590,6 +599,8 @@ define([
                   }
                 })
                 .attr("marker-mid", d => "url(#arrow)");
+            
+            //console.log('links: ', link)
 
             link.append("title")
                 .text(d => d.rel)
@@ -943,6 +954,7 @@ define([
             };
 
             var svg_node = function(d) {
+              console.log('called svg node function on nodes: ', d)
               var result = d.append("g")
                 .attr("stroke", colorByGroup)
                 .attr("fill", colorByGroup);
@@ -1009,6 +1021,8 @@ define([
                   .attr("stroke-width", 1.5)
                   .call(drag(simulation));
             
+            //console.log("nodes :", node)
+            
             console.log("Setting node titles")
             node.append("title")
                   .text(itemToTooltipText);
@@ -1022,6 +1036,7 @@ define([
                     //.attr("y2", d => d.target.y)
                     
                     .attr("points", d => {
+                    //console.log('node', d)
                     var src = d.source.x + "," + d.source.y;
                     var tgt = d.target.x + "," + d.target.y;
                     
@@ -1051,7 +1066,6 @@ define([
                 });
               }
             });
-
             scope.panelMeta.loading = false;
           }
         }

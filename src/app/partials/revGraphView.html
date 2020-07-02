@@ -1,0 +1,68 @@
+<div class="revGraphView">
+
+  <div class="legend-side">
+      <div class="brightness">
+          <div id="">
+              <p class="icon-info" title="Click an icon below to hide/display a node type in the reviewGraph"></p>
+              <p><input type="image" id="sidebarGraph" title="Tweet" value="tweet" src='img/tweet_symbol.svg' style='vertical-align: middle' width="20" height="20"/></p>
+              <p><input type="image" id="sidebarGraph" title="Review Credibility" value="claimReview_accurate" src='img/revCred_symbol.svg' style='vertical-align: middle' width="20" height="20"/></p>
+              <p><input type="image" id="sidebarGraph" title="Claim reviewed" value="review" src='img/claimRev_symbol.svg' style='vertical-align: middle' width="20" height="20"/></p>
+              <p><input type="image" id="sidebarGraph" title="Bot" value="bot" src='img/bot_symbol.svg' style='vertical-align: middle' width="20" height="20"/></p>
+              <p><input type="image" id="sidebarGraph" title="Web Site" value="website" src='img/website_symbol.svg' style='vertical-align: middle' width="20" height="20"/></p>
+              <p><input type="image" id="sidebarGraph" title="Sentence" value="sentence" src='img/sent_symbol.svg' style='vertical-align: middle' width="20" height="20"/></p>
+              <p><input type="image" id="sidebarGraph" title="Sentence Pair" value="sentence_pair" src='img/sentPair_symbol.svg' style='vertical-align: middle' width="20" height="20"/> </p>
+              <p><input type="image" id="sidebarGraph" title="Article" value="article" src='img/article_symbol.svg' style='vertical-align: middle' width="20" height="20"/></p>
+              <p><input type="image" id="sidebarGraph" title="Thing" value="thing" src='img/thing_symbol.svg' style='vertical-align: middle' width="20" height="20"/></p>
+          </div>
+      </div>
+  </div>
+
+  <div class="rev-graph-view" review-graph-view style="overflow:hidden; position:relative">
+  </div>
+        
+</div>
+
+<div id="table/buttons">
+        <style>
+          table {
+            width:50%;
+          }
+          table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+          }
+          th, td {
+            padding: 15px;
+            text-align: left;
+          }
+          table#t01 tr:nth-child(even) {
+            background-color: #eee;
+          }
+          table#t01 tr:nth-child(odd) {
+           background-color: #fff;
+          }
+          table#t01 th {
+            background-color: black;
+            color: white;
+          }
+        </style>
+
+        <style>
+            .button {
+              background-color: rgb(228, 227, 227);
+              border: none;
+              color: rgb(0, 0, 0);
+              padding: 15px 32px;
+              text-align: center;
+              text-decoration: none;
+              display: inline-block;
+              font-size: 14px;
+              margin: 4px 2px;
+              cursor: pointer;
+            }
+        </style>
+
+        <div id="selectedNode"><h2> > select a node</h2></div>
+        <div id="reviewNode"></div>
+</div>
+

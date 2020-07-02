@@ -1150,6 +1150,69 @@ div.flot-text{color:#333!important}
 .ciDocument {
   display: flex;
 }
+
+.revGraphView {
+  display: flex;
+}
+
+.legend-side {
+  width: 50px;
+  top: 20px;
+  left: 10px;
+  background: #eee;
+  overflow: hidden;
+  cursor: pointer;
+  background-color: #fff;
+  border: 1px solid #e1e8ed;
+  border-radius: 5px;
+}
+
+.legend-side p {
+  padding: 10px 10px 10px 10px;
+  text-decoration: none;
+  font-size: 10px;
+  display: block;
+}
+
+.brightness {
+  background-color: white;
+  display: inline-block;
+
+}
+.brightness img:hover {
+  opacity: .5;
+}
+
+.node {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+.node-active {
+  stroke: rgb(0, 140, 255);
+  stroke-width: 1.5px;
+}
+
+.link {
+  stroke: #555;
+  stroke-opacity: .3;
+}
+
+.link-active {
+  stroke: rgb(0, 140, 255);
+}
+
+.overlay {
+  fill: none;
+  pointer-events: all;
+}
+
+.force-search-box {
+  position: absolute;
+  left: 20px;
+  bottom: 0;
+}
+
 .CredibilityReview {
   padding: 20px 20px 11.6px 20px;
   with: 50%;
@@ -1186,6 +1249,15 @@ div.flot-text{color:#333!important}
 }
 .twitter-tweet-error:hover {
   border-color: #ccd6dd;
+}
+.rev-graph-view {
+  overflow: hidden;
+  cursor: pointer;
+  background-color: #fff;
+  border: 1px solid #e1e8ed;
+  border-radius: 5px;
+  max-width: 700px;
+  max-height: 500px;
 }
 .pseudoEmbedded-tweet {
   padding: 20px 20px 11.6px 20px;
@@ -1533,5 +1605,6 @@ div.flot-text{color:#333!important}
 .pseudoTweetInfo-timeGeo a{
   color: #697882;
 }
+
 
 
