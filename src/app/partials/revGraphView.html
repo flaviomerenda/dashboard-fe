@@ -4,15 +4,15 @@
       <div class="brightness">
           <div id="">
               <p class="icon-info" title="Click on an icon below to hide/display a node type in the reviewGraph"></p>
-              <p><input type="image" id="sidebarGraph" title="Tweet" value="tweet" src='img/tweet_symbol.svg' style='vertical-align: middle' width="20" height="20"/></p>
-              <p><input type="image" id="sidebarGraph" title="Review Credibility" value="revcred" src='img/revCred_symbol.svg' style='vertical-align: middle' width="20" height="20"/></p>
-              <p><input type="image" id="sidebarGraph" title="Claim Reviewed" value="claimrev" src='img/claimRev_symbol.svg' style='vertical-align: middle' width="20" height="20"/></p>
-              <p><input type="image" id="sidebarGraph" title="Bot" value="bot" src='img/bot_symbol.svg' style='vertical-align: middle' width="20" height="20"/></p>
-              <p><input type="image" id="sidebarGraph" title="Web Site" value="website" src='img/website_symbol.svg' style='vertical-align: middle' width="20" height="20"/></p>
-              <p><input type="image" id="sidebarGraph" title="Sentence" value="sent" src='img/sent_symbol.svg' style='vertical-align: middle' width="20" height="20"/></p>
-              <p><input type="image" id="sidebarGraph" title="Sentence Pair" value="sentpair" src='img/sentPair_symbol.svg' style='vertical-align: middle' width="20" height="20"/> </p>
-              <p><input type="image" id="sidebarGraph" title="Article" value="article" src='img/article_symbol.svg' style='vertical-align: middle' width="20" height="20"/></p>
-              <p><input type="image" id="sidebarGraph" title="Thing" value="thing" src='img/thing_symbol.svg' style='vertical-align: middle' width="20" height="20"/></p>
+              <p><input type="image" ng-click="sidebarGraphEvent('tweet_'+data.mainNode)" title="Tweet" src='img/tweet_symbol.svg' style='vertical-align: middle' width="20" height="20"/></p>
+              <p><input type="image" ng-click="sidebarGraphEvent('revCred_'+data.mainNode)" title="Review Credibility" src='img/revCred_symbol.svg' style='vertical-align: middle' width="20" height="20"/></p>
+              <p><input type="image" ng-click="sidebarGraphEvent('claimRev_'+data.mainNode)" title="Claim Reviewed" src='img/claimRev_symbol.svg' style='vertical-align: middle' width="20" height="20"/></p>
+              <p><input type="image" ng-click="sidebarGraphEvent('bot_'+data.mainNode)" title="Bot" src='img/bot_symbol.svg' style='vertical-align: middle' width="20" height="20"/></p>
+              <p><input type="image" ng-click="sidebarGraphEvent('website_'+data.mainNode)" title="Web Site" src='img/website_symbol.svg' style='vertical-align: middle' width="20" height="20"/></p>
+              <p><input type="image" ng-click="sidebarGraphEvent('sent_'+data.mainNode)" title="Sentence" src='img/sent_symbol.svg' style='vertical-align: middle' width="20" height="20"/></p>
+              <p><input type="image" ng-click="sidebarGraphEvent('sentPair_'+data.mainNode)" title="Sentence Pair" src='img/sentPair_symbol.svg' style='vertical-align: middle' width="20" height="20"/> </p>
+              <p><input type="image" ng-click="sidebarGraphEvent('article_'+data.mainNode)" title="Article" src='img/article_symbol.svg' style='vertical-align: middle' width="20" height="20"/></p>
+              <p><input type="image" ng-click="sidebarGraphEvent('thing_'+data.mainNode)" title="Thing" src='img/thing_symbol.svg' style='vertical-align: middle' width="20" height="20"/></p>
           </div>
       </div>
   </div>
@@ -58,14 +58,14 @@
   <div class="legend-side">
     <div id="">
       <p class="icon-info" title="Click on a graph node to display element information"></p>
-      <p><img src="img/node_click.png" title="Click on a node above" alt="click on a node" width="20" height="20"></p>
+      <p><img src="img/node_click.png" title="Click on a graph node above" alt="click on a node" width="20" height="20"></p>
       <p>
-         <div id="reviewNode"></div>
+         <div id="reviewNode_{{data.mainNode}}"></div>
       </p>
     </div>
   </div>
 
-  <table id="selectedNode" class='table-review'>
+  <table id="selectedNode_{{data.mainNode}}" class='table-review'>
   </table>
 
 </div>

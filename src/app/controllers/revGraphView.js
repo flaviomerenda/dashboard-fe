@@ -324,8 +324,9 @@ function (angular, app, _, d3, d3force) {
             $scope.data = processedData
             $scope.render = function () {
               $scope.$broadcast('render');
+              $scope.$emit('render')
               };
-            console.log('scope rendere' , $scope.render())
+            $scope.render()
             });
         };
 
@@ -394,8 +395,9 @@ function (angular, app, _, d3, d3force) {
             console.log("Creating svg node")
             console.log("svg element: ", element[0])
             console.log('d3: ', d3)
-            
+
             var svg = d3.select(element[0]).append("svg")
+                .attr("id", scope.data.mainNode)
                 .attr("width", width + margin.left + margin.right)
                 .attr("height", height + margin.top + margin.bottom);
 
@@ -470,13 +472,12 @@ function (angular, app, _, d3, d3force) {
                       return "scale(" + scale  + ")"
                   })
                   var selectedNode = d.__proto__
-                          d3.select("#selectedNode")
+                          d3.select("#selectedNode_" + scope.data.mainNode)
                           .html("<p>" + node_as_html_table(selectedNode) + "</p>");
                           if (selectedNode.rel == "itemReviewed") {
-                              console.log("this is the target: ", selectedNode.target)
                           }
                           if (selectedNode['@type'].endsWith("Review")) {
-                              d3.select("#reviewNode")
+                              d3.select("#reviewNode_" + scope.data.mainNode)
                               .html(`
                                      <span class="rate" title="This review is accurate (help us improve our AI)" id="accRev">
                                      <a class="icon-ok"></a>
@@ -490,7 +491,7 @@ function (angular, app, _, d3, d3force) {
                                     `
                                    );
                               }
-                            else {d3.select("#reviewNode").html('')}
+                            else {d3.select("#reviewNode_" + scope.data.mainNode).html('')}
               
                           // select neighborhood
                           //selectedRelatedLinks = links.filter(function (i) { 
@@ -553,9 +554,9 @@ function (angular, app, _, d3, d3force) {
                 if (typeof itType == "undefined") {
                 return "#thing";
                 } else if (itType == "NormalisedClaimReview") {
-                return "#revcred";
+                return "#revCred";
                 } else if (itType.endsWith("Review")) {
-                return "#claimrev";
+                return "#claimRev";
                 } else if (itType == "ClaimReviewNormalizer") {
                 return "#bot";
                 } else if (itType == "SentenceEncoder") {
@@ -569,7 +570,7 @@ function (angular, app, _, d3, d3force) {
                 } else if (itType == "WebSite") {
                 return "#website";
                 } else if (itType == "SentencePair") {
-                return "#sentpair";
+                return "#sentPair";
                 } else {
                 return "#thing";
                 }
@@ -843,6 +844,7 @@ function (angular, app, _, d3, d3force) {
             var node_as_html_table = function(node) {
                 const privateFields = ["id", "hierarchyLevel", "group", "opacity", "nodeSize", "nodeScale"];
                 console.log("", node["@type"], node["id"], "as table");
+
                 let rows = node_as_key_vals(node, 2, privateFields)
                 .map(entry => {
                     let [key, val] = entry;
@@ -963,12 +965,12 @@ function (angular, app, _, d3, d3force) {
                 .attr("r", d.nodeScale * 2 + 12);
             });
 
-            d3.selectAll('#sidebarGraph').on('click', function () {
-              var value = this.value
+            scope.sidebarGraphEvent = function(nodeIconId){
               var nodeList = node._groups[0];
+              var iconType = nodeIconId.split("_")[0]
               var nod;
               for (nod of nodeList) {
-                if (nod.innerHTML.includes('#' + value)) {
+                if (nod.innerHTML.includes('#' + iconType)) {
                   // Hide/show selected nodes
                   // Check and store the original opacity of a node
                   var origNodeOpacity = nod.origNodeOpacity ? false : true;
@@ -1033,7 +1035,7 @@ function (angular, app, _, d3, d3force) {
                   }
                 };
               };
-            });
+            };
             }
           }
         };
