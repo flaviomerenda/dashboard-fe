@@ -1155,10 +1155,13 @@ div.flot-text{color:#333!important}
   display: flex;
 }
 
+.revGraphInfoNodes {
+  display: flex;
+}
+
 .legend-side {
+  text-align:center;
   width: 50px;
-  top: 20px;
-  left: 10px;
   background: #eee;
   overflow: hidden;
   cursor: pointer;

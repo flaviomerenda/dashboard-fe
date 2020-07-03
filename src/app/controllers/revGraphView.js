@@ -482,14 +482,15 @@ function (angular, app, _, d3, d3force) {
                                      <a class="icon-ok"></a>
                                      <span class="accurate-stat" title="Number of Co-inform users who have rate this review as accurate"></span>
                                      </span>
-                                     &nbsp;|&nbsp;
+                                     |
                                      <span title="This review is inaccurate (help us improve our AI)" id="inaccRev">
                                      <a class="icon-remove"></a>
                                      <span class="accurate-stat" title="Number of Co-inform users who have rate this review as inaccurate"></span>
-                                     </span></div>
+                                     </span>
                                     `
                                    );
                               }
+                            else {d3.select("#reviewNode").html('')}
               
                           // select neighborhood
                           //selectedRelatedLinks = links.filter(function (i) { 
@@ -848,7 +849,7 @@ function (angular, app, _, d3, d3force) {
                     return ["<tr><td>" + key.toString() + "</td><td>" +  val.toString() + "</td></tr>"]
                 })
                 .join(" ");
-                let table = "<font size='3'>  <table id=t01>" + rows + "</table> </font>"
+                let table = rows
                 return table;
             }
 
