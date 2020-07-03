@@ -177,39 +177,6 @@
           "hyperlinkColumnForURI": "url"
         }
       ]
-    },
-    {
-      "title": "Review Graph Diagram",
-      "height": "600px",
-      "editable": true,
-      "collapse": false,
-      "collapsable": true,
-      "panels": [
-        {
-          "title": "Credibility Review Graph",
-          "span": 12,
-          "editable": true,
-          "type": "reviewGraph",
-          "queries": {
-            "mode": "all",
-            "ids": [],
-            "query": "",
-            "custom": ""
-          },
-          "facet_limit": "10,20",
-          "node_size_weight": 0,
-          "link_width_weight": 0,
-          "link_strength_weight": 0,
-          "link_distance_weight": 0,
-          "strength": -400,
-          "colors": "#1f77b4, #ff7f0e, #2ca02c, #d62728, #9467bd, #8c564b, #e377c2, #7f7f7f, #bcbd22, #17becf",
-          "mute_category_1": false,
-          "mute_category_2": true,
-          "spheres": true,
-          "spyable": true,
-          "show_queries": true
-        }
-      ]
     }
   ],
   "editable": true,

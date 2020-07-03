@@ -6,15 +6,12 @@ define([
     'angular',
     'app',
     'underscore',
-    'jquery',
-    'kbn',
     'd3',
     'd3-force',
   ],
 
-function (angular, app, _, $, kbn, d3, d3force) {
+function (angular, app, _, d3, d3force) {
     'use strict';
-    var FORCE_SEARCH_FOR_NODE_EVENT = "reviewGraph-search-for-node";
 
     var module = angular.module('kibana.controllers');
     app.useModule(module);
@@ -22,9 +19,9 @@ function (angular, app, _, $, kbn, d3, d3force) {
     module.controller('revGraphView', function ($scope, querySrv, dashboard, filterSrv, $rootScope, $http) {
 
         $scope.init = function (ciDoc) {
-            $scope.$on('refresh', function () {
-                $scope.get_data();
-              });
+            //$scope.$on('refresh', function () {
+            //    $scope.get_data();
+            //  });
             $scope.querySrv = querySrv;
             $scope.ciDoc = ciDoc;
             console.log('Initialising revGraphView with ciDoc', ciDoc)
@@ -188,9 +185,14 @@ function (angular, app, _, $, kbn, d3, d3force) {
               
                 var nodeById = function(nid) {
                   var matching = graph['nodes'].filter(n => n['id'] == nid);
+                  //console.log('matching: ', matching)
                   if (matching.length > 0) {
+                    //console.log('matching: ', matching[0])
                     return matching[0];
-                  } return;
+                  } 
+                  else {
+                    return;
+                  }
                 }
               
                 var lookupNodes = function(qnode, qrel, qnodeRole) {
@@ -205,18 +207,23 @@ function (angular, app, _, $, kbn, d3, d3force) {
                     var resRole = 'source';
                   }
                   var qnodeId = qnode['id'];
-                  var resIds = graph['links'].filter(link => link['rel'] == qrel && qnodeId == link[qnodeRole]).map(link => link[resRole])
+                  //console.log('links based on: ', graph['links'].filter(link => link['rel'] == qrel ))
+                  var resIds = graph['links'].filter(link => (link['rel'] == qrel) && (qnodeId == link[qnodeRole])).map(link => link[resRole])
+                  //console.log('resIds: ', resIds)
                   //console.log('risultati nodi: ', resIds.map(n => nodeById(n)))
                   return resIds.map(n => nodeById(n));
                 }
               
                 var lookupSubject = function(node, rel) {
+                  //console.log('node and rel:', node, rel)
                   var matchingNodes = lookupNodes(node, rel, 'target');
+                  //console.log('matching nodes: ', matchingNodes)
                   if (matchingNodes.length == 0) {
+                    //console.log('zero: ', matchingNodes)
                     return;
                   } 
                    else {
-                    //console.log('subjs',  matchingNodes[0])
+                    //console.log('no zero',  matchingNodes[0])
                     return matchingNodes[0];
                    }
                 }
@@ -233,7 +240,7 @@ function (angular, app, _, $, kbn, d3, d3force) {
                 }
               
                 var calcMainItemReviewed = function() {
-                  var nid = graph['mainNode'];
+                  var nid = $scope.graph['mainNode'];
                   if (nid == null) {
                     return "??";
                   }
@@ -242,11 +249,11 @@ function (angular, app, _, $, kbn, d3, d3force) {
                     var itReved = lookupObject(crev, 'itemReviewed') || {};
                     var itType = itReved['@type'] || itReved['type'] || 'Thing';
                     var text = itReved['headline'] || itReved['text'] || '??';
+                    return String(itType) + ': ' + String(text);
                   }
-                  return "??"
                 }
               
-                var calcNodeHierarchy = function(d) {
+                var calcNodeHierarchy = function(d, seen=[]) {
                   var seen = [];
                   var dt = calcNodeType(d);
                   var topNid = graph['mainNode'];
@@ -256,7 +263,7 @@ function (angular, app, _, $, kbn, d3, d3force) {
                     } else {
                         var parentN = lookupSubject(d, 'isBasedOn');
                         if (parentN) {
-                          return 1 + calcNodeHierarchy(parentN, seen + [d])
+                          return 1 + calcNodeHierarchy(parentN, seen + [d]);
                         } else {
                           console.log('Could not find parent node')
                           return;
@@ -282,7 +289,6 @@ function (angular, app, _, $, kbn, d3, d3force) {
                 }
               
                 var ntypes = Array.from(new Set($scope.graph['nodes'].map(n => calcNodeType(n))));
-                var rtypes = Array.from(new Set($scope.graph['links'].map(e => e['rel'] || e['relatedTo'])));
               
                 var processGraph = function(graph) {
                   var n; 
@@ -305,39 +311,36 @@ function (angular, app, _, $, kbn, d3, d3force) {
                 console.log('min/max hierarchy levels: ', Math.min(hlevels), Math.max(hlevels))
                 var e;
                 for (e of processedGraph['links']) {
-                e['value'] = calcLinkValue(e);
-                e['opacity'] = calcLinkOpacity(e);
+                  e['value'] = calcLinkValue(e);
+                  e['opacity'] = calcLinkOpacity(e);
                 };
                 processedGraph['main_itemReviewed'] = calcMainItemReviewed();
                 return processedGraph;
-            }
+             }
 
             var processedData = preProcessedGraph($scope.graph)
             console.log('reviewGraph data: ', processedData)
-            $scope.data = processedData
 
-            $scope.render();
+            $scope.data = processedData
+            $scope.render = function () {
+              $scope.$broadcast('render');
+              };
+            console.log('scope rendere' , $scope.render())
             });
         };
 
-        $scope.set_refresh = function (state) {
-        $scope.refresh = state;
-        };
+        //$scope.set_refresh = function (state) {
+        //$scope.refresh = state;
+        //};
 
-        $scope.close_edit = function () {
-        if ($scope.refresh) {
-            $scope.get_data();
-        }
-        $scope.refresh = false;
-        $scope.$emit('render');
-        };
-
-        $scope.render = function () {
-        $scope.$emit('render');
-        };  
+        //$scope.close_edit = function () {
+        //if ($scope.refresh) {
+        //    $scope.get_data();
+        //}
+        //$scope.refresh = false;
     });
 
-    module.directive('reviewGraphView', function ($rootScope) {
+    module.directive('reviewGraphView', function () {
         return {
         restrict: 'A',
         link: function (scope, element) {
@@ -447,8 +450,10 @@ function (angular, app, _, $, kbn, d3, d3force) {
               .attr("stroke", colorByGroup)
               .attr("fill", colorByGroup);
           
-              var use = result.append("use")
+              var svg = result.append("use")
                   .attr("xlink:href", calcSymbolId)
+                  .attr("width", 20)
+                  .attr("height", 20)
                   .attr("transform", d => {
                       let selectedFactor = (d.id == selectedNodeId) ? 2.0 : 1.0;
                       let scale = (d.nodeScale || 1.0) * selectedFactor;
@@ -456,29 +461,35 @@ function (angular, app, _, $, kbn, d3, d3force) {
                   })
                   .attr("style", d => "opacity:" + (d.opacity || 0.8));
 
-              use.on("click", d => {
+              svg.on("click", d => {
                   console.log("clicked on ", d);
                   var selectedNodeId = d.id;
-                  use.attr("transform", d => { //recalc scale
+                  svg.attr("transform", d => { //recalc scale
                       let selectedFactor = (d.id == selectedNodeId) ? 2.0 : 1.0;
                       let scale = (d.nodeScale || 1.0) * selectedFactor;
                       return "scale(" + scale  + ")"
                   })
                   var selectedNode = d.__proto__
                           d3.select("#selectedNode")
-                          .html("<h2> > check and review the selected node</h2> <p>" + node_as_html_table(selectedNode) + "</p>");
+                          .html("<p>" + node_as_html_table(selectedNode) + "</p>");
                           if (selectedNode.rel == "itemReviewed") {
                               console.log("this is the target: ", selectedNode.target)
                           }
                           if (selectedNode['@type'].endsWith("Review")) {
                               d3.select("#reviewNode")
-                              .html("<p><button class='button' id='accRev'>Accurate</button>" +
-                                      "<button class='button' id='inaccRev'>Incorrect</button></p>");
+                              .html(`
+                                     <span class="rate" title="This review is accurate (help us improve our AI)" id="accRev">
+                                     <a class="icon-ok"></a>
+                                     <span class="accurate-stat" title="Number of Co-inform users who have rate this review as accurate"></span>
+                                     </span>
+                                     &nbsp;|&nbsp;
+                                     <span title="This review is inaccurate (help us improve our AI)" id="inaccRev">
+                                     <a class="icon-remove"></a>
+                                     <span class="accurate-stat" title="Number of Co-inform users who have rate this review as inaccurate"></span>
+                                     </span></div>
+                                    `
+                                   );
                               }
-                          else {
-                              d3.select("#reviewNode")
-                              .html("<p>cannot be reviewed</p>")
-                          }
               
                           // select neighborhood
                           //selectedRelatedLinks = links.filter(function (i) { 
@@ -491,11 +502,12 @@ function (angular, app, _, $, kbn, d3, d3force) {
                           Object.keys(d), Object.keys(d).includes("@type"));
               
                           d3.select("#accRev")
-                          .attr("hidden", isReview ? null : true)
-                          .on("click", handleAccurate(selectedNode))
-              
+                            .attr("hidden", isReview ? null : true)
+                            .on("click", handleAccurate(selectedNode))
+
                           d3.select("#inaccRev")
-                          .on("click", handleInaccurate(selectedNode))
+                            .on("click", handleInaccurate(selectedNode))
+
                   });
 
               return result
@@ -540,9 +552,9 @@ function (angular, app, _, $, kbn, d3, d3force) {
                 if (typeof itType == "undefined") {
                 return "#thing";
                 } else if (itType == "NormalisedClaimReview") {
-                return "#claimReview_accurate";
+                return "#revcred";
                 } else if (itType.endsWith("Review")) {
-                return "#review";
+                return "#claimrev";
                 } else if (itType == "ClaimReviewNormalizer") {
                 return "#bot";
                 } else if (itType == "SentenceEncoder") {
@@ -550,13 +562,13 @@ function (angular, app, _, $, kbn, d3, d3force) {
                 } else if (itType.endsWith("Reviewer")) {
                 return "#bot";
                 } else if (itType == "Sentence") {
-                return "#sentence";
+                return "#sent";
                 } else if (itType == "Article") {
                 return "#article";
                 } else if (itType == "WebSite") {
                 return "#website";
                 } else if (itType == "SentencePair") {
-                return "#sentence_pair";
+                return "#sentpair";
                 } else {
                 return "#thing";
                 }
@@ -1021,23 +1033,6 @@ function (angular, app, _, $, kbn, d3, d3force) {
                 };
               };
             });
-            
-
-            $rootScope.$on(FORCE_SEARCH_FOR_NODE_EVENT, function (e, q) {
-                var lq = q.toLowerCase().trim();
-
-                if (lq === "") {
-                scope.selList = _.extend({}, scope.selListCopy);
-                } else {
-                scope.selListCopy = _.extend({}, scope.selList);
-
-                node.each(function(d) {
-                    scope.selList["n" + d.node] = d.name.toLowerCase().indexOf(lq) !== -1;
-                });
-                }
-            });
-
-            //scope.panelMeta.loading = false;
             }
           }
         };
