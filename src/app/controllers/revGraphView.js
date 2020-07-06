@@ -16,7 +16,7 @@ function (angular, app, _, d3, d3force) {
     var module = angular.module('kibana.controllers');
     app.useModule(module);
 
-    module.controller('revGraphView', function ($scope, querySrv, dashboard, filterSrv, $rootScope, $http) {
+    module.controller('revGraphView', function ($scope, querySrv, dashboard, $http, alertSrv) {
 
         $scope.init = function (ciDoc) {
             //$scope.$on('refresh', function () {
@@ -341,7 +341,7 @@ function (angular, app, _, d3, d3force) {
         //$scope.refresh = false;
     });
 
-    module.directive('reviewGraphView', function () {
+    module.directive('reviewGraphView', function (dashboard, alertSrv) {
         return {
         restrict: 'A',
         link: function (scope, element) {
@@ -725,38 +725,42 @@ function (angular, app, _, d3, d3force) {
                 return "The " + getCoinformUserReviewSchema().type + " is incorrect";
             };
 
-            var itemReviewedType = (selectedRelatedLink) => {
-                return selectedRelatedLink["@type"]
+            var itemReviewedType = (nodeId) => {
+                return nodeId["@type"]
             };
 
-            var itemReviewedUrl = (selectedRelatedLink) => {
-                return "http://coinform.eu/sentence?text=" + selectedRelatedLink.text
+            var itemReviewedUrl = (nodeId) => {
+                return "http://coinform.eu/" + itemReviewedType(nodeId) + "?identifier=" + nodeId['identifier']
             };
 
-            var createCoinformUserReview = (coinformUserReviewSchema) => {
+            var createCoinformUserReview = (nodeId, coinformUserReviewSchema) => {
                 coinformUserReviewSchema = getCoinformUserReviewSchema();
                 coinformUserReviewSchema.dateCreated = dateTime();
                 coinformUserReviewSchema.url = mockReviewUrl();
                 coinformUserReviewSchema.author.url = mockUserUrl();
                 coinformUserReviewSchema.author.identifier = mockDevUser;
                 coinformUserReviewSchema.text = prompt("If you want, insert your review comment please:", "Write your comment here");
-                //coinformUserReviewSchema.itemReviewed.context = "http://schema.org";
-                //coinformUserReviewSchema.itemReviewed.type = itemReviewedType(selectedRelatedLink);
-                //coinformUserReviewSchema.itemReviewed.url = itemReviewedUrl(selectedRelatedLink);
+                coinformUserReviewSchema.itemReviewed.context = "http://schema.org";
+                coinformUserReviewSchema.itemReviewed.type = itemReviewedType(nodeId);
+                coinformUserReviewSchema.itemReviewed.url = itemReviewedUrl(nodeId);
                 return coinformUserReviewSchema;
             }
 
             var confirmUserReview = (review) => {
                 return confirm("Are you sure? This review will be stored in a collection", review)
             }
-
+            
+            var mockPostReview = function() {
+              alert('This feature is not implemented yet');
+          }
+            
             var postReview = (review) => {
                 jQuery.ajax({
                 type: "POST",
                 data: JSON.stringify(review),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
-                url: "http://127.0.0.1:8070/test/api/v1/user/accuracy-review",
+                url: dashboard.current.solr.server + "user/accuracy-review",
                 crossDomain: true,
                 beforeSend: function(xhr){
                     xhr.withCredentials = true;
@@ -774,7 +778,7 @@ function (angular, app, _, d3, d3force) {
 
             var handleAccurate = (nodeId) => {
                 return function () {
-                var accurateUserReview = createCoinformUserReview();
+                var accurateUserReview = createCoinformUserReview(nodeId);
                 accurateUserReview.reviewRating.ratingValue = "accurate";
                 if (!accurateUserReview.text || 
                 accurateUserReview.text == null ||
@@ -785,14 +789,16 @@ function (angular, app, _, d3, d3force) {
                 console.log("The user review feedback is: ", accurateUserReview);
                 var conf = confirmUserReview(accurateUserReview);
                 if (conf == true) { 
-                    postReview(accurateUserReview)
+                  mockPostReview();
+                  // TODO: activate no-mock POST request
+                  //postReview(accurateUserReview)
                 }
                 }
             }
 
             var handleInaccurate = nodeId => {
                 return function() {
-                var inaccurateUserReview = createCoinformUserReview();
+                var inaccurateUserReview = createCoinformUserReview(nodeId);
                 inaccurateUserReview.reviewRating.ratingValue = "inaccurate";
                 if (!inaccurateUserReview.text || 
                 inaccurateUserReview.text == null ||
@@ -803,7 +809,9 @@ function (angular, app, _, d3, d3force) {
                 console.log("The user review feedback is: ", inaccurateUserReview);
                 var conf = confirmUserReview(inaccurateUserReview);
                 if (conf == true) { 
-                    postReview(inaccurateUserReview)
+                  mockPostReview();
+                  // TODO: activate no-mock POST request
+                  //postReview(inaccurateUserReview)
                 }
                 }
             }
