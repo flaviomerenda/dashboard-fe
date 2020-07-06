@@ -185,9 +185,7 @@ function (angular, app, _, d3, d3force) {
               
                 var nodeById = function(nid) {
                   var matching = graph['nodes'].filter(n => n['id'] == nid);
-                  //console.log('matching: ', matching)
                   if (matching.length > 0) {
-                    //console.log('matching: ', matching[0])
                     return matching[0];
                   } 
                   else {
@@ -207,23 +205,16 @@ function (angular, app, _, d3, d3force) {
                     var resRole = 'source';
                   }
                   var qnodeId = qnode['id'];
-                  //console.log('links based on: ', graph['links'].filter(link => link['rel'] == qrel ))
                   var resIds = graph['links'].filter(link => (link['rel'] == qrel) && (qnodeId == link[qnodeRole])).map(link => link[resRole])
-                  //console.log('resIds: ', resIds)
-                  //console.log('risultati nodi: ', resIds.map(n => nodeById(n)))
                   return resIds.map(n => nodeById(n));
                 }
               
                 var lookupSubject = function(node, rel) {
-                  //console.log('node and rel:', node, rel)
                   var matchingNodes = lookupNodes(node, rel, 'target');
-                  //console.log('matching nodes: ', matchingNodes)
                   if (matchingNodes.length == 0) {
-                    //console.log('zero: ', matchingNodes)
                     return;
                   } 
                    else {
-                    //console.log('no zero',  matchingNodes[0])
                     return matchingNodes[0];
                    }
                 }
@@ -234,7 +225,6 @@ function (angular, app, _, d3, d3force) {
                     return;
                   }
                   else {
-                    //console.log('objs',  matchingNodes[0])
                     return matchingNodes[0];
                   }
                 }
@@ -329,16 +319,6 @@ function (angular, app, _, d3, d3force) {
             $scope.render()
             });
         };
-
-        //$scope.set_refresh = function (state) {
-        //$scope.refresh = state;
-        //};
-
-        //$scope.close_edit = function () {
-        //if ($scope.refresh) {
-        //    $scope.get_data();
-        //}
-        //$scope.refresh = false;
     });
 
     module.directive('reviewGraphView', function (dashboard, alertSrv) {
@@ -725,15 +705,15 @@ function (angular, app, _, d3, d3force) {
                 return "The " + getCoinformUserReviewSchema().type + " is incorrect";
             };
 
-            var itemReviewedType = (nodeId) => {
-                return nodeId["@type"]
+            var itemReviewedType = () => {
+                return scope.ciDoc.type
             };
 
             var itemReviewedUrl = (nodeId) => {
-                return "http://coinform.eu/" + itemReviewedType(nodeId) + "?identifier=" + nodeId['identifier']
+                return "http://coinform.eu/" + itemReviewedType() + "?sentence=" + scope.ciDoc.title.replace(/ /g, '&')
             };
 
-            var createCoinformUserReview = (nodeId, coinformUserReviewSchema) => {
+            var createCoinformUserReview = (coinformUserReviewSchema) => {
                 coinformUserReviewSchema = getCoinformUserReviewSchema();
                 coinformUserReviewSchema.dateCreated = dateTime();
                 coinformUserReviewSchema.url = mockReviewUrl();
@@ -741,8 +721,8 @@ function (angular, app, _, d3, d3force) {
                 coinformUserReviewSchema.author.identifier = mockDevUser;
                 coinformUserReviewSchema.text = prompt("If you want, insert your review comment please:", "Write your comment here");
                 coinformUserReviewSchema.itemReviewed.context = "http://schema.org";
-                coinformUserReviewSchema.itemReviewed.type = itemReviewedType(nodeId);
-                coinformUserReviewSchema.itemReviewed.url = itemReviewedUrl(nodeId);
+                coinformUserReviewSchema.itemReviewed.type = itemReviewedType();
+                coinformUserReviewSchema.itemReviewed.url = itemReviewedUrl();
                 return coinformUserReviewSchema;
             }
 
@@ -778,7 +758,7 @@ function (angular, app, _, d3, d3force) {
 
             var handleAccurate = (nodeId) => {
                 return function () {
-                var accurateUserReview = createCoinformUserReview(nodeId);
+                var accurateUserReview = createCoinformUserReview();
                 accurateUserReview.reviewRating.ratingValue = "accurate";
                 if (!accurateUserReview.text || 
                 accurateUserReview.text == null ||
@@ -798,7 +778,7 @@ function (angular, app, _, d3, d3force) {
 
             var handleInaccurate = nodeId => {
                 return function() {
-                var inaccurateUserReview = createCoinformUserReview(nodeId);
+                var inaccurateUserReview = createCoinformUserReview();
                 inaccurateUserReview.reviewRating.ratingValue = "inaccurate";
                 if (!inaccurateUserReview.text || 
                 inaccurateUserReview.text == null ||
@@ -886,8 +866,6 @@ function (angular, app, _, d3, d3force) {
                     }
                 })
                 .attr("marker-mid", d => "url(#arrow)");
-            
-            //console.log('links: ', link)
 
             link.append("title")
                 .text(d => d.rel);
@@ -900,8 +878,6 @@ function (angular, app, _, d3, d3force) {
                     .join(svg_node)
                     .attr("stroke-width", 1.5)
                     .call(drag(simulation));
-
-            //console.log("nodes :", node)
             
             console.log("Setting node titles")
             node.append("title")
