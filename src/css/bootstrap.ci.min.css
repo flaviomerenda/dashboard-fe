@@ -1159,31 +1159,30 @@ div.flot-text{color:#333!important}
   display: flex;
 }
 
-.legend-side {
+.rev-graph-sidebar {
   text-align:center;
-  width: 50px;
-  background: #eee;
-  overflow: hidden;
-  cursor: pointer;
+  width: 60px;
   background-color: #fff;
-  border: 1px solid #e1e8ed;
-  border-radius: 5px;
 }
 
-.legend-side p {
-  padding: 10px 10px 10px 10px;
-  text-decoration: none;
-  font-size: 10px;
-  display: block;
+.rev-graph-sidebar button {
+  height: 40px;
+  width: 40px;
+  border: none;
+  background-color: #fff;
 }
 
-.brightness {
-  background-color: white;
-  display: inline-block;
-
+.rev-graph-sidebar img {
+  height: 25px;
+  width: 25px;
 }
-.brightness img:hover {
-  opacity: .5;
+
+.rev-graph-sidebar button:hover {
+  opacity: .3;
+}
+
+.rev-graph-sidebar button:focus {
+  outline: none;
 }
 
 .node {
@@ -1257,8 +1256,7 @@ div.flot-text{color:#333!important}
   overflow: hidden;
   cursor: pointer;
   background-color: #fff;
-  border: 1px solid #e1e8ed;
-  border-radius: 5px;
+  border: 0px solid #e1e8ed;
   max-width: 100%;
   max-height: 500px;
 }

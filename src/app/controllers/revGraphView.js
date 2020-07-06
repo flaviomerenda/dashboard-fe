@@ -479,6 +479,7 @@ function (angular, app, _, d3, d3force) {
                           if (selectedNode['@type'].endsWith("Review")) {
                               d3.select("#reviewNode_" + scope.data.mainNode)
                               .html(`
+                                     <br>
                                      <span class="rate" title="This review is accurate (help us improve our AI)" id="accRev">
                                      <a class="icon-ok"></a>
                                      <span class="accurate-stat" title="Number of Co-inform users who have rate this review as accurate"></span>
@@ -564,7 +565,7 @@ function (angular, app, _, d3, d3force) {
                 } else if (itType.endsWith("Reviewer")) {
                 return "#bot";
                 } else if (itType == "Sentence") {
-                return "#sent";
+                return "#singleSent";
                 } else if (itType == "Article") {
                 return "#article";
                 } else if (itType == "WebSite") {
@@ -966,8 +967,26 @@ function (angular, app, _, d3, d3force) {
             });
 
             scope.sidebarGraphEvent = function(nodeIconId){
+              // Sidebar actions
               var nodeList = node._groups[0];
-              var iconType = nodeIconId.split("_")[0]
+              var iconType = nodeIconId.split(":")[0]
+              var iconId = nodeIconId.split(":")[1]
+              var sideIconId = iconType + "_sideButton_" + iconId;
+              // Hide/show the selected sidebar icon
+              // Store the original opacity of a sidebar button
+              var selectedIcon = d3.select("#" + sideIconId)._groups[0][0]
+              var realIconOpacity = 1
+              // Define the current sidebar icon state
+              var iconState = selectedIcon.iconState ? false : true;
+              var newIconOpacity = iconState ? 0.3 : realIconOpacity;
+              // Hide or show the elements
+              selectedIcon.style.opacity = newIconOpacity;
+              // Update the real icon opacity
+              selectedIcon.origIconOpacity = realIconOpacity;
+              // Update whether or not the elements are active
+              selectedIcon.iconState = iconState;
+
+              // Iterate nodes
               var nod;
               for (nod of nodeList) {
                 if (nod.innerHTML.includes('#' + iconType)) {
@@ -980,14 +999,12 @@ function (angular, app, _, d3, d3force) {
                   var newNodeOpacity = nodActive ? 0 : realNodeOpacity;
                   var nodData = nod.__data__;
                   if (nodData == undefined) {continue;};
-                  //console.log('node data', nodData)
                   // Hide or show the elements
                   nod.getElementsByTagName('use')[0].style.opacity = newNodeOpacity;
                   // Update the real node opacity
                   nod.origNodeOpacity = realNodeOpacity;
                   // Update whether or not the elements are active
                   nod.active = nodActive;
-                  //console.log('nod', nod)
 
                   // Hide/show also related links
                   var linkList = link._groups[0];
@@ -1036,7 +1053,7 @@ function (angular, app, _, d3, d3force) {
                 };
               };
             };
-            }
+           }
           }
         };
     });

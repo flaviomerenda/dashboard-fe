@@ -1,20 +1,53 @@
 <div class="revGraphView">
 
-  <div class="legend-side">
-      <div class="brightness">
-          <div id="">
-              <p class="icon-info" title="Click on an icon below to hide/display a node type in the reviewGraph"></p>
-              <p><input type="image" ng-click="sidebarGraphEvent('tweet_'+data.mainNode)" title="Tweet" src='img/tweet_symbol.svg' style='vertical-align: middle' width="20" height="20"/></p>
-              <p><input type="image" ng-click="sidebarGraphEvent('revCred_'+data.mainNode)" title="Review Credibility" src='img/revCred_symbol.svg' style='vertical-align: middle' width="20" height="20"/></p>
-              <p><input type="image" ng-click="sidebarGraphEvent('claimRev_'+data.mainNode)" title="Claim Reviewed" src='img/claimRev_symbol.svg' style='vertical-align: middle' width="20" height="20"/></p>
-              <p><input type="image" ng-click="sidebarGraphEvent('bot_'+data.mainNode)" title="Bot" src='img/bot_symbol.svg' style='vertical-align: middle' width="20" height="20"/></p>
-              <p><input type="image" ng-click="sidebarGraphEvent('website_'+data.mainNode)" title="Web Site" src='img/website_symbol.svg' style='vertical-align: middle' width="20" height="20"/></p>
-              <p><input type="image" ng-click="sidebarGraphEvent('sent_'+data.mainNode)" title="Sentence" src='img/sent_symbol.svg' style='vertical-align: middle' width="20" height="20"/></p>
-              <p><input type="image" ng-click="sidebarGraphEvent('sentPair_'+data.mainNode)" title="Sentence Pair" src='img/sentPair_symbol.svg' style='vertical-align: middle' width="20" height="20"/> </p>
-              <p><input type="image" ng-click="sidebarGraphEvent('article_'+data.mainNode)" title="Article" src='img/article_symbol.svg' style='vertical-align: middle' width="20" height="20"/></p>
-              <p><input type="image" ng-click="sidebarGraphEvent('thing_'+data.mainNode)" title="Thing" src='img/thing_symbol.svg' style='vertical-align: middle' width="20" height="20"/></p>
-          </div>
-      </div>
+  <div class="rev-graph-sidebar">
+    <p>
+      <p class="icon-info" title="Click on an icon below to hide/display a node type in the reviewGraph"></p>
+    </p>
+    <p>
+      <button ng-click="sidebarGraphEvent('tweet:'+data.mainNode)" title="Tweet">
+        <img id="tweet_sideButton_{{data.mainNode}}" src='img/tweet_symbol.svg'/>
+      </button>
+    </p>
+    <p>
+      <button ng-click="sidebarGraphEvent('revCred:'+data.mainNode)" title="Review Credibility">
+        <img id="revCred_sideButton_{{data.mainNode}}" src='img/revCred_symbol.svg'/>
+      </button>
+    </p>
+    <p>
+      <button ng-click="sidebarGraphEvent('claimRev:'+data.mainNode)" title="Claim Reviewed">
+        <img id="claimRev_sideButton_{{data.mainNode}}" src='img/claimRev_symbol.svg'/>
+      </button>
+    <p>
+      <button ng-click="sidebarGraphEvent('bot:'+data.mainNode)" title="Bot">
+      <img id="bot_sideButton_{{data.mainNode}}" src='img/bot_symbol.svg'/>
+      </button>
+    </p>
+    <p>
+      <button ng-click="sidebarGraphEvent('website:'+data.mainNode)" title="Web Site" style='vertical-align: middle' width="20" height="20">
+        <img id="website_sideButton_{{data.mainNode}}" src='img/website_symbol.svg'/>
+      </button>
+    </p>
+    <p>
+      <button ng-click="sidebarGraphEvent('singleSent:'+data.mainNode)" title="Sentence">
+        <img id="singleSent_sideButton_{{data.mainNode}}" src='img/sent_symbol.svg'/>
+      </button>
+    </p>
+    <p>
+      <button ng-click="sidebarGraphEvent('sentPair:'+data.mainNode)" title="Sentence Pair"> 
+        <img id="sentPair_sideButton_{{data.mainNode}}" src='img/sentPair_symbol.svg'/>
+      </button>
+    </p>
+    <p>
+      <button ng-click="sidebarGraphEvent('article:'+data.mainNode)" title="Article">
+        <img id="article_sideButton_{{data.mainNode}}" src='img/article_symbol.svg'/>
+      </button>
+    </p>
+    <p>
+      <button ng-click="sidebarGraphEvent('thing:'+data.mainNode)" title="Thing">
+        <img id="thing_sideButton_{{data.mainNode}}" src='img/thing_symbol.svg'/>
+      </button>
+    </p>
   </div>
 
   <div class="rev-graph-view" review-graph-view style="overflow:hidden; position:relative">
@@ -30,6 +63,7 @@
       padding:30px;
       width:100%;
       height:100%;
+      overflow: auto;
       background-color: #fff;
     }
 
@@ -55,20 +89,18 @@
 
   </style>
 
-  <div class="legend-side">
-    <div id="">
+  <div class="rev-graph-sidebar">
+    <p>
       <p class="icon-info" title="Click on a graph node to display element information"></p>
-      <p><img src="img/node_click.png" title="Click on a graph node above" alt="click on a node" width="20" height="20"></p>
-      <p>
-         <div id="reviewNode_{{data.mainNode}}"></div>
-      </p>
-    </div>
+    </p>
+    <p>
+      <img src="img/node_click.png" title="Click on a graph node above" alt="click on a node" width="20" height="20">
+    </p>
+    <p>
+        <div id="reviewNode_{{data.mainNode}}"></div>
+    </p>
   </div>
-
   <table id="selectedNode_{{data.mainNode}}" class='table-review'>
   </table>
 
 </div>
-
-<br>
-<p></p>
