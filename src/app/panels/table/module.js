@@ -22,17 +22,17 @@ define([
     'app',
     'underscore',
     'kbn',
-    'moment',
+    'moment'
     //'showdown'
     // 'text!./pagination.html',
     // 'text!partials/querySelect.html'
 ],
-function (angular, app, _, kbn, moment) {
+       function (angular, app, _, kbn, moment) {
     'use strict';
 
     var module = angular.module('kibana.panels.table', []);
     app.useModule(module);
-    module.controller('table', function ($rootScope, $scope, $timeout, timer, fields,
+           module.controller('table', function ($rootScope, $scope, $timeout, timer, fields,
                                                 querySrv, dashboard, filterSrv, solrSrv, alertSrv) {
         $scope.panelMeta = {
             modals: [

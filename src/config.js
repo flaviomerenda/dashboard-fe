@@ -127,8 +127,7 @@ function (Settings) {
       'sunburst',
       'docviewer',
       'sankey',
-      'force',
-      'reviewGraph',
+      'force'
     ]
   });
 });
