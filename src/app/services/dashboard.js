@@ -137,7 +137,7 @@ function (angular, $, kbn, _, config, moment, Modernizr) {
                     self.dash_load(dashboard);
                     // No? Ok, grab default.json, its all we have now
                 } else {
-                    self.file_load('coinform');
+                    self.file_load('dev-fakeNewsNet.json');
                 }
             }
         };
