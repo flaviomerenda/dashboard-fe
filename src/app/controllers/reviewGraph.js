@@ -1,30 +1,25 @@
 /*
-  ## D3 Force Diagram Integrated with Banana.
+  ## D3 Review Graph integrated in the Table panel.
 */
 
 define([
     'angular',
     'app',
     'underscore',
-    'd3',
+    'd3v5',
     'd3-force',
   ],
 
-function (angular, app, _, d3, d3force) {
+function (angular, app, _, d3v5, d3force) {
     'use strict';
 
     var module = angular.module('kibana.controllers');
     app.useModule(module);
 
-    module.controller('revGraphView', function ($scope, querySrv, dashboard, $http, alertSrv) {
+    module.controller('reviewGraph', function ($scope, dashboard, $http, alertSrv) {
 
         $scope.init = function (ciDoc) {
-            //$scope.$on('refresh', function () {
-            //    $scope.get_data();
-            //  });
-            $scope.querySrv = querySrv;
             $scope.ciDoc = ciDoc;
-            console.log('Initialising revGraphView with ciDoc', ciDoc)
             $scope.get_data();
         };
             
@@ -60,27 +55,25 @@ function (angular, app, _, d3, d3force) {
               
                 // add group property to nodes and value property to links
                 // this is just so the current force chart implementation works, 
-                // TODO: modify the chart implementation to assign correct values to different 
-                // nodes based on their property values
                 var calcNodeType = function(d){
-                  var dt = d['@type'] || d['type'] || 'Thing';
-                  var bot = ['ClaimReviewNormalizer', 'SentenceEncoder']
-                  var org = ['Article', 'Tweet', 'WebSite', 'Dataset', 'Sentence', 'SentencePair']
-                  if (dt.endsWith('Review')) {
-                    return 'Review';
-                  } else if (dt == 'Rating') {
-                    return 'Review'; // incorrect, but OK for now, this is a bug upstream
-                  } else if (bot.includes(dt)) {
-                    return 'Bot';
-                  } else if (dt.endsWith('Reviewer')) {
-                    return 'Bot';
-                  } else if (org.includes(dt)) {
-                    return 'CreativeWork'; // content
-                  } else if (dt.endsWith('Organization')) {
-                    return 'Organization';
-                  } else {
-                    return dt;
-                  }
+                    var dt = d['@type'] || d['type'] || 'Thing';
+                    var bot = ['ClaimReviewNormalizer', 'SentenceEncoder']
+                    var org = ['Article', 'Tweet', 'WebSite', 'Dataset', 'Sentence', 'SentencePair']
+                    if (dt.endsWith('Review')) {
+                        return 'Review';
+                    } else if (dt == 'Rating') {
+                        return 'Review'; // incorrect, but OK for now, this is a bug upstream
+                    } else if (bot.includes(dt)) {
+                        return 'Bot';
+                    } else if (dt.endsWith('Reviewer')) {
+                        return 'Bot';
+                    } else if (org.includes(dt)) {
+                        return 'CreativeWork'; // content
+                    } else if (dt.endsWith('Organization')) {
+                        return 'Organization';
+                    } else {
+                        return dt;
+                    }
                 }
               
                 var calcNodeOpacity = function(d) {
@@ -189,7 +182,7 @@ function (angular, app, _, d3, d3force) {
                     return matching[0];
                   } 
                   else {
-                    return;
+                    return null;
                   }
                 }
               
@@ -230,7 +223,7 @@ function (angular, app, _, d3, d3force) {
                 }
               
                 var calcMainItemReviewed = function() {
-                  var nid = $scope.graph['mainNode'];
+                  var nid = graph['mainNode'];
                   if (nid == null) {
                     return "??";
                   }
@@ -312,11 +305,9 @@ function (angular, app, _, d3, d3force) {
             console.log('reviewGraph data: ', processedData)
 
             $scope.data = processedData
-            $scope.render = function () {
-              $scope.$broadcast('render');
-              $scope.$emit('render')
-              };
-            $scope.render()
+
+            // trigger rendering of the graph
+            $scope.$broadcast('render');
             });
         };
     });
@@ -327,7 +318,7 @@ function (angular, app, _, d3, d3force) {
         link: function (scope, element) {
             // Receive render events
             scope.$on('render', function () {
-            render_panel();
+              render_panel();
             });
 
             // Re-render if the window is resized
@@ -340,7 +331,6 @@ function (angular, app, _, d3, d3force) {
             element.html("");
             const links = scope.data.links.map(d => Object.create(d));
             const nodes = scope.data.nodes.map(d => Object.create(d));
-            console.log("Loaded", nodes.length, "nodes and", links.length, "links")
 
             var width = element.parent().width();
             var height = element.parent().width();
@@ -372,11 +362,7 @@ function (angular, app, _, d3, d3force) {
                 return 30;
             }
 
-            console.log("Creating svg node")
-            console.log("svg element: ", element[0])
-            console.log('d3: ', d3)
-
-            var svg = d3.select(element[0]).append("svg")
+            var svg = d3v5.select(element[0]).append("svg")
                 .attr("id", scope.data.mainNode)
                 .attr("width", width + margin.left + margin.right)
                 .attr("height", height + margin.top + margin.bottom);
@@ -400,48 +386,48 @@ function (angular, app, _, d3, d3force) {
             var isolate_force = function(force, nodeFilter) {
                 let init = force.initialize;
                 force.initialize = function() { 
-                let fnodes = nodes.filter(nodeFilter);
-                init.call(force, fnodes); };
+                  let fnodes = nodes.filter(nodeFilter);
+                  init.call(force, fnodes); 
+                };
                 return force;
             }
 
             var drag = function(simulation) {
               function dragstarted(d) {
-              if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+              if (!d3v5.event.active) simulation.alphaTarget(0.3).restart();
               d.fx = d.x;
               d.fy = d.y;
               }
               function dragged(d) {
-              d.fx = d3.event.x;
-              d.fy = d3.event.y;
+              d.fx = d3v5.event.x;
+              d.fy = d3v5.event.y;
               }
               function dragended(d) {
-              if (!d3.event.active) simulation.alphaTarget(0);
+              if (!d3v5.event.active) simulation.alphaTarget(0);
               d.fx = null;
               d.fy = null;
               }
-              return d3.drag()
+              return d3v5.drag()
                   .on("start", dragstarted)
                   .on("drag", dragged)
                   .on("end", dragended);
             }
 
             var svg_node = function(d) {
-              console.log('called svg node function on nodes: ', d)
               var result = d.append("g")
-              .attr("stroke", colorByGroup)
-              .attr("fill", colorByGroup);
+                .attr("stroke", colorByGroup)
+                .attr("fill", colorByGroup);
           
               var svg = result.append("use")
-                  .attr("xlink:href", calcSymbolId)
-                  .attr("width", 20)
-                  .attr("height", 20)
-                  .attr("transform", d => {
-                      let selectedFactor = (d.id == selectedNodeId) ? 2.0 : 1.0;
-                      let scale = (d.nodeScale || 1.0) * selectedFactor;
-                      return "scale(" + scale  + ")"
-                  })
-                  .attr("style", d => "opacity:" + (d.opacity || 0.8));
+                .attr("xlink:href", calcSymbolId)
+                .attr("width", 20)
+                .attr("height", 20)
+                .attr("transform", d => {
+                    let selectedFactor = (d.id == selectedNodeId) ? 2.0 : 1.0;
+                    let scale = (d.nodeScale || 1.0) * selectedFactor;
+                    return "scale(" + scale  + ")"
+                })
+                .attr("style", d => "opacity:" + (d.opacity || 0.8));
 
               svg.on("click", d => {
                   console.log("clicked on ", d);
@@ -452,46 +438,48 @@ function (angular, app, _, d3, d3force) {
                       return "scale(" + scale  + ")"
                   })
                   var selectedNode = d.__proto__
-                          d3.select("#selectedNode_" + scope.data.mainNode)
-                          .html("<p>" + node_as_html_table(selectedNode) + "</p>");
-                          if (selectedNode.rel == "itemReviewed") {
-                          }
-                          if (selectedNode['@type'].endsWith("Review")) {
-                              d3.select("#reviewNode_" + scope.data.mainNode)
-                              .html(`
-                                     <br>
-                                     <span class="rate" title="This review is accurate (help us improve our AI)" id="accRev">
-                                     <a class="icon-ok"></a>
-                                     <span class="accurate-stat" title="Number of Co-inform users who have rate this review as accurate"></span>
-                                     </span>
-                                     |
-                                     <span title="This review is inaccurate (help us improve our AI)" id="inaccRev">
-                                     <a class="icon-remove"></a>
-                                     <span class="accurate-stat" title="Number of Co-inform users who have rate this review as inaccurate"></span>
-                                     </span>
-                                    `
-                                   );
-                              }
-                            else {d3.select("#reviewNode_" + scope.data.mainNode).html('')}
-              
-                          // select neighborhood
-                          //selectedRelatedLinks = links.filter(function (i) { 
-                          //  return i.__proto__.source == d.__proto__.identifier });
-                          //selectedRelatedLink = selectedRelatedLinks.filter(function (i) { 
-                          //  return i.__proto__.rel == "itemReviewed" })[0].target.__proto__;
-              
-                          let isReview = typeof selectedNode == "object" && Object.keys(selectedNode).includes("@type") && selectedNode["@type"].endsWith("Review");
-                          console.log("selected node is review?", isReview, typeof d == "object", 
-                          Object.keys(d), Object.keys(d).includes("@type"));
-              
-                          d3.select("#accRev")
-                            .attr("hidden", isReview ? null : true)
-                            .on("click", handleAccurate(selectedNode))
+                  d3v5.select("#selectedNode_" + scope.data.mainNode)
+                    .html("<p>" + node_as_html_table(selectedNode) + "</p>");
+                  if (selectedNode.rel == "itemReviewed") {
+                  }
+                  if (selectedNode['@type'].endsWith("Review")) {
+                      d3v5.select("#reviewNode_" + scope.data.mainNode)
+                        .html(`
+                              <br>
+                              <span class="rate" title="This review is accurate (help us improve our AI)" id="accRev">
+                              <a class="icon-ok"></a>
+                              <span class="accurate-stat" title="Number of Co-inform users who have rate this review as accurate"></span>
+                              </span>
+                              |
+                              <span title="This review is inaccurate (help us improve our AI)" id="inaccRev">
+                              <a class="icon-remove"></a>
+                              <span class="accurate-stat" title="Number of Co-inform users who have rate this review as inaccurate"></span>
+                              </span>
+                            `
+                            );
+                  }
+                  else {
+                    d3v5.select("#reviewNode_" + scope.data.mainNode).html('')
+                  }
+      
+                  // select neighborhood
+                  //selectedRelatedLinks = links.filter(function (i) { 
+                  //  return i.__proto__.source == d.__proto__.identifier });
+                  //selectedRelatedLink = selectedRelatedLinks.filter(function (i) { 
+                  //  return i.__proto__.rel == "itemReviewed" })[0].target.__proto__;
+      
+                  let isReview = typeof selectedNode == "object" && Object.keys(selectedNode).includes("@type") && selectedNode["@type"].endsWith("Review");
+                  console.log("selected node is review?", isReview, typeof d == "object", 
+                  Object.keys(d), Object.keys(d).includes("@type"));
+      
+                  d3v5.select("#accRev")
+                    .attr("hidden", isReview ? null : true)
+                    .on("click", handleAccurate(selectedNode))
 
-                          d3.select("#inaccRev")
-                            .on("click", handleInaccurate(selectedNode))
+                  d3v5.select("#inaccRev")
+                    .on("click", handleInaccurate(selectedNode))
 
-                  });
+              });
 
               return result
             }
@@ -504,7 +492,7 @@ function (angular, app, _, d3, d3force) {
                 let targetY = hLevel * height / (1 + maxHLevel)
                 let hLevelFilter = n => n.hierarchyLevel == hLevel;
                 simulation.force("hierarchy_y_" + hLevel, 
-                isolate_force(d3.forceY(targetY), hLevelFilter))
+                isolate_force(d3v5.forceY(targetY), hLevelFilter))
                 });
             
             let groups = nodes.filter(n => typeof n.group == "number")
@@ -515,13 +503,12 @@ function (angular, app, _, d3, d3force) {
                 let targetX = group * width / (1 + maxGroup);
                 let groupFilter = n => n.group == group;
                 simulation.force("group_x_" + group,
-                isolate_force(d3.forceX(targetX), groupFilter));
+                isolate_force(d3v5.forceX(targetX), groupFilter));
             })
             
             var selectedNodeId = null;
 
-            // TODO: remove this? or define groups that make sense in the context of ClaimReviews
-            const scale = d3.scaleOrdinal(d3.schemeCategory10);
+            const scale = d3v5.scaleOrdinal(d3v5.schemeCategory10);
             //console.log("scale 0", scale(0), "1:", scale(1), "2:", scale(2))
             var colorByGroup = function(d) {
                 return scale(d.group + (d.hierarchyLevel || 0));
@@ -533,27 +520,37 @@ function (angular, app, _, d3, d3force) {
             var calcSymbolId = function(d) {
                 var itType = d["@type"]
                 if (typeof itType == "undefined") {
-                return "#thing";
-                } else if (itType == "NormalisedClaimReview") {
-                return "#revCred";
-                } else if (itType.endsWith("Review")) {
-                return "#claimRev";
-                } else if (itType == "ClaimReviewNormalizer") {
-                return "#bot";
-                } else if (itType == "SentenceEncoder") {
-                return "#bot";
-                } else if (itType.endsWith("Reviewer")) {
-                return "#bot";
-                } else if (itType == "Sentence") {
-                return "#singleSent";
-                } else if (itType == "Article") {
-                return "#article";
-                } else if (itType == "WebSite") {
-                return "#website";
-                } else if (itType == "SentencePair") {
-                return "#sentPair";
-                } else {
-                return "#thing";
+                  return "#thing";
+                } 
+                else if (itType == "NormalisedClaimReview") {
+                  return "#revCred";
+                } 
+                else if (itType.endsWith("Review")) {
+                  return "#claimRev";
+                } 
+                else if (itType == "ClaimReviewNormalizer") {
+                  return "#bot";
+                } 
+                else if (itType == "SentenceEncoder") {
+                  return "#bot";
+                } 
+                else if (itType.endsWith("Reviewer")) {
+                  return "#bot";
+                } 
+                else if (itType == "Sentence") {
+                  return "#singleSent";
+                } 
+                else if (itType == "Article") {
+                  return "#article";
+                } 
+                else if (itType == "WebSite") {
+                  return "#website";
+                } 
+                else if (itType == "SentencePair") {
+                  return "#sentPair";
+                } 
+                else {
+                  return "#thing";
                 }
             }
 
@@ -640,9 +637,8 @@ function (angular, app, _, d3, d3force) {
             }
 
             // create usr feedback (review)
-
             var getCoinformUserReviewSchema = () => {
-                var coinformUserReviewDict = `{
+                var coinformUserReviewDict = {
                 "context": "http://schema.org",
                 "type": "CoinformUserReview",
                 "url": "",
@@ -675,9 +671,9 @@ function (angular, app, _, d3, d3force) {
                 },
                 "dateCreated": "",
                 "requestFactCheck": true
-            }`;
+            };
 
-            return JSON.parse(coinformUserReviewDict);
+            return coinformUserReviewDict;
             }
 
             const coinformUrl = "http://coinform.eu/";
@@ -690,11 +686,6 @@ function (angular, app, _, d3, d3force) {
 
             var mockUserUrl = () => {
                 return coinformUsrPath + "/" + mockDevUser
-            };
-
-            var mockReviewUrl = () => {
-                var mockId = Math.random().toString().slice(2,);
-                return mockUserUrl() + "/" + mockId
             };
 
             var accurateSupportingTextReview = () => {
@@ -716,7 +707,6 @@ function (angular, app, _, d3, d3force) {
             var createCoinformUserReview = (coinformUserReviewSchema) => {
                 coinformUserReviewSchema = getCoinformUserReviewSchema();
                 coinformUserReviewSchema.dateCreated = dateTime();
-                coinformUserReviewSchema.url = mockReviewUrl();
                 coinformUserReviewSchema.author.url = mockUserUrl();
                 coinformUserReviewSchema.author.identifier = mockDevUser;
                 coinformUserReviewSchema.text = prompt("If you want, insert your review comment please:", "Write your comment here");
@@ -796,39 +786,19 @@ function (angular, app, _, d3, d3force) {
                 }
             }
 
-            var drag = function(simulation) {
-                function dragstarted(d) {
-                if (!d3.event.active) simulation.alphaTarget(0.3).restart();
-                d.fx = d.x;
-                d.fy = d.y;
-                }
-                function dragged(d) {
-                d.fx = d3.event.x;
-                d.fy = d3.event.y;
-                }
-                function dragended(d) {
-                if (!d3.event.active) simulation.alphaTarget(0);
-                d.fx = null;
-                d.fy = null;
-                }
-                return d3.drag()
-                    .on("start", dragstarted)
-                    .on("drag", dragged)
-                    .on("end", dragended);
-            }
-
             var node_as_key_vals = (node, maxDepth, privateFields) => Object.entries(node)
-                .filter(entry => !privateFields.includes(entry[0]))
-                .flatMap(entry => {
+              .filter(entry => !privateFields.includes(entry[0]))
+              .flatMap(entry => {
                 let [key, val] = entry;
                 if (typeof val == "object" && maxDepth > 0) {
-                    return node_as_key_vals(val, maxDepth - 1, privateFields)
-                    .map(entry2 => [key + "." + entry2[0], entry2[1]]);
-                } else if (typeof val == "object") {
-                    return [[key, "Object"]];
+                  return node_as_key_vals(val, maxDepth - 1, privateFields)
+                  .map(entry2 => [key + "." + entry2[0], entry2[1]]);
+                } 
+                else if (typeof val == "object") {
+                  return [[key, "Object"]];
                 }
                 return [entry]
-                })
+              })
 
             var node_as_html_table = function(node) {
                 const privateFields = ["id", "hierarchyLevel", "group", "opacity", "nodeSize", "nodeScale"];
@@ -910,10 +880,10 @@ function (angular, app, _, d3, d3force) {
                 });
 
             console.log("Register zoom handler")
-            var zoom = d3.zoom()
+            var zoom = d3v5.zoom()
                 .scaleExtent([0.1, 4])
                 .on("zoom", function () {
-                container.attr("transform", d3.event.transform);
+                container.attr("transform", d3v5.event.transform);
                 });
 
             svg.call(zoom);
@@ -936,8 +906,8 @@ function (angular, app, _, d3, d3force) {
               link.classed("link-active", function(o) {
                 return o.source === d || o.target === d ? true : false;
               });
-              d3.select(this).classed("node-active", true);
-              d3.select(this).select("use").transition() // TODO: fix node size growth
+              d3v5.select(this).classed("node-active", true);
+              d3v5.select(this).select("use").transition() // TODO: fix node size growth
                 .duration(750)
                 .attr("r", (d.nodeScale * 2 + 12) * 1.5);
             })
@@ -945,7 +915,7 @@ function (angular, app, _, d3, d3force) {
             node.on("mouseout", function(d) {
               node.classed("node-active", false);
               link.classed("link-active", false);
-              d3.select(this).select("use").transition() // TODO: fix link size growth
+              d3v5.select(this).select("use").transition() // TODO: fix link size growth
                 .duration(750)
                 .attr("r", d.nodeScale * 2 + 12);
             });
@@ -958,7 +928,7 @@ function (angular, app, _, d3, d3force) {
               var sideIconId = iconType + "_sideButton_" + iconId;
               // Hide/show the selected sidebar icon
               // Store the original opacity of a sidebar button
-              var selectedIcon = d3.select("#" + sideIconId)._groups[0][0]
+              var selectedIcon = d3v5.select("#" + sideIconId)._groups[0][0]
               var realIconOpacity = 1
               // Define the current sidebar icon state
               var iconState = selectedIcon.iconState ? false : true;

@@ -130,8 +130,8 @@
                              |noXml|urlLink|stringify"></td>
                 </tr>
               </table>
-              <div class='' ng-switch-when="graphView">
-                <div ng-controller='revGraphView' ng-init="init(event.kibana._source)" ng-include="'app/partials/revGraphView.html'"></div>
+              <div ng-switch-when="graphView">
+                <div ng-controller='reviewGraph' ng-init="init(event.kibana._source)" ng-include="'app/partials/reviewGraph.html'"></div>
               </div>
               <pre style="white-space:pre-wrap"  ng-bind-html="without_kibana(event)|tableJson:2" ng-switch-when="json"></pre>
               <pre ng-bind-html="without_kibana(event)|tableJson:1" ng-switch-when="raw"></pre>

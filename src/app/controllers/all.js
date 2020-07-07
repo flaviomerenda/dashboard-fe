@@ -4,5 +4,5 @@ define([
     './row',
     './sideColumn',
     './ciDocument',
-    './revGraphView',
+    './reviewGraph',
 ], function () {});
