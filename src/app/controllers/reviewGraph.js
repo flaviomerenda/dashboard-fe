@@ -312,7 +312,7 @@ function (angular, app, _, d3v5, d3force) {
         };
     });
 
-    module.directive('reviewGraphView', function (dashboard, alertSrv) {
+    module.directive('reviewGraphDir', function (dashboard, alertSrv) {
         return {
         restrict: 'A',
         link: function (scope, element) {
@@ -371,7 +371,7 @@ function (angular, app, _, d3v5, d3force) {
 
             var link_force = d3force.forceLink(links)
                 .id(function (d) {
-                return d.id;
+                    return d.id;
                 })
                 .distance(calcLinkDistance) // let distance depend on the type of relation?
 
@@ -394,18 +394,18 @@ function (angular, app, _, d3v5, d3force) {
 
             var drag = function(simulation) {
               function dragstarted(d) {
-              if (!d3v5.event.active) simulation.alphaTarget(0.3).restart();
-              d.fx = d.x;
-              d.fy = d.y;
+                if (!d3v5.event.active) simulation.alphaTarget(0.3).restart();
+                d.fx = d.x;
+                d.fy = d.y;
               }
               function dragged(d) {
-              d.fx = d3v5.event.x;
-              d.fy = d3v5.event.y;
+                d.fx = d3v5.event.x;
+                d.fy = d3v5.event.y;
               }
               function dragended(d) {
-              if (!d3v5.event.active) simulation.alphaTarget(0);
-              d.fx = null;
-              d.fy = null;
+                if (!d3v5.event.active) simulation.alphaTarget(0);
+                d.fx = null;
+                d.fy = null;
               }
               return d3v5.drag()
                   .on("start", dragstarted)
@@ -420,8 +420,6 @@ function (angular, app, _, d3v5, d3force) {
           
               var svg = result.append("use")
                 .attr("xlink:href", calcSymbolId)
-                .attr("width", 20)
-                .attr("height", 20)
                 .attr("transform", d => {
                     let selectedFactor = (d.id == selectedNodeId) ? 2.0 : 1.0;
                     let scale = (d.nodeScale || 1.0) * selectedFactor;
@@ -830,9 +828,10 @@ function (angular, app, _, d3v5, d3force) {
                 .attr("stroke-dasharray", d => { // some relations use dashed lines
                     var rel = d.rel;
                     if (rel == "itemReviewed") {
-                    return "2 1";
-                    } else {
-                    return null;
+                        return "2 1";
+                    }
+                    else {
+                        return null;
                     }
                 })
                 .attr("marker-mid", d => "url(#arrow)");
@@ -862,7 +861,6 @@ function (angular, app, _, d3v5, d3force) {
                     //.attr("y2", d => d.target.y)
                     
                     .attr("points", d => {
-                    //console.log('node', d)
                     var src = d.source.x + "," + d.source.y;
                     var tgt = d.target.x + "," + d.target.y;
                     
