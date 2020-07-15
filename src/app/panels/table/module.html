@@ -89,7 +89,7 @@
                 View:
                 <a class="link" ng-class="{'strong':event.kibana.view == 'custom'}" ng-click="event.kibana.view = 'custom'">Doc+Review</a> /
                 <a class="link" ng-class="{'strong':event.kibana.view == 'table'}" ng-click="event.kibana.view = 'table'">Table</a> /
-                <a class="link" ng-class="{'strong':event.kibana.view == 'graphView'}" ng-click="event.kibana.view = 'graphView'">reviewGraph</a>
+                <a class="link" ng-class="{'strong':event.kibana.view == 'graph'}" ng-click="event.kibana.view = 'graph'">reviewGraph</a>
                 <!--
                 <a class="link" ng-class="{'strong':event.kibana.view == 'json'}" ng-click="event.kibana.view = 'json'">JSON</a> /
                 <a class="link" ng-class="{'strong':event.kibana.view == 'raw'}" ng-click="event.kibana.view = 'raw'">Raw</a>
@@ -130,7 +130,7 @@
                              |noXml|urlLink|stringify"></td>
                 </tr>
               </table>
-              <div ng-switch-when="graphView">
+              <div ng-switch-when="graph">
                 <div ng-controller='reviewGraph' ng-init="init(event.kibana._source)" ng-include="'app/partials/reviewGraph.html'"></div>
               </div>
               <pre style="white-space:pre-wrap"  ng-bind-html="without_kibana(event)|tableJson:2" ng-switch-when="json"></pre>
