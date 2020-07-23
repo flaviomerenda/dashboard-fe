@@ -5,53 +5,33 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
-   id="svg2098"
-   version="1.1"
    width="10"
    height="10"
-   viewBox="0 0 15 15">
+   viewBox="0 0 15 15"
+   version="1.1"
+   id="svg-thing">
   <title
-     id="title2134">article</title>
+     id="title-thing">thing</title>
   <defs
-     id="defs2092" />
+     id="defs-thing" />
   <metadata
-     id="metadata2095">
+     id="metadata-thing">
     <rdf:RDF>
       <cc:Work
          rdf:about="">
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title>article</dc:title>
+        <dc:title>thing</dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <path
      d="m 1.6361987,1.1082787 c -0.29247,0 -0.52792,0.23712 -0.52792,0.53168 V 13.971129 c 0,0.29448 0.23545,0.53155 0.52792,0.53155 H 13.974779 c 0.29263,0 0.52811,-0.23707 0.52811,-0.53155 V 1.6399587 c 0,-0.29445 -0.23548,-0.53157 -0.52811,-0.53157 H 1.6361987 Z"
      style="fill:none;stroke:#ffffff;stroke-width:2.1497395;stroke-linecap:round;stroke-linejoin:round"
-     id="path1097" />
+     />
   <path
      d="m 1.6361987,1.1082787 c -0.29247,0 -0.52792,0.23712 -0.52792,0.53168 V 13.971129 c 0,0.29448 0.23545,0.53155 0.52792,0.53155 H 13.974779 c 0.29263,0 0.52811,-0.23707 0.52811,-0.53155 V 1.6399587 c 0,-0.29445 -0.23548,-0.53157 -0.52811,-0.53157 H 1.6361987 Z"
      style="fill:#ffffff;fill-rule:evenodd;stroke:#000000;stroke-width:0.82682288;stroke-linecap:round;stroke-linejoin:round"
-     id="rect812" />
-  <path
-     id="rect912"
-     style="fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:1.32293558;stroke-linecap:round;stroke-linejoin:round"
-     d="m 9.4894087,6.1327987 c -0.31212,0 -0.56339,0.25127 -0.56339,0.56339 v 2.21856 c 0,0.31212 0.25127,0.56339 0.56339,0.56339 h 2.2185603 c 0.31212,0 0.56339,-0.25127 0.56339,-0.56339 v -2.21856 c 0,-0.31212 -0.25127,-0.56339 -0.56339,-0.56339 z" />
-  <path
-     id="path842"
-     style="fill:none;stroke:#000000;stroke-width:1.32291102;stroke-linecap:round;stroke-linejoin:round"
-     d="M 3.3399487,3.3407487 H 12.271359" />
-  <path
-     id="path844"
-     style="fill:none;stroke:#000000;stroke-width:1.32293558;stroke-linecap:round;stroke-linejoin:round"
-     d="m 3.3399487,6.3473587 2.86792,-0.0453" />
-  <path
-     id="path845"
-     style="fill:none;stroke:#000000;stroke-width:1.32293558;stroke-linecap:round;stroke-linejoin:round"
-     d="m 3.3399487,9.3088987 h 2.84082" />
-  <path
-     id="path914"
-     style="fill:none;stroke:#000000;stroke-width:1.3229146;stroke-linecap:round;stroke-linejoin:round"
-     d="M 3.3401387,12.270339 H 12.271259" />
-</svg>
+     />
+  </svg>

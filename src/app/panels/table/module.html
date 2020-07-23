@@ -89,13 +89,11 @@
                 View:
                 <a class="link" ng-class="{'strong':event.kibana.view == 'custom'}" ng-click="event.kibana.view = 'custom'">Doc+Review</a> /
                 <a class="link" ng-class="{'strong':event.kibana.view == 'table'}" ng-click="event.kibana.view = 'table'">Table</a> /
+                <a class="link" ng-class="{'strong':event.kibana.view == 'graph'}" ng-click="event.kibana.view = 'graph'">reviewGraph</a>
                 <!--
                 <a class="link" ng-class="{'strong':event.kibana.view == 'json'}" ng-click="event.kibana.view = 'json'">JSON</a> /
                 <a class="link" ng-class="{'strong':event.kibana.view == 'raw'}" ng-click="event.kibana.view = 'raw'">Raw</a>
                 -->
-                <button type="button" class="btn btn-primary"
-                        ng-show="panel.withReviewGraph"
-                        ng-click="displayReviewGraph(event)">Display Review Graph</button>
                 <i class="link pull-right icon-chevron-up" ng-click="toggle_details(event)"></i>
               </span>
               <div class='' ng-switch-when="custom">
@@ -109,6 +107,7 @@
                   -->
                   <th class='wideCol'>Value</th>
                 </thead>
+
                 <tr ng-repeat="(key,value) in event.kibana._source" ng-class-odd="'odd'">
                   <td>{{key}}</td>
                   <!-- 
@@ -127,12 +126,15 @@
                              |noXml|urlLink|stringify"></td>
                 </tr>
               </table>
-              
+              <div ng-switch-when="graph">
+                <div ng-controller='reviewGraph' ng-init="init(event.kibana._source)" ng-include="'app/partials/reviewGraph.html'"></div>
+              </div>
               <pre style="white-space:pre-wrap"  ng-bind-html="without_kibana(event)|tableJson:2" ng-switch-when="json"></pre>
               <pre ng-bind-html="without_kibana(event)|tableJson:1" ng-switch-when="raw"></pre>
             </td>
             <td>
-              </td>
+
+            </td>
           </tr>
         </tbody>
       </table>
