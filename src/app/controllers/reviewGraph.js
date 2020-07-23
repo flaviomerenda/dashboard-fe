@@ -1150,12 +1150,16 @@ define(
 
                 var resetGraphAttributes = function() {
                     // reset attributes of each node (opacity, opacityFilter)
-                    nodes.forEach(n=> (Object.getPrototypeOf(n).opacity = Object.getPrototypeOf(n).originalOpacity) && 
-                        (Object.getPrototypeOf(n).opacityFilter = false));
+                    nodes.forEach(n => {
+                        var np = Object.getPrototypeOf(n);
+                        (np.opacity = np.originalOpacity) && (np.opacityFilter = false);
+                    });
                     updateNodeIconOpacity(d3v5.select("#nodeGroup_" + graph.id).selectAll("use"));
                     // reset attributes of each link (opacity, opacityFilter)
-                    links.forEach(l=> (Object.getPrototypeOf(l).opacity = Object.getPrototypeOf(l).originalOpacity) && 
-                        (Object.getPrototypeOf(l).opacityFilter = false));
+                    links.forEach(l => {
+                        var lp = Object.getPrototypeOf(l);
+                        (lp.opacity = lp.originalOpacity) && (lp.opacityFilter = false);
+                    });
                     updateLinkIconOpacity(d3v5.select("#linkGroup_" + graph.id).selectAll("polyline"));
                     // reset activation flag of each node
                     nodes.forEach(d=> Object.getPrototypeOf(d).enabledNode = true)
