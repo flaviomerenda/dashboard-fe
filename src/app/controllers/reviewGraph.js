@@ -23,45 +23,22 @@ define(
             // Nodes and links are generated taking into account different features.
             // A force simulation spreads out nodes by their hierarchy and groups them by node type.
             // The controller also manages click/tooltip/sidebar/table events.
-
             $scope.init = function (ciDoc) {
                 $scope.ciDoc = ciDoc;
-                $scope.get_data();
+                $scope.getReviewGraph($scope.ciDoc);
             };
-                
-            $scope.get_data = function () {
-                // Execute the search and get results
-                let doc_id = $scope.ciDoc.id;
-                let baseUrl = dashboard.current.solr.server;
-                let collection = dashboard.current.solr.core_name;
-                $http({
-                method: 'GET',
-                url: baseUrl + "/reviewGraph/" + collection + "?id=" + doc_id
-                }).error(function(data, status) {
-                if(status === 0) {
-                alertSrv.set('Error', 'Could not retrieve Review Graph at '+baseUrl+
-                        '. Please ensure that the server is reachable from your system.' ,'error');
-                } else {
-                alertSrv.set('Error','Could not retrieve Review Graph data from server (Error status = '+status+')','error');
-                }
-                }).success(function(data, status) {
-                let result = data['results'][0]
-                //console.log('Got response back from server for doc_id: ', result['doc_id'], result);
-                $scope.reviewGraph = result['reviewGraph'];
-                if ($scope.reviewGraph == null) {
-                alertSrv.set('Warning', 'No review available for this document. Sorry.');
-                } else {
-                console.log('Retrieved review graph with', $scope.reviewGraph['nodes'].length, 'nodes and', $scope.reviewGraph['links'].length, 'links');
-                //TODO: trigger display of graph
-                }
+            
+            // Load graph from json and add chart-specific fields to nodes and links
+            // The chart-specific fields are tailored to the d3-force requirements 
+            $scope.getReviewGraph = function (doc) {
 
+                // preprocess the reviewGraph
                 var preProcessedGraph = function(graph) {
-                    //Load graph from json and add chart-specific fields to nodes and links
-                    //The chart-specific fields are tailored to the d3-force requirements 
-                
                     // add group property to nodes and value property to links
                     // this is just so the current force chart implementation works, 
-                    var calcNodeType = function(d){
+
+                    // extract node type
+                    var calcNodeType = function(d) {
                         var dt = d['@type'] || d['type'] || 'Thing';
                         var bot = ['ClaimReviewNormalizer', 'SentenceEncoder']
                         var org = ['Article', 'Tweet', 'WebSite', 'Dataset', 'Sentence', 'SentencePair']
@@ -88,6 +65,7 @@ define(
                         }
                     }
                 
+                    // calculate node opacity based on its attributes
                     var calcNodeOpacity = function(d) {
                         var dt = calcNodeType(d);
                         var minOpacity = 0.2;
@@ -104,7 +82,7 @@ define(
                                 return calcNodeOpacity(revNode);
                             } 
                             else {
-                                minOpacity;
+                                return minOpacity;
                             }
                         } 
                         else {
@@ -114,11 +92,12 @@ define(
                                 return calcNodeOpacity(revNode);
                             }
                             else {
-                                minOpacity;
+                                return minOpacity;
                             }
                         }
                     }
-    
+                    
+                    // calculate link opacity based on its attributes
                     var calcLinkOpacity = function(link) {
                         var rel = link['rel'];
                         var sent = ['sentA', 'sentB'];
@@ -130,7 +109,7 @@ define(
                             return calcNodeOpacity($scope.nodeById(link['target']));
                         } 
                         else if (author.includes(rel)) {
-                            return 0.4; // calcNodeOpacity($scope.nodeById(link['source']))
+                            return 0.4;
                         } 
                         else if (rel == 'itemReviewed') {
                             return calcNodeOpacity($scope.nodeById(link['source']));
@@ -146,10 +125,12 @@ define(
                         }
                     }
                 
+                    // calculate link value
                     var calcLinkValue = function(link) {
-                        return 2.0; // rtype2i[e.get('rel', 'relatedTo')]
+                        return 2.0;
                     }
                 
+                    // calculate node size based on its type
                     var calcNodeSize = function(d) {
                         var minSize = 10;
                         var maxSize = 30;
@@ -169,21 +150,22 @@ define(
                         }
                     }
                 
+                    // calculate node scale
                     var calcNodeScale = function(d) {
                         var maxScale = 2.5; 
                         var maxReviewCount = 20;
                         var dt1 = d['@type'] || d['type'] || 'Thing';
-                        var dt = calcNodeType(d) 
-                        if (dt1 == 'NormalisedClaimReview') { //ground cred signal
+                        var dt2 = calcNodeType(d) 
+                        if (dt1 == 'NormalisedClaimReview') {
                             return maxScale;
                         }
-                        if (dt.endsWith('Review')) {
+                        if (dt2.endsWith('Review')) {
                             var rating = d['reviewRating'] || {};
                             var revCnt = Math.min(maxReviewCount, rating['reviewCount'] || 1);
                             var rate = revCnt / maxReviewCount;
                             return Math.max(1.0, maxScale*rate);
                         }
-                        else if (dt == 'CreativeWork') {
+                        else if (dt2 == 'CreativeWork') {
                             var revN = lookupSubject(d, 'itemReviewed');
                             if (revN) {
                                 return calcNodeScale(revN);
@@ -197,8 +179,9 @@ define(
                         }
                     }
                 
+                    // get node by its id
                     $scope.nodeById = function(nid) {
-                        var matching = graph['nodes'].filter(n => n['identifier'] == nid);
+                        var matching = graph['nodes'].filter(n => n['id'] == nid);
                         if (matching.length > 0) {
                             return matching[0];
                         }
@@ -207,6 +190,7 @@ define(
                         }
                     }
                 
+                    // look for linked nodes
                     var lookupNodes = function(qnode, qrel, qnodeRole) {
                         if ('id' in qnode == false) {
                             console.log('Cannot lookup triple for node without id. Node: ', qnode);
@@ -219,10 +203,14 @@ define(
                             var resRole = 'source';
                         };
                         var qnodeId = qnode['id'];
-                        var resIds = graph['links'].filter(link => ((link['rel'] == qrel) || (link['rel'] == "basedOn")) && (qnodeId == link[qnodeRole])).map(link => link[resRole])
+                        // TODO: fix the coinfo-apy bug and remove the option "basedOn"
+                        var resIds = graph['links'].filter(link => ((link['rel'] == qrel) || 
+                                                                    (link['rel'] == "basedOn")) && 
+                                                                    (qnodeId == link[qnodeRole])).map(link => link[resRole])
                         return resIds.map(n => $scope.nodeById(n));
                     }
                 
+                    // look for respective targer node
                     var lookupSubject = function(node, rel) {
                         var matchingNodes = lookupNodes(node, rel, 'target');
                         if (matchingNodes.length == 0) {
@@ -233,16 +221,35 @@ define(
                         }
                     }
                     
-                    $scope.lookupObject = function(node, rel) {
+                    // look for respective source node
+                    $scope.lookupObject = function(node, rel, searchCriticalPath=false) {
                         var matchingNodes = lookupNodes(node, rel, 'source');
                         if (matchingNodes.length == 0) {
                             return undefined;
+                        }
+                        if (searchCriticalPath == true) {
+                            if (node.hierarchyLevel == 0) {
+                                if (rel == 'isBasedOn') {
+                                    // filter the right first critical node 
+                                    // (it will be removed when acred will take care of the criticalPath)
+                                    var filteredMatching = matchingNodes.filter(n => 
+                                        n.reviewRating.confidence == node.reviewRating.confidence)
+                                    return filteredMatching[0];
+                                }
+                                else {
+                                    return matchingNodes[0];
+                                }
+                            }
+                            else {
+                                return matchingNodes[0];
+                            }
                         }
                         else {
                             return matchingNodes[0];
                         }
                     }
                 
+                    // calculate the main itemreviewed
                     var calcMainItemReviewed = function() {
                         var nid = graph['mainNode'];
                         if (nid == null) {
@@ -260,6 +267,7 @@ define(
                         }
                     }
                 
+                    // calculate the node hierarchy
                     var calcNodeHierarchy = function(d) {
                         var dt = calcNodeType(d);
                         var topNid = graph['mainNode'];
@@ -307,20 +315,23 @@ define(
                             var nid = n['identifier'] || n['@id'] || n['url'];
                             n['id'] = nid;
                         }
-                        for (n of graph['nodes']) {
+                        for (var n of graph['nodes']) {
                             var hlevel = calcNodeHierarchy(n);
                             n['hierarchyLevel'] = hlevel;
                         }
                         for (n of graph['nodes']) {
                             var nt = calcNodeType(n);
                             n['group'] = ntypes.indexOf(nt);
-                            n['opacity'] = calcNodeOpacity(n);
+                            n['originalOpacity'] = calcNodeOpacity(n);
+                            n['opacity'] = n['originalOpacity'];
                             n['nodeSize'] = calcNodeSize(n);
                             n['nodeScale'] = calcNodeScale(n);
+                            n['enabledNode'] = true
                         }
                         for (var l of graph['links']) {
                             l['value'] = calcLinkValue(l);
-                            l['opacity'] = calcLinkOpacity(l);
+                            l['originalOpacity'] = calcLinkOpacity(l);
+                            l['opacity'] = l['originalOpacity'];
                         };
                         graph['mainItemReviewed'] = calcMainItemReviewed();
                         graph['mainNodeLabel'] = $scope.ciDoc.credibility_label
@@ -337,26 +348,30 @@ define(
                     return processedGraph;
                 }
 
-                var processedData = preProcessedGraph($scope.reviewGraph)
-                console.log('reviewGraph data: ', processedData)
+                // request the corresponding reviewGraph
+                let rg = solrSrv.fetchReviewGraph(doc);
+                rg.success(function(data, status) {
+                    var result = data['results'][0]
+                    $scope.reviewGraph = result['reviewGraph'];
+                    if ($scope.reviewGraph == null) {
+                        alertSrv.set('Warning', 'No review available for this document. Sorry.');
+                    }
 
-                $scope.graph = processedData
+                    var processedData = preProcessedGraph($scope.reviewGraph)
+                    if (DEBUG) {console.debug('reviewGraph data: ', processedData)}
 
-                // trigger rendering of the graph
-                $scope.$broadcast('render');
+                    $scope.graph = processedData
+
+                    // trigger rendering of the graph
+                    $scope.renderGraph($scope.graph);
                 });
             };
 
-            // Receive render event
-            $scope.$on('render', function () {
-            render_panel();
-            });
-
-            // Function for rendering panel
-            function render_panel() {
+            // Function for rendering graph
+            $scope.renderGraph = function (graph) {
                 // get nodes and links
-                const nodes = $scope.graph.nodes.map(d => Object.create(d));
-                const links = $scope.graph.links.map(d => Object.create(d));
+                const nodes = graph.nodes.map(d => Object.create(d));
+                const links = graph.links.map(d => Object.create(d));
 
                 // get the current element where to add the graph
                 // get the height and width parent values
@@ -365,11 +380,12 @@ define(
                 var height = currEl.parentNode.clientHeight;
 
                 var svg = d3v5.select(currEl).append("svg")
-                    .attr("id", "svg_" + $scope.graph.id)
-                    .attr("class", "rev-graph-svg")
+                    .attr("id", "svg_" + graph.id)
+                    .attr("class", "review-graph-svg")
                     .attr("width", width)
                     .attr("height", height)
 
+                // TODO: transfer these values to a config file
                 var calcLinkDistance = function(link) {
                     var rel = link.rel || "isRelatedTo";
                     if (rel == "sentA") { //sentPair to query sent
@@ -401,22 +417,25 @@ define(
 
                 var container = svg.append("g")
                     .attr("class", "review-graph-container")
-                    .attr("id", "container_" + $scope.graph.id);
+                    .attr("id", "container_" + graph.id);
 
+                // applies the force to the source and target node of each link.
                 var link_force = d3force.forceLink(links)
                     .id(function (d) {
                         return d.id;
                         })
                     .distance(calcLinkDistance); // let distance depend on the type of relation
 
-                console.log("defining forceSimulation")
+                console.log("Defining forceSimulation")
 
                 var simulation = d3force.forceSimulation()
+                    // TODO: transfer -400 value to a config file
                     .force("charge_force", d3force.forceManyBody().strength(-400))
                     .force("center_force", d3force.forceCenter(width / 2, height / 2))
                     .nodes(nodes)
                     .force("links", link_force);
 
+                // assingn a force to a node subset
                 var isolate_force = function(force, nodeFilter) {
                     let init = force.initialize;
                     force.initialize = function() { 
@@ -426,6 +445,8 @@ define(
                     return force;
                 }
 
+                // these functions allow to move the pointer to an object, 
+                // press and hold to grab it and “drag” the object to a new location
                 var drag = function(simulation) {
                     function dragstarted(d) {
                         if (!d3v5.event.active) {
@@ -455,8 +476,9 @@ define(
                 let hLevels = nodes.filter(n => typeof n.hierarchyLevel == "number")
                     .map(n => n.hierarchyLevel || 0);
                 let maxHLevel = Math.max(...hLevels);
-                console.log("Max HLevel: ", maxHLevel, "of", hLevels);
-                // assign a simulation force depending by the node hierarchy level
+                if (DEBUG) {console.debug("Max HLevel: ", maxHLevel, "of", hLevels)};
+
+                // assign a simulation force depending by the node hierarchy level on the horizontal axis
                 [...Array(maxHLevel).keys()].forEach(hLevel => {
                     let targetY = hLevel * height / (1 + maxHLevel)
                     let hLevelFilter = n => n.hierarchyLevel == hLevel;
@@ -464,10 +486,11 @@ define(
                     isolate_force(d3v5.forceY(targetY), hLevelFilter))
                     });
                 
+                // assign a simulation force depending by the node group on the vertical axis
                 /*let groups = nodes.filter(n => typeof n.group == "number")
                     .map(n => n.group || 0)
                 let maxGroup = Math.max(...groups);
-                console.log("Max Groups: ", maxGroup, "of", groups);
+                if (DEBUG) {console.debug("Max Groups: ", maxGroup, "of", groups);}
                 // assign a simulation force depending by the node group
                 [...Array(maxGroup).keys()].forEach(group => {
                     let targetX = group * width / (1 + maxGroup);
@@ -477,43 +500,15 @@ define(
                 })*/
 
                 var clickedNode = function(d) {
-                    var selectedNode = d.__proto__
-                    d3v5.select("#selectedNodeDetailsFor_" + $scope.graph.id)
+                    var selectedNode = Object.getPrototypeOf(d);
+                    
+                    // TODO: change this table with a proper "card"
+                    d3v5.select("#selectedNodeDetailsFor_" + graph.id)
                         .html("<p>" + node_as_html_table(selectedNode) + "</p>");
-                    if (selectedNode['@type'].endsWith("Review")) {
-                        d3v5.select("#reviewNode_" + $scope.graph.id)
-                            .html(`
-                                <br>
-                                <span class="rate" title="This review is accurate (help us improve our AI)" id="accRev">
-                                <a class="icon-ok"></a>
-                                <span class="accurate-stat" title="Number of Co-inform users who have rate this review as accurate"></span>
-                                </span>
-                                |
-                                <span title="This review is inaccurate (help us improve our AI)" id="inaccRev">
-                                <a class="icon-remove"></a>
-                                <span class="accurate-stat" title="Number of Co-inform users who have rate this review as inaccurate"></span>
-                                </span>
-                                `
-                                );
-                    }
-                    else {
-                        d3v5.select("#reviewNode_" + $scope.graph.id).html('')
-                    }
 
-                    // select neighborhood
-                    //selectedRelatedLinks = links.filter(function (i) { 
-                    //  return i.__proto__.source == d.__proto__.identifier });
-                    //selectedRelatedLink = selectedRelatedLinks.filter(function (i) { 
-                    //  return i.__proto__.rel == "itemReviewed" })[0].target.__proto__;
-
-                    //let isReview = typeof selectedNode == "object" && Object.keys(selectedNode).includes("@type") && selectedNode["@type"].endsWith("Review");
-                    //console.log("selected node is review?", isReview, typeof d == "object", 
-                    //Object.keys(d), Object.keys(d).includes("@type"));
-
+                    // TODO: allow users to produce a feedback when selectedNode is "Review"
                     d3v5.select("#accRev")
-                        //.attr("hidden", isReview ? null : true)
                         .on("click", handleAccurate(selectedNode))
-
                     d3v5.select("#inaccRev")
                         .on("click", handleInaccurate(selectedNode))
                 }
@@ -526,11 +521,8 @@ define(
                             return "node_" + d.id;
                         })
                 
-                    var svg = result.append("use")
+                    var use = result.append("use")
                         .attr("xlink:href", calcSymbolId)
-                        .attr("id", d => {
-                            return "nodeIcon_" + d.id;
-                        })
                         .attr("transform", d => {
                             let selectedFactor = (d.id == selectedNodeId) ? 2.0 : 1.0;
                             let scale = (d.nodeScale || 1.0) * selectedFactor;
@@ -538,10 +530,10 @@ define(
                         })
                         .attr("style", d => "opacity:" + (d.opacity || 0.8));
 
-                    svg.on("click", d => {
-                        console.log("clicked on ", d);
+                    use.on("click", d => {
+                        if (DEBUG) {console.debug("clicked on ", d)};
                         var selectedNodeId = d.id;
-                        svg.attr("transform", d => { //recalc scale
+                        use.attr("transform", d => { //recalc scale
                             let selectedFactor = (d.id == selectedNodeId) ? 2.0 : 1.0;
                             let scale = (d.nodeScale || 1.0) * selectedFactor;
                             return "scale(" + scale  + ")"
@@ -559,9 +551,8 @@ define(
                     return colorScale(d.group + (d.hierarchyLevel || 0));
                 }
 
-                /* Given a node object, return the appropriate symbol id stored in src/index.html
-                The symbol must be defined as part of the encompassing svg element.
-                */
+                // Given a node object, return the appropriate symbol id stored in src/index.html
+                // The symbol must be defined as part of the encompassing svg element.
                 var calcSymbolId = function(d) {
                     var itType = d["@type"]
                     if (typeof itType == "undefined") {
@@ -599,7 +590,7 @@ define(
                     }
                 }
 
-                /* wrapper of number.toFixed in case v is not a number */
+                // wrapper of number.toFixed in case v is not a number
                 var myToFixed = function(v) {
                     if (typeof v == "number") {
                         return v.toFixed(3);
@@ -609,7 +600,7 @@ define(
                     }
                 }
 
-                /* Given a node object, return the tooltip text */
+                // Given a node object, return the tooltip text
                 var itemToTooltipText = function(d) {
                     const itType = d["@type"];
                     if (typeof itType == "undefined") {
@@ -777,34 +768,8 @@ define(
                     return coinformUserReviewSchema;
                 }
 
-                var confirmUserReview = (review) => {
-                    return confirm("Are you sure? This review will be stored in a collection", review)
-                }
-                
                 var mockPostReview = function() {
                     alert('This feature is not implemented yet');
-                }
-                
-                var postReview = (review) => {
-                    jQuery.ajax({
-                    type: "POST",
-                    data: JSON.stringify(review),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    url: dashboard.current.solr.server + "user/accuracy-review",
-                    crossDomain: true,
-                    beforeSend: function(xhr){
-                        xhr.withCredentials = true;
-                    },
-                    success: function(data, textStatus, request){
-                        console.log(data, textStatus, request)
-                        alert("your review has been submitted");
-                    },
-                    error: function(data, textStatus, request){
-                        console.log(data, textStatus, request)
-                        alert('POST request error!');
-                    }
-                    });
                 }
 
                 var handleAccurate = (selectedReview) => {
@@ -816,14 +781,13 @@ define(
                             accurateUserReview.text == "Write your comment here") {
                             accurateUserReview.text = accurateSupportingTextReview();
                         }
-                        console.log("User says review ", selectedReview, "is accurate");
-                        console.log("The user review feedback is: ", accurateUserReview);
-                        var conf = confirmUserReview(accurateUserReview);
-                        if (conf == true) { 
-                            mockPostReview();
-                            // TODO: activate no-mock POST request
-                            //postReview(accurateUserReview)
-                        }
+                        if (DEBUG) {
+                            console.debug("User says review ", selectedReview, "is inaccurate");
+                            console.debug("The user review feedback is: ", inaccurateUserReview);
+                        };
+                    mockPostReview();
+                    // TODO: activate no-mock POST request
+                    //postReview(accurateUserReview)
                     }
                 }
 
@@ -836,14 +800,13 @@ define(
                             inaccurateUserReview.text == "Write your comment here") {
                             inaccurateUserReview.text = inaccurateSupportingTextReview();
                         }
-                        console.log("User says review ", selectedReview, "is inaccurate");
-                        console.log("The user review feedback is: ", inaccurateUserReview);
-                        var conf = confirmUserReview(inaccurateUserReview);
-                        if (conf == true) { 
-                            mockPostReview();
-                            // TODO: activate no-mock POST request
-                            //postReview(inaccurateUserReview)
-                        }
+                        if (DEBUG) {
+                            console.debug("User says review ", selectedReview, "is inaccurate");
+                            console.debug("The user review feedback is: ", inaccurateUserReview);
+                        };
+                    mockPostReview();
+                    // TODO: activate no-mock POST request
+                    //postReview(inaccurateUserReview)
                     }
                 }
 
@@ -868,8 +831,8 @@ define(
                     })
 
                 var node_as_html_table = function(node) {
-                    const privateFields = ["id", "hierarchyLevel", "group", "opacity", "nodeSize", "nodeScale"];
-                    console.log("", node["@type"], node["id"], "as table");
+                    const privateFields = ["id", "hierarchyLevel", "group", "opacity", "nodeSize", "nodeScale", "originalNodeOpacity", "filtered"];
+                    if (DEBUG) {console.debug("", node["@type"], node["id"], "as table")};
 
                     let rows = node_as_key_vals(node, 2, privateFields)
                     .map(entry => {
@@ -883,15 +846,20 @@ define(
 
                 var link = container.append("g")
                     .attr("class", "links")
-                    .attr("id", "linkGroup_" + $scope.graph.id)
+                    .attr("id", "linkGroup_" + graph.id)
                     .selectAll("polyline")
                     .data(links)
                     .join("polyline")
+                    .attr("id", d => {
+                        var source = d.source.index
+                        var target = d.target.index
+                        return "link_" + source + "_" + target;
+                    })
                     .attr("stroke-width", d => Math.max(1, Math.sqrt(d.value)))
                     .attr("stroke", "#999")
                     .attr("stroke-opacity", d => d.opacity || 0.6)
                     .attr("fill", d => "none")
-                    .attr("stroke-dasharray", d => { // some relations use dashed lines
+                    .attr("stroke-dasharray", d => {
                         var rel = d.rel;
                         if (rel == "itemReviewed") {
                             return "2 1";
@@ -905,28 +873,23 @@ define(
                 link.append("title")
                     .text(d => d.rel);
                 
-                console.log("Adding node svg elts")
+                console.log("Adding node svg elts");
                 var node = container.append("g")
                     .attr("class", "nodes")
-                    .attr("id", "nodeGroup_" + $scope.graph.id)
+                    .attr("id", "nodeGroup_" + graph.id)
                     .selectAll("circle")
                     .data(nodes)
                     .join(svg_node)
                     .attr("stroke-width", 1.5)
                     .call(drag(simulation));
                 
-                console.log("Setting node titles")
+                console.log("Setting node titles");
                 node.append("title")
                     .text(itemToTooltipText);
                         
-                console.log("Register tick event handlers")
+                console.log("Register tick event handlers");
                 simulation.on("tick", () => {
                     link
-                        //.attr("x1", d => d.source.x)
-                        //.attr("y1", d => d.source.y)
-                        //.attr("x2", d => d.target.x)
-                        //.attr("y2", d => d.target.y)
-                        
                         .attr("points", d => {
                         var src = d.source.x + "," + d.source.y;
                         var tgt = d.target.x + "," + d.target.y;
@@ -955,7 +918,7 @@ define(
 
                 var linkedByIndex = {};
                 links.forEach(function(d) {
-                linkedByIndex[d.source.index + "," + d.target.index] = 1;
+                    linkedByIndex[d.source.index + "," + d.target.index] = 1;
                 });
 
                 var isConnected = function (a, b) {
@@ -987,168 +950,245 @@ define(
                         //.attr("transform", "scale(" + (d.nodeScale)  + ")");
                 });
 
+                var updateNodeIconOpacity = function (nodeGroup) {
+                    nodeGroup
+                        .attr("style", d => "opacity:" + d.opacity)
+                }
+                
+                var updateLinkIconOpacity = function (linkGroup) {
+                    linkGroup
+                        .attr("stroke-opacity", l => l.opacity)
+                        .attr("marker-mid", d => {
+                            if (d.opacity == 0) {
+                                return ""
+                            }
+                            else {
+                                return "url(#arrow)"
+                            }
+                        });
+                }
+
+                var handleNodeActivation = function(nodeGroup, criticalPath=false) {
+                    nodeGroup.forEach(n => {
+                        var np = Object.getPrototypeOf(n);
+                        var nodeActive = n.opacityFilter ? false : true;
+                        var newNodeOpacity = nodeActive ? 0 : np.originalOpacity;
+                        // handle the sidebar actions
+                        if (criticalPath == false) {
+                            if (np.enabledNode == true) {
+                                // Update node opacity
+                                np.opacity = newNodeOpacity;
+                                // Update node flag activation
+                                np.opacityFilter = nodeActive;
+                            }
+                        }
+                        else {
+                            // Update node opacity
+                            np.opacity = newNodeOpacity;
+                            // Update node flag activation
+                            np.opacityFilter = nodeActive;
+                        }
+                    });
+                    // Hide/show selected nodes icons
+                    updateNodeIconOpacity(d3v5.select("#nodeGroup_" + graph.id).selectAll("use"));
+                }
+                
+                var handleLinkActivation = function(nodeGroup) {
+                    // Hide/show related links
+                    // Filter links related to selected nodes
+                    var linkGroup = links.filter(l =>
+                        nodeGroup.map(n => n.index).includes(l.source.index) || 
+                        nodeGroup.map(n => n.index).includes(l.target.index)
+                    );
+                    // Isolate target nodes
+                    var targetNodes = nodes.filter(nod => linkGroup.map(l => 
+                        l.target.index).includes(nod.index));
+                    // Isolate source nodes                     
+                    var sourceNodes = nodes.filter(nod => linkGroup.map(l => 
+                        l.source.index).includes(nod.index));
+
+                    linkGroup.map(l => {
+                        var lp = Object.getPrototypeOf(l);
+                        // Determine if current link is visible
+                        var linkActive = lp.opacityFilter ? false : true;
+                        if (linkActive) {
+                            var newLinkOpacity = 0;
+                        }
+                        else {                            
+                            var targetNodeOpacity = targetNodes.filter(n => 
+                                (n.index == l.target.index) && ((Object.getPrototypeOf(n).opacityFilter 
+                                    ? Object.getPrototypeOf(n).opacityFilter : false) == false));
+                            var sourceNodeOpacity = sourceNodes.filter(n => 
+                                (n.index == l.source.index) && ((Object.getPrototypeOf(n).opacityFilter 
+                                    ? Object.getPrototypeOf(n).opacityFilter : false) == false));
+                            if ((targetNodeOpacity.length) && (sourceNodeOpacity.length)) {
+                                newLinkOpacity = lp.originalOpacity;
+                            }
+                            else {
+                                newLinkOpacity = 0;
+                            }
+                        }
+                        // Update link opacity
+                        lp.opacity = newLinkOpacity
+                        // Update link flag activation
+                        lp.opacityFilter = linkActive;
+                    });
+                    // Hide/show selected nodes icons
+                    updateLinkIconOpacity(d3v5.select("#linkGroup_" + graph.id).selectAll("polyline"));
+                }
+
                 $scope.sidebarGraphEvent = function(nodeIconId){
                     // Sidebar actions
-                    var nodeList = node._groups[0];
                     var iconType = nodeIconId.split(":")[0]
                     var iconId = nodeIconId.split(":")[1]
                     var sideIconId = iconType + "_sideButton_" + iconId;
                     // Hide/show the selected sidebar icon
                     // Store the original opacity of a sidebar button
-                    var selectedIcon = d3v5.select("#" + sideIconId)._groups[0][0]
-                    var realIconOpacity = 1
+                    var selectedIcon = d3v5.select("#" + sideIconId).node()
+                    var currentIconOpacity = 1
                     // Define the current sidebar icon state
                     var iconState = selectedIcon.iconState ? false : true;
-                    var newIconOpacity = iconState ? 0.3 : realIconOpacity;
+                    var newIconOpacity = iconState ? 0.3 : currentIconOpacity;
                     // Hide or show the elements
                     selectedIcon.style.opacity = newIconOpacity;
-                    // Update the real icon opacity
-                    selectedIcon.origIconOpacity = realIconOpacity;
-                    // Update whether or not the elements are active
+                    // Update the current icon opacity
+                    selectedIcon.origIconOpacity = currentIconOpacity;
+                    // Update the current icon state
                     selectedIcon.iconState = iconState;
-
-                    // Iterate nodes
-                    var nod;
-                    for (nod of nodeList) {
-                        if (nod.innerHTML.includes('#' + iconType)) {
-                            // Hide/show selected nodes
-                            // Check and store the original opacity of a node
-                            var origNodeOpacity = nod.origNodeOpacity ? false : true;
-                            var realNodeOpacity = origNodeOpacity ? nod.getElementsByTagName('use')[0].style.opacity : nod.origNodeOpacity;
-                            // Determine if current node is visible
-                            var nodActive = nod.active ? false : true;
-                            var newNodeOpacity = nodActive ? 0 : realNodeOpacity;
-                            var nodData = nod.__data__;
-                            if (nodData == undefined) {continue;};
-                            // Hide or show the elements
-                            nod.getElementsByTagName('use')[0].style.opacity = newNodeOpacity;
-                            // Update the real node opacity
-                            nod.origNodeOpacity = realNodeOpacity;
-                            // Update whether or not the elements are active
-                            nod.active = nodActive;
-
-                            // Hide/show also related links
-                            var linkList = link._groups[0];
-                            var lin;
-                            for (lin of linkList) {
-                                var linkData = lin.__data__;
-                                if ((linkData.source.index == nodData.index) ||
-                                    (linkData.target.index == nodData.index)) {
-                                    // Check and store the original opacity of a link
-                                    var origLinkOpacity = lin.origLinkOpacity ? false : true;
-                                    var realLinkOpacity = origLinkOpacity ? lin.attributes['stroke-opacity']['value'] : lin.origLinkOpacity;
-                                    // Determine if current link is visible
-                                    var linkActive = lin.active ? false : true;
-                                    var newLinkOpacity;
-                                    if (linkActive) {
-                                        newLinkOpacity = 0;
-                                    }
-                                    else {
-                                        var sourceNode = nodeList.filter(nod => nod.__data__.index == linkData.source.index);
-                                        var targetNode = nodeList.filter(nod => nod.__data__.index == linkData.target.index);
-                                        var sourceNodeOpacity = sourceNode[0].active ? false : true;
-                                        var targetNodeOpacity = targetNode[0].active ? false : true;
-                                        if ((sourceNodeOpacity == true) && (targetNodeOpacity == true))
-                                            {
-                                            newLinkOpacity = realLinkOpacity;
-                                        }
-                                        else {
-                                            newLinkOpacity = 0;
-                                            }
-                                    }
-                                    // Hide or show the elements
-                                    lin.attributes['stroke-opacity']['value'] = newLinkOpacity;
-                                    // Update the real node opacity
-                                    lin.origLinkOpacity = realLinkOpacity;
-                                    // Update whether or not the elements are active
-                                    lin.active = linkActive;
-                                    // Update also the middle arrow
-                                    if (lin.attributes['stroke-opacity']['value'] == 0) {
-                                        lin.attributes['marker-mid']['value'] = ""
-                                    }
-                                    else {
-                                        lin.attributes['marker-mid']['value'] = "url(#arrow)"
-                                    }
-                                }
-                            }
-                        }
-                    };
+                    // Filter nodes selected by type over the sidebar
+                    var nodeGroup = nodes.filter(d => calcSymbolId(d).slice(1,) == iconType);
+                    // change the properties of each node corresponding to the selected type
+                    // handle node activation in order to show/hide nodes 
+                    handleNodeActivation(nodeGroup)
+                    // handle link activation in order to show/hide links 
+                    handleLinkActivation(nodeGroup)
                 };
 
-                $scope.displayMainNode = function(){
-                    var selectedRevIcon = d3v5.select("#nodeIcon_" + $scope.graph.id);
-                    var nodeGroup = d3v5.select("#nodeGroup_" + $scope.graph.id).selectAll("use");
-                    // retrieve the element with .node()
-                    var mNode = selectedRevIcon.node().__data__;
+                $scope.displayMainNode = function() {
+                    let nodeGroup = d3v5.select("#nodeGroup_" + graph.id).selectAll("use");
+                    var mainNode = nodeGroup.filter(n => n.id == graph.id).node().__data__
                     nodeGroup.attr("transform", d => {
-                        let selectedFactor = (d.id == mNode.id) ? 2.0 : 1.0;
+                        let selectedFactor = (d.id == mainNode.id) ? 2.0 : 1.0;
                         let scale = (d.nodeScale || 1.0) * selectedFactor;
                         return "scale(" + scale  + ")"
                     });
-                    clickedNode(mNode);
+                    clickedNode(mainNode);
                 };
+
+                // activate the flag value in order to show the main node
+                $scope.showMainNode = function() {
+                    $scope.activateMainNode = true
+                }
+
+                // display the main node as default node/table
+                $scope.$watch('activateMainNode', function(val) {
+                    if (val) {
+                        $scope.displayMainNode();
+                    }
+                })
 
                 $scope.displayMainItemRev = function() {
-                    var nid = $scope.graph.id;
-                    if (nid == null) {
-                        return "??";
-                    }
-                    var crev = $scope.nodeById(nid);
+                    let nodeGroup = d3v5.select("#nodeGroup_" + graph.id).selectAll("use");
+                    var crev = $scope.nodeById(graph.id);
                     if (crev) {
-                        var itReved = $scope.lookupObject(crev, 'itemReviewed') || {};
-                        var selectedItemIcon = d3v5.select("#nodeIcon_" + itReved.id);
-                        var selectedItemRev = selectedItemIcon.node().__data__;
+                        var mainItRev = $scope.lookupObject(crev, 'itemReviewed') || {};
                     }
-                    clickedNode(selectedItemRev);
+                    nodeGroup.attr("transform", d => {
+                        let selectedFactor = (d.id == mainItRev.id) ? 2.0 : 1.0;
+                        let scale = (d.nodeScale || 1.0) * selectedFactor;
+                        return "scale(" + scale  + ")"
+                    });
+                    var ItRev = nodeGroup.filter(n => n.id == mainItRev.id).node().__data__
+                    clickedNode(ItRev);
                 };
 
-                $scope.mostRelevantPath = function() {
-                    
+                var getCriticalLinkedNodes = function(criticalNode) {
+                    var rels = ['sentA', 'sentB', 'author', 'creator', 'itemReviewed', 'appearance']
+                    var searchCriticalPath = true
+                    var linkedNodes = []
+                    for (var rel of rels) {
+                        var pathNode = $scope.lookupObject(criticalNode, rel, searchCriticalPath);
+                        if (pathNode) {
+                            linkedNodes.push(pathNode);
+                        }
+                    }
+                    return linkedNodes
+                }
+
+                var findCriticalPath = function(mainNode) {
+                    let criticalPath = lookupCriticalNodes(mainNode)
+                    var criticalLinkedNodes = []
+                    for (var cn of criticalPath) {
+                        var linkedNode = getCriticalLinkedNodes(cn);
+                        if (linkedNode) {
+                            criticalLinkedNodes.push(...linkedNode)
+                        }
+                    };
+                    return criticalPath.concat(criticalLinkedNodes);
+                }
+
+                var lookupCriticalNodes = function(node, criticalPath=[node]) {
+                    var searchCriticalPath = true
+                    var pathNode = $scope.lookupObject(node, 'isBasedOn', searchCriticalPath);
+                    if (pathNode) {
+                        return lookupCriticalNodes(pathNode, criticalPath.concat(pathNode));
+                    }
+                    return criticalPath
                 };
 
-                // any svg.select(...) that has a single node like a container group by #id
-                var root = svg.select("#container_" + $scope.graph.id)
-                var zoomFit = function (paddingPercent, transitionDuration) {
-                    var bounds = root.node().getBBox();
-                    var parent = root.node().parentNode;
+                // set a criticalPath flag
+                $scope.manageCriticalPath = false;
 
-                    console.log('bounds: ', bounds)
-                    console.log('parent: ', parent)
-                    
-                    var fullWidth = parent.clientWidth || parent.parentNode.clientWidth,
-                        fullHeight = parent.clientHeight || parent.parentNode.clientHeight;
-                    var width = bounds.width,
-                        height = bounds.height;
-                    var midX = bounds.x + width / 2,
-                        midY = bounds.y + height / 2;
+                // set the default critical path button text
+                $scope.criticalPathButtonText = "Click to show the criticalPath"
 
-                    if (width == 0 || height == 0) return; // nothing to fit
-                    var scale = (paddingPercent || 0.75) / Math.max(width / fullWidth, height / fullHeight);
-                    var translate = [fullWidth / 2 - scale * midX, fullHeight / 2 - scale * midY];
-                    console.log('translate:', translate)
-                    console.log('scale: ', scale)
-
-                    //console.trace("zoomFit", translate, scale);
-
-                    var transform = d3v5.zoomIdentity
-                        .translate(translate[0], translate[1])
-                        .scale(scale);
-                    console.log('transform:', transform)
-                    
-                    root.transition()
-                        .duration(transitionDuration || 0) // milliseconds
-                        .call(zoom.transform, transform);
+                // create a criticalPath click event
+                $scope.clickCriticalPath = function() {
+                    $scope.manageCriticalPath = !$scope.manageCriticalPath
+                    //$scope.hideSidebarWhenCriticalPath = !$scope.hideSidebarWhenCriticalPath
                 }
-                
-                function lapsedZoomFit(ticks, transitionDuration) {
-                    for (var i = ticks || 200; i > 0; --i) simulation.tick;
-                    simulation.stop;
-                        zoomFit(undefined, transitionDuration);
+
+                var resetGraphAttributes = function() {
+                    // reset attributes of each node (opacity, opacityFilter)
+                    nodes.forEach(n=> (Object.getPrototypeOf(n).opacity = Object.getPrototypeOf(n).originalOpacity) && 
+                        (Object.getPrototypeOf(n).opacityFilter = false));
+                    updateNodeIconOpacity(d3v5.select("#nodeGroup_" + graph.id).selectAll("use"));
+                    // reset attributes of each link (opacity, opacityFilter)
+                    links.forEach(l=> (Object.getPrototypeOf(l).opacity = Object.getPrototypeOf(l).originalOpacity) && 
+                        (Object.getPrototypeOf(l).opacityFilter = false));
+                    updateLinkIconOpacity(d3v5.select("#linkGroup_" + graph.id).selectAll("polyline"));
+                    // reset activation flag of each node
+                    nodes.forEach(d=> Object.getPrototypeOf(d).enabledNode = true)
+                    // reset the sidebar attributes
+                    var sidebarIcons = d3v5.selectAll("img")
+                    sidebarIcons.nodes().filter(d => d.id.includes('sideButton'))
+                    // reset the buttons opacity
+                    sidebarIcons.attr("style", d => "opacity:" + "1")
+                    // reset the state of the sidebar icons
+                    sidebarIcons.nodes().forEach(d => d.iconState = false)
                 }
-                
-                //zoomFit(0.75, 500);
-                //lapsedZoomFit(0.75, 10000);
-            }
+
+                // manage the criticalPath activation
+                $scope.$watch("manageCriticalPath", function(newVal, oldVal) {
+                    resetGraphAttributes()
+                    var mainNode = (Object.getPrototypeOf(nodes.filter(n=> n.id == graph.id)[0]))
+                    let criticalPath = findCriticalPath(mainNode)
+                    var graphNodesToManage = nodes.filter(n => !criticalPath.includes(Object.getPrototypeOf(n)));
+                    if (newVal != oldVal) {
+                        if (newVal) {
+                            graphNodesToManage.forEach(d=> Object.getPrototypeOf(d).enabledNode = false)
+                            var criticalpath = true
+                            handleNodeActivation(graphNodesToManage, criticalpath);
+                            handleLinkActivation(graphNodesToManage, criticalpath);
+                            $scope.criticalPathButtonText = "Click to show the whole reviewGraph"
+                        }
+                        else {
+                            $scope.criticalPathButtonText = "Click to show the criticalPath"
+                        }
+                    }
+                });
+
+            };
         });
     }
 );

@@ -1155,19 +1155,9 @@ div.flot-text{color:#333!important}
   display: flex;
   width: 100%;
   height: 100%;
-  top: 20;
-  right: 20;
-  bottom: 20;
-  left: 20;
 }
 
-.review-graph-render {
-    display: flex;
-    width: 100%;
-    height: 100%;
-}
-
-.rev-graph-svg {
+.review-graph-svg {
     display: flex;
     overflow: hidden;
     cursor: pointer;
@@ -1177,35 +1167,49 @@ div.flot-text{color:#333!important}
     max-height: 500px;
   }
 
+.review-graph-render {
+    background-color: #fff;
+}
+
 .review-graph-info-nodes {
   display: flex;
   width: 100%;
   height: 100%;
 }
 
-.rev-graph-sidebar {
+.review-graph-render{
+    max-width: 100%;
+    max-height: 500px;
+}
+
+.review-graph-sidebar {
   text-align:center;
   width: 6%;
   background-color: #fff;
 }
 
-.rev-graph-sidebar button {
-  height: 40px;
-  width: 40px;
-  border: none;
-  background-color: #fff;
+.review-graph-sidebar button {
+    height: 40px;
+    width: 40px;
+    border: none;
+    background-color: #fff;
 }
 
-.rev-graph-sidebar img {
-  height: 25px;
-  width: 25px;
-}
+.review-graph-sidebar button svg {
+    height: 40px;
+    width: 40px;
+  }
 
-.rev-graph-sidebar button:hover {
+.review-graph-sidebar button img {
+    height: 20px;
+    width: 20px;
+  }
+
+.review-graph-sidebar button:hover {
   opacity: .3;
 }
 
-.rev-graph-sidebar button:focus {
+.review-graph-sidebar button:focus {
   outline: none;
 }
 
@@ -1249,6 +1253,29 @@ div.flot-text{color:#333!important}
     padding: 5px;
     border-right: none;
 }
+
+.criticalPathButton{
+    background-color: #fff;
+    border-color: #ddd;
+    border-width: 1px;
+    border-radius: 6px;
+}
+
+.criticalPathButton{
+    background-color: #fff;
+    border-color: #ddd;
+    border-width: 1px;
+    border-radius: 6px;
+}
+
+.criticalPathButton:focus{
+    outline: none;
+}
+
+.criticalPathButton:hover {
+    opacity: .5;
+  }
+
 
 .titleButtons{
     background-color: #fff;

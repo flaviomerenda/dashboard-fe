@@ -62,6 +62,29 @@ function (angular, _) {
         //     }
         // });
     };
+
+    // Send user review to Solr
+    this.postReview = function(review) {
+        jQuery.ajax({
+        type: "POST",
+        data: JSON.stringify(review),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        url: dashboard.current.solr.server + "user/accuracy-review",
+        crossDomain: true,
+        beforeSend: function(xhr){
+            xhr.withCredentials = true;
+        },
+        success: function(data, textStatus, request){
+            console.log(data, textStatus, request)
+            alert("your review has been submitted");
+        },
+        error: function(data, textStatus, request){
+            console.log(data, textStatus, request)
+            alert('POST request error!');
+        }
+        });
+    }
       
     // Calculate each field top 10 values using facet query
     this.calcTopFieldValues = function(fields) {

@@ -233,24 +233,6 @@ define([
             //row.kibana.details = !row.kibana.details ? $scope.without_kibana(row) : false;
         };
 
-        $scope.displayReviewGraph = function(row) {
-            // console.log('TODO: displayReviewGraph for', row.kibana._source);
-            let rg = solrSrv.fetchReviewGraph(row.kibana._source);
-            rg.success(function(data, status) {
-                var result = data['results'][0]
-                //console.log('Got response back from server for doc_id: ', result['doc_id'], result);
-                var graph = result['reviewGraph'];
-                if (graph == null) {
-                    alertSrv.set('Warning', 'No review available for this document. Sorry.');
-                } else {
-                    alertSrv.set(
-                        'Not implemented yet',
-                        'This will trigger the display of a reviewGraph with ' + graph['nodes'].length +
-                            ' nodes and ' + graph['links'].length + ' links.');
-                }            
-            })
-        }
-
         $scope.page = function (page) {
             $scope.panel.offset = page * $scope.panel.size;
             $scope.get_data();
