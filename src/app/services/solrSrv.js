@@ -77,11 +77,11 @@ function (angular, _) {
         },
         success: function(data, textStatus, request){
             console.log(data, textStatus, request)
-            alert("your review has been submitted");
+            alertSrv.set("Your review has been submitted");
         },
         error: function(data, textStatus, request){
             console.log(data, textStatus, request)
-            alert('POST request error!');
+            alertSrv.set("Error", "Failed to send your review to the server", "error");
         }
         });
     }

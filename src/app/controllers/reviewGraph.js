@@ -1,5 +1,15 @@
 /*
   ## D3 Review Graph integrated in the Table panel.
+    
+    Note: 
+        This is the only file that uses the version 5 of the d3 library (d3v5).
+        The d3v5 library has been updated from v5.7.0 up to v5.16.0.
+
+    TODO : In order to avoid long files, the $scope.renderGraph() function could be moved to a new directive.
+           Manupulating HTML elements from a directive is also a general good practice. 
+           In addition, this method could be also divided into two smaller functions:
+           one that creates the graph and one that allows different object manipulations.
+
 */
 
 define(
@@ -32,8 +42,9 @@ define(
             // The chart-specific fields are tailored to the d3-force requirements 
             $scope.getReviewGraph = function (doc) {
 
+                // TODO: mode acred_to_d3_ReviewGraph one level up?
                 // preprocess the reviewGraph
-                var preProcessedGraph = function(graph) {
+                var acred_to_d3_ReviewGraph = function(graph) {
                     // add group property to nodes and value property to links
                     // this is just so the current force chart implementation works, 
 
@@ -357,7 +368,7 @@ define(
                         alertSrv.set('Warning', 'No review available for this document. Sorry.');
                     }
 
-                    var processedData = preProcessedGraph($scope.reviewGraph)
+                    var processedData = acred_to_d3_ReviewGraph($scope.reviewGraph)
                     if (DEBUG) {console.debug('reviewGraph data: ', processedData)}
 
                     $scope.graph = processedData
