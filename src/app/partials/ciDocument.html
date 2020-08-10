@@ -1,76 +1,78 @@
 <!-- This file is responsible for displaying a Co-inform Document -->
 <div class="ciDocument">
-  <div class="ciTweet" ng-show="isTweet()">
-    <blockquote class="twitter-tweet" data-dnt="true">
-      <div class="pseudoEmbedded-tweet">
-        <div class="pseudoTweet-header">
-          <p><img class="Avatar" src="img/user-icon.svg"></img></p>
-          <div class="pseudoTweetAuthor">
-            <a class="pseudoTweetAuthor-link" href="https://twitter.com/{{ciDoc.author.substr(1)}}"'>
-              <div class="pseudoTweetAuthor-nameScreenNameContainer">
-                <span class="pseudoTweetAuthor-decoratedName">
-                  <span class="pseudoTweetAuthor-name">{{ciDoc.title}}</span>
-                </span>
-                <span class="pseudoTweetAuthor-screenName">{{ciDoc.author}}</span>
-              </div>
-            </a>
-          </div>
-          <div class="pseudoTweet-brand">
-            <a href="{{ciDoc.url}}">
-              <span class="FollowButton-bird">
-                <div class="icon-twitter" title="View on Twitter"></div>
-              </span>
-            </a>
-          </div>
-        </div>
-        <div class="pseudoTweet-body">
-          
-          <p class="pseudoTweet-text" lang="{{ciDoc.lang_orig}}" dir="ltr">{{ciDoc.content}}</p>
-          <div class="pseudoTweetInfo">
-            <div class="pseudoTweetInfo-timeGeo">
-              <a href="{{ciDoc.url}}">{{pubDate()}}</a>
+    <div class="principal-card">
+        <div class="ciTweet" ng-show="isTweet()">
+            <blockquote class="twitter-tweet" data-dnt="true">
+            <div class="pseudoEmbedded-tweet">
+                <div class="pseudoTweet-header">
+                <p><img class="Avatar" src="img/user-icon.svg"></img></p>
+                <div class="pseudoTweetAuthor">
+                    <a class="pseudoTweetAuthor-link" href="https://twitter.com/{{ciDoc.author.substr(1)}}"'>
+                    <div class="pseudoTweetAuthor-nameScreenNameContainer">
+                        <span class="pseudoTweetAuthor-decoratedName">
+                        <span class="pseudoTweetAuthor-name">{{ciDoc.title}}</span>
+                        </span>
+                        <span class="pseudoTweetAuthor-screenName">{{ciDoc.author}}</span>
+                    </div>
+                    </a>
+                </div>
+                <div class="pseudoTweet-brand">
+                    <a href="{{ciDoc.url}}">
+                    <span class="FollowButton-bird">
+                        <div class="icon-twitter" title="View on Twitter"></div>
+                    </span>
+                    </a>
+                </div>
+                </div>
+                <div class="pseudoTweet-body">
+                
+                <p class="pseudoTweet-text" lang="{{ciDoc.lang_orig}}" dir="ltr">{{ciDoc.content}}</p>
+                <div class="pseudoTweetInfo">
+                    <div class="pseudoTweetInfo-timeGeo">
+                    <a href="{{ciDoc.url}}">{{pubDate()}}</a>
+                    </div>
+                    <!--
+                        <a href="{{ciDoc.url}}?ref_src=twsrc%5Etfw">{{pubDate()}}</a>
+                    -->
+                </div>
+                </div>
             </div>
-            <!--
-                 <a href="{{ciDoc.url}}?ref_src=twsrc%5Etfw">{{pubDate()}}</a>
-            -->
-          </div>
+            </blockquote>
+            <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+            
         </div>
-      </div>
-    </blockquote>
-    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-    
-  </div>
-  <div class="ciGenericDoc" ng-show="isArticle()">
-    <blockquote class="ciArticle">
-      <div class="article-header">
-        <p><img class="Avatar-square" src="img/article_symbol.svg"></img></p>
-        <div class="articlePublisher">
-          <a class="articlePublisher-link" href="{{ciDoc.url}}">
-            <div class="article-decoratedNameContainer">
-              <span class="article-title">
-                <span class="articleTitle">{{ciDoc.title}}</span>
-              </span>
+        <div class="ciGenericDoc" ng-show="isArticle()">
+            <blockquote class="ciArticle">
+            <div class="article-header">
+                <p><img class="Avatar-square" src="img/article_symbol.svg"></img></p>
+                <div class="articlePublisher">
+                <a class="articlePublisher-link" href="{{ciDoc.url}}">
+                    <div class="article-decoratedNameContainer">
+                    <span class="article-title">
+                        <span class="articleTitle">{{ciDoc.title}}</span>
+                    </span>
+                    </div>
+                </a>
+                </div>
+                <div class="article-brand">
+                <a href="{{ciDoc.domain}}">
+                    <span class="">
+                    <a class="icon-news" title="Visit Publisher"></a>
+                    </span>
+                </a>
             </div>
-          </a>
+            </div>
+            <div class="article-body">
+            <div ng-bind-html="viewableContent()"></div>
+            <div class="articleInfo">
+                <div class="articleInfo-timeGeo">
+                <a title="Date published (if unknown: date retrieved)" href="{{ciDoc.url}}">{{pubDate()}}</a>
+                </div>
+            </div>
+            </div>
+        </blockquote>
         </div>
-        <div class="article-brand">
-          <a href="{{ciDoc.domain}}">
-            <span class="">
-              <a class="icon-news" title="Visit Publisher"></a>
-            </span>
-          </a>
-      </div>
     </div>
-    <div class="article-body">
-      <div ng-bind-html="viewableContent()"></div>
-      <div class="articleInfo">
-        <div class="articleInfo-timeGeo">
-          <a title="Date published (if unknown: date retrieved)" href="{{ciDoc.url}}">{{pubDate()}}</a>
-        </div>
-      </div>
-    </div>
-  </blockquote>
- </div>
  <div class="CredibilityReview">
    <div class="credReview-header">
      <p><img class="Avatar-square" title="{{ciDoc.credibility_assessor}}" src="img/bot_symbol.svg"></img></p>

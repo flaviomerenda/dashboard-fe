@@ -1,8 +1,8 @@
 <div class="review-graph-explanation">
     Credibility evidence for saying that 
-    <button class="titleButtons" ng-click="displayMainItemRev()" title="Item Reviewed">{{graph.mainItemReviewed}}</button>
+    <button class="titleButtons" ng-click="displayMainItemReviewed()" title="Item Reviewed">{{graph.mainItemReviewed}}</button> <!--    -->
      is 
-    <button class="titleButtons" ng-click="displayMainNode()" title="Review">{{graph.mainNodeLabel}}</button>
+    <button class="titleButtons" ng-click="displayMainReview()" title="Review">{{graph.mainNodeLabel}}</button> <!--  ng-click=""  -->
 </div>
 
 <div class="review-graph">
@@ -45,7 +45,7 @@
         </p>
         <p>
         <button ng-click="sidebarGraphEvent('singleSent:'+graph.id)" title="Sentence">
-            <img id="singleSent_sideButton_{{graph.id}}" src='img/sent_symbol.svg'/>
+            <img id="singleSent_sideButton_{{graph.id}}" src='img/singleSent_symbol.svg'/>
         </button>
         </p>
         <p>
@@ -66,26 +66,157 @@
     </div>
   </div>
 
-  <div class="review-graph-render">
+  <div class="review-graph-render" review-graph-dir>
   </div>
 
 </div>
 
-<div class="review-graph-explanation">
-    <button class="titleButtons" ng-click="clickCriticalPath()" title="Display only the criticalPath">{{criticalPathButtonText}}</button>
+<div class="rg-critical-path-bar">
+    <button class="titleButtons" ng-click="zoomFit()">Fit the reviewGraph</button>
+    <button class="titleButtons" ng-click="clickCriticalPath()">{{criticalPathButtonText}}</button>
 </div>
 
-<div class="review-graph-info-nodes">
-  <div class="review-graph-sidebar">
-    <p>
-      <p class="icon-info" title="Click on a graph node to display element information"></p>
-    </p>
-    <p>
-        <div id="reviewNode_{{graph.id}}"></div>
-    </p>
-  </div>
-  <div ng-show="showMainNode()" class='table-review'></div>
-  <table id="selectedNodeDetailsFor_{{graph.id}}" class='table-review'>
-  </table>
-
+<p></p>
+    
+<div class="ciDocument">
+    <!-- review card -->
+    <div class="principal-card" ng-show="activateReviewCard">
+        <div class="CredibilityReview" ng-show="activateReviewCard">
+            <div class="credReview-header">
+            <p><img class="Avatar" title="{{mainNode.type}}" src="img/{{revCardIconType}}_symbol.svg"></img></p>
+            <div class="RatingRater">
+                <div class="reviewLabelContainer">
+                <span class="reviewLabel">
+                    <span class="reviewLabel" title="{{credLabelDescription}}">{{credibilitylabel}}</span>
+                    <span class="reviewConfidence" title="Credibility signal strength | 0.0 means weak, 1.0 means strong">{{reviewConfidence}}</span>
+                </span>
+                <span class="reviewer">
+                    <img class="Avatar-small" src="img/bot_symbol.svg"></img>{{credibilityAssessor}}
+                </span>
+                </div>
+            </div>
+            <div class="review-brand">
+                <a class="icon-info" title="This review was generated automatically by an AI system. It compared the sentences in the document with 45,000 claims reviewed by fact-checkers and 40,000 sentences extracted from news sites."></a>
+            </div>
+            </div>
+            <div class="review-body">
+            <div class="CredibilityReview-Explanation"
+                        ng-bind-html="revExplanation">
+            </div>
+            <div class="reviewInfo">
+                <div class="reviewInfo-actions">
+                <span class="rate" title="This review is accurate (help us improve our AI)"
+                        ng-click="rateReviewAsAccurate(selectedNode)">
+                    <a class="icon-ok"></a>
+                    <span class="accurate-stat" title="Number of Co-inform users who have rate this review as accurate"></span>
+                </span>
+                &nbsp;|&nbsp;
+                <span title="This review is inaccurate (help us improve our AI)"
+                        ng-click="rateReviewAsInaccurate(selectedNode)">
+                    <a class="icon-remove"></a>
+                    <span class="accurate-stat" title="Number of Co-inform users who have rate this review as inaccurate"></span>
+                </span>
+                </div>
+                <div class="reviewInfo-timeGeo">
+                <span title="Reviewed On">{{credReviewDate()}}</span>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+    <!-- item reviewed card -->
+    <div ng-show="activateItemReviewedCard">
+        <blockquote class="ciArticle">
+            <div class="article-header">
+                <p><img class="Avatar-square" src="img/{{itRevCardIconType}}_symbol.svg"></img></p>
+                <div class="articlePublisher">
+                    <a class="articlePublisher-link" href="{{itRevUrl}}">
+                    <div class="article-decoratedNameContainer">
+                        <span class="article-title">
+                        <span class="articleTitle">{{itRevTitle}}</span>
+                        </span>
+                    </div>
+                    </a>
+                </div>
+                <div class="article-brand">
+                    <a href="{{itRevDomain}}">
+                    <span class="">
+                        <a class="icon-news" title="Visit Publisher"></a>
+                    </span>
+                    </a>
+                </div>
+            </div>
+            <div class="article-body">
+                <div ng-bind-html="viewableContent"></div>
+                <div class="articleInfo">
+                <div class="articleInfo-timeGeo">
+                    <a title="Date published (if unknown: date retrieved)" href="{{itRevUrl}}">{{pubDate}}</a>
+                </div>
+                </div>
+            </div>
+        </blockquote>
+    </div>
+    <!-- bot card -->
+    <div ng-show="activateBotCard">
+        <blockquote class="generic-card">
+            <div class="generic-card-header">
+                <p><img class="Avatar-square" src="img/{{botIconType}}_symbol.svg"></img></p>
+                <div class="reviewer-card">
+                    <a class="reviewer-card-link" href="{{botUrl}}">
+                        <span class="element-name">
+                        <span class="elementName">{{botName}}</span>
+                        </span>
+                    </a>
+                </div>
+            </div>
+            <span class="bot-description">{{botDescription}}</span>
+        </blockquote>
+    </div>
+    <!-- organization card -->
+    <div ng-show="activateOrganizationCard">
+        <blockquote class="generic-card">
+            <div class="generic-card-header">
+                <p><img class="Avatar-square" src="img/{{organizationIconType}}_symbol.svg"></img></p>
+                <div class="organization">
+                    <a class="organization-link" href="{{organizationUrl}}">
+                        <span class="element-name">
+                        <span class="elementName">{{organizationName}}</span>
+                        </span>
+                    </a>
+                </div>
+            </div>
+        </blockquote>
+    </div>
 </div>
+
+<p></p>
+
+<!--
+<div class="container">
+    <!-- Trigger the modal with a button - ->
+    <div ng-show="userReviewComment" data-toggle="modal" data-target="#myModal">
+  
+        <!-- Modal - ->
+        <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal-dialog">
+            
+                <!-- Modal content- ->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">If you want, insert your review comment please:</h4>
+                    </div>
+                    <div class="modal-body">
+                        <input type="text"></input>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Confirm</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+-->
