@@ -8,6 +8,9 @@ define([
   './timer',
   './panelMove',
   './solrSrv',
-  './lucidworksSrv'
+  './lucidworksSrv',
+  './card',
+  './rgBuilder',
+  './rgProcessor',
 ],
 function () {});
