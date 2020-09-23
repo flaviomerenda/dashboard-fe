@@ -30,14 +30,13 @@ define(
 
                     // Receive render events
                     scope.$on('render', function () {
-                        render_panel();
+                        render_panel(scope.wholeGraph);
                     });
 
                     // Function for rendering panel
-                    function render_panel() {
+                    function render_panel(graph) {
                 
                         element.html("");
-                        var graph = scope.graph
 
                         // get nodes and links
                         const nodes = graph.nodes.map(d => Object.create(d));
@@ -401,6 +400,24 @@ define(
                             return linkedByIndex[a.index + "," + b.index] || linkedByIndex[b.index + "," + a.index];
                         }
 
+                        var activeArrows = function(active) {
+                            var linkGroup = d3v5.select("#linkGroup_" + graph.id);
+                            if (active) {
+                                linkGroup.selectAll(".link-active").attr("marker-mid", l => {
+                                    if (l.opacity > 0) {
+                                        return "url(#arrow-active)"
+                                    }
+                                });
+                            }
+                            else {
+                                linkGroup.selectAll("polyline").attr("marker-mid", l => {
+                                    if (l.opacity > 0) {
+                                        return "url(#arrow)"
+                                    }
+                                });
+                            }
+                        }
+
                         node.on("mouseover", function(d) {
                             node.classed("node-active", function(o) {
                                 var thisOpacity = isConnected(d, o) ? true : false;
@@ -410,20 +427,15 @@ define(
                             link.classed("link-active", function(o) {
                                 return o.source === d || o.target === d ? true : false;
                             });
+                            var active = true;
+                            activeArrows(active)
                             d3v5.select(this).classed("node-active", true);
-                            d3v5.select(this).select("use").transition()
-                                .duration(750)
-                                // TODO: fix node size growth
-                                //.attr("transform", "scale(" + (d.nodeScale * 2)  + ")"); 
                         })
 
                         node.on("mouseout", function(d) {
                             node.classed("node-active", false);
                             link.classed("link-active", false);
-                            d3v5.select(this).select("use").transition()
-                                .duration(750)
-                                // TODO: fix node size growth
-                                //.attr("transform", "scale(" + (d.nodeScale)  + ")");
+                            activeArrows()
                         });
 
                         var updateNodeIconOpacity = function (nodeGroup) {
@@ -609,40 +621,6 @@ define(
                             selectProperCard(scope.selectedNode)
                         };
 
-                        var getCriticalLinkedNodes = function(criticalNode) {
-                            var rels = ['sentA', 'sentB', 'author', 'creator', 'itemReviewed', 'appearance']
-                            var searchCriticalPath = true
-                            var linkedNodes = []
-                            for (var rel of rels) {
-                                var pathNode = rgProcessor.lookupObject(criticalNode, rel, searchCriticalPath);
-                                if (pathNode) {
-                                    linkedNodes.push(pathNode);
-                                }
-                            }
-                            return linkedNodes
-                        }
-
-                        var findCriticalPath = function(mainNode) {
-                            let criticalPath = lookupCriticalNodes(mainNode)
-                            var criticalLinkedNodes = []
-                            for (var cn of criticalPath) {
-                                var linkedNode = getCriticalLinkedNodes(cn);
-                                if (linkedNode) {
-                                    criticalLinkedNodes.push(...linkedNode)
-                                }
-                            };
-                            return criticalPath.concat(criticalLinkedNodes);
-                        }
-
-                        var lookupCriticalNodes = function(node, criticalPath=[node]) {
-                            var searchCriticalPath = true
-                            var pathNode = rgProcessor.lookupObject(node, 'isBasedOn', searchCriticalPath);
-                            if (pathNode) {
-                                return lookupCriticalNodes(pathNode, criticalPath.concat(pathNode));
-                            }
-                            return criticalPath
-                        };
-
                         // create a criticalPath click event
                         scope.clickCriticalPath = function() {
                             scope.manageCriticalPath = !scope.manageCriticalPath
@@ -673,11 +651,30 @@ define(
                             sidebarIcons.nodes().forEach(d => d.iconState = false)
                         }
 
+                        // manage the criticalPath activation ("scope.prunedGraph" version)
+                        //scope.$watch("manageCriticalPath", function(newVal, oldVal) {
+                        //    resetGraphAttributes()
+                        //    if (newVal != oldVal) {
+                        //        if (newVal) {
+                        //            render_panel(scope.wholeGraph)
+                        //            scope.criticalPathButtonText = "Show the criticalPath"
+                        //        }
+                        //        else {
+                        //            render_panel(scope.prunedGraph)
+                        //            scope.criticalPathButtonText = "Show the whole reviewGraph"
+                        //        }
+                        //    }
+                        //    // this is the first case to show the criticalPath as default
+                        //    else if (!newVal || !oldVal) {
+                        //        scope.criticalPathButtonText = "Show the whole reviewGraph"
+                        //    }
+                        //});
+
                         // manage the criticalPath activation
                         scope.$watch("manageCriticalPath", function(newVal, oldVal) {
                             resetGraphAttributes()
                             var mainNode = (Object.getPrototypeOf(nodes.filter(n=> n.id == graph.id)[0]))
-                            let criticalPath = findCriticalPath(mainNode)
+                            let criticalPath = rgProcessor.findCriticalPath(mainNode, 'isBasedOnKept')
                             var graphNodesToManage = nodes.filter(n => !criticalPath.includes(Object.getPrototypeOf(n)));
                             if (newVal != oldVal) {
                                 if (newVal) {

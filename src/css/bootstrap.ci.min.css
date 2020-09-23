@@ -1317,6 +1317,7 @@ div.flot-text{color:#333!important}
 
 .node-active {
   stroke: rgb(0, 140, 255);
+  fill: rgb(0, 140, 255);
   stroke-width: 1.5px;
 }
 
@@ -1327,6 +1328,7 @@ div.flot-text{color:#333!important}
 
 .link-active {
   stroke: rgb(0, 140, 255);
+  fill: rgb(0, 140, 255);
 }
 
 .overlay {
@@ -1496,7 +1498,6 @@ div.flot-text{color:#333!important}
 .Avatar {
   max-width: 100%;
   max-height: 100%;
-  border-radius: 50%;
   flex-basis: 36px;
   width: 36px;
   margin-right: 9px;

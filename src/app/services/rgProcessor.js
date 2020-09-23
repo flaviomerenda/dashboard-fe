@@ -244,23 +244,6 @@ define([
                 if (matchingNodes.length == 0) {
                     return undefined;
                 }
-                if (searchCriticalPath == true) {
-                    if (node.hierarchyLevel == 0) {
-                        if (rel == 'isBasedOn') {
-                            // filter the right first critical node 
-                            // (it will be removed when acred will take care of the criticalPath)
-                            var filteredMatching = matchingNodes.filter(n => 
-                                n.reviewRating.confidence == node.reviewRating.confidence)
-                            return filteredMatching[0];
-                        }
-                        else {
-                            return matchingNodes[0];
-                        }
-                    }
-                    else {
-                        return matchingNodes[0];
-                    }
-                }
                 else {
                     return matchingNodes[0];
                 }
@@ -312,6 +295,58 @@ define([
                     l['opacity'] = l['originalOpacity'];
                 };
                 return this.graph
+            }
+
+            this.lookupCriticalNodes = function(node, rel, criticalPath=[node]) {
+                var searchCriticalPath = true
+                var pathNode = this.lookupObject(node, rel, searchCriticalPath);
+                if (pathNode) {
+                    return this.lookupCriticalNodes(pathNode, rel, criticalPath.concat(pathNode));
+                }
+                return criticalPath
+            }
+
+            this.getCriticalLinkedNodes = function(criticalNode) {
+                var rels = ['sentA', 'sentB', 'author', 'creator', 'itemReviewed', 'appearance']
+                var searchCriticalPath = true
+                var linkedNodes = []
+                for (var rel of rels) {
+                    var pathNode = this.lookupObject(criticalNode, rel, searchCriticalPath);
+                    if (pathNode) {
+                        linkedNodes.push(pathNode);
+                    }
+                }
+                return linkedNodes
+            }
+
+            this.findCriticalPath = function(mainNode, rel) {
+                let criticalPath = this.lookupCriticalNodes(mainNode, rel)
+                var criticalLinkedNodes = []
+                for (var cn of criticalPath) {
+                    var linkedNode = this.getCriticalLinkedNodes(cn);
+                    if (linkedNode) {
+                        criticalLinkedNodes.push(...linkedNode)
+                    }
+                };
+                return criticalPath.concat(criticalLinkedNodes);
+            }
+
+            this.removeDuplicates = function(arr) {
+                let s = new Set(arr);
+                let it = s.values();
+                return Array.from(it);
+            }
+
+            this.pruneGraph = function(graph) {
+                var mainNode = graph.nodes.filter(n => n.identifier == graph.mainNode)[0]
+                var nodeGroup = this.findCriticalPath(mainNode, 'isBasedOnKept')
+                var linkGroup = graph.links.filter(l =>
+                    nodeGroup.map(n => n.id).includes(l.source) && 
+                    nodeGroup.map(n => n.id).includes(l.target)
+                );
+                graph['nodes'] = this.removeDuplicates(nodeGroup)
+                graph['links'] = linkGroup
+                return graph
             }
 
         });
