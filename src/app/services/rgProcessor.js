@@ -239,7 +239,7 @@ define([
             }
             
             // look for respective source node
-            this.lookupObject = function(node, rel, searchCriticalPath=false) {
+            this.lookupObject = function(node, rel) {
                 var matchingNodes = this.lookupNodes(node, rel, 'source');
                 if (matchingNodes.length == 0) {
                     return undefined;
@@ -298,8 +298,7 @@ define([
             }
 
             this.lookupCriticalNodes = function(node, rel, criticalPath=[node]) {
-                var searchCriticalPath = true
-                var pathNode = this.lookupObject(node, rel, searchCriticalPath);
+                var pathNode = this.lookupObject(node, rel);
                 if (pathNode) {
                     return this.lookupCriticalNodes(pathNode, rel, criticalPath.concat(pathNode));
                 }
@@ -308,10 +307,9 @@ define([
 
             this.getCriticalLinkedNodes = function(criticalNode) {
                 var rels = ['sentA', 'sentB', 'author', 'creator', 'itemReviewed', 'appearance']
-                var searchCriticalPath = true
                 var linkedNodes = []
                 for (var rel of rels) {
-                    var pathNode = this.lookupObject(criticalNode, rel, searchCriticalPath);
+                    var pathNode = this.lookupObject(criticalNode, rel);
                     if (pathNode) {
                         linkedNodes.push(pathNode);
                     }
