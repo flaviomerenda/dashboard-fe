@@ -57,11 +57,14 @@ define(
                     if ($scope.reviewGraph == null) {
                         alertSrv.set('Warning', 'No review available for this document. Sorry.');
                     }
-
                     var processedData = acred_to_d3_ReviewGraph($scope.reviewGraph)
-                    if (DEBUG) {console.debug('reviewGraph data: ', processedData)}
 
-                    $scope.graph = processedData
+                    $scope.wholeGraph = processedData
+                    if (DEBUG) {console.debug('wholeReviewGraph: ', $scope.wholeGraph)}
+
+                    // already preprocessed prunedGraph
+                    //$scope.prunedGraph = rgProcessor.pruneGraph(angular.copy(processedData))
+                    //if (DEBUG) {console.debug('prunedReviewGraph: ', $scope.prunedGraph)}
                     
                     // trigger rendering of the graph
                     $scope.$broadcast('render');
