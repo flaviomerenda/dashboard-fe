@@ -39,8 +39,43 @@ define(
                         element.html("");
 
                         // get nodes and links
-                        const nodes = graph.nodes.map(d => Object.create(d));
-                        const links = graph.links.map(d => Object.create(d));
+                        var nodes = graph.nodes.map(d => Object.create(d));
+                        var links = graph.links.map(d => Object.create(d));
+                        var linkedNodes = new Set([...graph.links.map(d => d.source), 
+                                                   ...graph.links.map(d => d.target)])
+
+                        var findLinkedThing = function(qnode) {
+                            var qnodeId = qnode['id'];
+                            var thingLink = graph['links'].filter(link => (qnodeId == link['source']) && 
+                                                                 ((link['rel'] == 'creator') || link['rel'] == 'author')) // control author rel
+                            var thingNode = thingLink.map(link => link['target']).map(n => rgProcessor.nodeById(n))
+                            return [thingNode, thingLink];
+                        }
+
+                        // clean the nodes array
+                        var thingNodesToDelete = function(nodes, links, linkedNodes) {
+                            var nodeGroup = nodes.filter(d => rgBuilder.calcSymbolId(d).slice(1,) == 'thing');
+                            var thingNodes = []
+                            var thingLinks = []
+                            thingNodes.push(...nodeGroup.filter(n => ![...linkedNodes]
+                                .includes(Object.getPrototypeOf(n).id))
+                                .map(n => Object.getPrototypeOf(n)));
+                            for (var n of nodeGroup) {
+                                var thingNodeLink = findLinkedThing(n)
+                                if (thingNodeLink[0].length > 0) {
+                                    thingNodes.push(Object.getPrototypeOf(n));
+                                    thingNodes.push(...thingNodeLink[0]);
+                                    thingLinks.push(...thingNodeLink[1])
+                                }
+                            }
+                            var cleanNodes = nodes.filter(n => !thingNodes.includes(Object.getPrototypeOf(n)));
+                            var cleanLinks = links.filter(l => !thingLinks.includes(Object.getPrototypeOf(l)));
+                            return [cleanNodes, cleanLinks]
+                        };
+
+                        var cleanGraph = thingNodesToDelete(nodes, links, linkedNodes)
+                        nodes = cleanGraph[0]
+                        links = cleanGraph[1]
 
                         // get the current element where to add the graph
                         // get the height and width parent values
@@ -164,6 +199,43 @@ define(
                             selectProperCard(scope.selectedNode)
                         }
 
+                        var findNeighbhd = function(qnode) {
+                            var qnodeId = qnode['id'];
+                            var neighbhnLinks = graph['links'].filter(link => qnodeId == link['source'])
+                            var neighbhnNodes = neighbhnLinks.map(link => link['target']).map(n => rgProcessor.nodeById(n))
+                            return [neighbhnNodes, neighbhnLinks];
+                        }
+
+                        var handleNeighbhd = function(neighbhdNodes, neighbhLinks, alfa=0.2) {
+                            neighbhdNodes.forEach(n => {
+                                if (n.opacityFilter == true) {
+                                    n.opacityFilter = false;
+                                    n.opacity = alfa;
+                                    n.neighbhdActivation = true;
+                                    n.enabledNode = true;
+                                }
+                            });
+                            updateNodeIconOpacity(d3v5.select("#nodeGroup_" + graph.id).selectAll("use"));
+                            neighbhLinks.forEach(l => {
+                                if (l.opacityFilter == true) {
+                                    l.opacityFilter = false;
+                                    l.opacity = alfa;
+                                    l.neighbhdActivation = true;
+                                    l.enabledNode = true;
+                                }
+                            });
+                            updateLinkIconOpacity(d3v5.select("#linkGroup_" + graph.id).selectAll("polyline"));
+                            // reset activation flag of each node
+                            //neighbhdNodes.forEach(d=> d.enabledNode = true)
+                            // reset the sidebar attributes
+                            //var sidebarIcons = d3v5.selectAll("img")
+                            //sidebarIcons.nodes().filter(d => d.id.includes('sideButton'))
+                            // reset the buttons opacity
+                            //sidebarIcons.attr("style", d => "opacity:" + "1")
+                            // reset the state of the sidebar icons
+                            //sidebarIcons.nodes().forEach(d => d.iconState = false)
+                        }
+
                         var svg_node = function(d) {
                             var selectedNodeId;
                             var result = d.append("g")
@@ -190,6 +262,10 @@ define(
                                     let scale = (d.nodeScale || 1.0) * selectedFactor;
                                     return "scale(" + scale  + ")"
                                 })
+                                if (scope.prunedGraphActivation == true) {
+                                    var neighbhd = findNeighbhd(d)
+                                    handleNeighbhd(neighbhd[0], neighbhd[1])
+                                }
                                 scope.$apply(function() { 
                                     clickedNode(d);
                                 });
@@ -439,8 +515,7 @@ define(
                         });
 
                         var updateNodeIconOpacity = function (nodeGroup) {
-                            nodeGroup
-                                .attr("style", d => "opacity:" + d.opacity)
+                            nodeGroup.attr("style", d => "opacity:" + d.opacity)
                         }
                         
                         var updateLinkIconOpacity = function (linkGroup) {
@@ -456,14 +531,39 @@ define(
                                 });
                         }
 
-                        var handleNodeActivation = function(nodeGroup, criticalPath=false) {
+                        var handleNodeActivation = function(nodeGroup, criticalPath=false, alfa=0.2) {
                             nodeGroup.forEach(n => {
                                 var np = Object.getPrototypeOf(n);
-                                var nodeActive = n.opacityFilter ? false : true;
-                                var newNodeOpacity = nodeActive ? 0 : np.originalOpacity;
+                                // handle neighbhd nodes
+                                if ((np.neighbhdActivation == true) && (criticalPath)) {
+                                    np.opacityFilter = true;
+                                    var originalOpacity = alfa;
+                                } 
+                                else {
+                                    originalOpacity = np.originalOpacity
+                                }
+                                var nodeActive = np.opacityFilter ? false : true;
+                                var newNodeOpacity = nodeActive ? 0 : originalOpacity;
                                 // handle the sidebar actions
                                 if (criticalPath == false) {
+                                    if ((np.neighbhdActivation == true) && (np.enabledNode == false) && (np.opacityFilter == false)) {
+                                        newNodeOpacity = 0;
+                                        // Update node opacity
+                                        np.opacity = newNodeOpacity;
+                                        // Update node flag activation
+                                        np.opacityFilter = nodeActive;
+                                    }
+                                    else if ((np.neighbhdActivation == true) && (np.enabledNode == false) && (np.opacityFilter == true)) {
+                                        newNodeOpacity = alfa;
+                                        // Update node opacity
+                                        np.opacity = newNodeOpacity;
+                                        // Update node flag activation
+                                        np.opacityFilter = nodeActive;
+                                    }
                                     if (np.enabledNode == true) {
+                                        if ((np.neighbhdActivation == true) && (np.opacityFilter == true)) {
+                                            newNodeOpacity = alfa;
+                                        }
                                         // Update node opacity
                                         np.opacity = newNodeOpacity;
                                         // Update node flag activation
@@ -481,7 +581,7 @@ define(
                             updateNodeIconOpacity(d3v5.select("#nodeGroup_" + graph.id).selectAll("use"));
                         }
                         
-                        var handleLinkActivation = function(nodeGroup) {
+                        var handleLinkActivation = function(nodeGroup, alfa=0.2) {
                             // Hide/show related links
                             // Filter links related to selected nodes
                             var linkGroup = links.filter(l =>
@@ -497,6 +597,14 @@ define(
 
                             linkGroup.map(l => {
                                 var lp = Object.getPrototypeOf(l);
+                                // handle neighbhd links
+                                if (lp.neighbhdActivation == true) {
+                                    lp.opacityFilter = true;
+                                    originalOpacity = alfa;
+                                } 
+                                else {
+                                    var originalOpacity = lp.originalOpacity
+                                }
                                 // Determine if current link is visible
                                 var linkActive = lp.opacityFilter ? false : true;
                                 if (linkActive) {
@@ -510,7 +618,7 @@ define(
                                         (n.index == l.source.index) && ((Object.getPrototypeOf(n).opacityFilter 
                                             ? Object.getPrototypeOf(n).opacityFilter : false) == false));
                                     if ((targetNodeOpacity.length) && (sourceNodeOpacity.length)) {
-                                        newLinkOpacity = lp.originalOpacity;
+                                        newLinkOpacity = originalOpacity;
                                     }
                                     else {
                                         newLinkOpacity = 0;
@@ -670,27 +778,31 @@ define(
                         //    }
                         //});
 
-                        // manage the criticalPath activation
-                        scope.$watch("manageCriticalPath", function(newVal, oldVal) {
-                            resetGraphAttributes()
+                        var getGraphNodesToManage = function() {
                             var mainNode = (Object.getPrototypeOf(nodes.filter(n=> n.id == graph.id)[0]))
                             let criticalPath = rgProcessor.findCriticalPath(mainNode, 'isBasedOnKept')
-                            var graphNodesToManage = nodes.filter(n => !criticalPath.includes(Object.getPrototypeOf(n)));
-                            if (newVal != oldVal) {
-                                if (newVal) {
-                                    graphNodesToManage.forEach(d=> Object.getPrototypeOf(d).enabledNode = false)
-                                    var criticalpath = true
-                                    handleNodeActivation(graphNodesToManage, criticalpath);
-                                    handleLinkActivation(graphNodesToManage, criticalpath);
-                                    scope.criticalPathButtonText = "Show the whole reviewGraph"
-                                }
-                                else {
-                                    scope.criticalPathButtonText = "Show the criticalPath"
-                                }
+                            return nodes.filter(n => !criticalPath.includes(Object.getPrototypeOf(n)));
+                        }
+
+                        //var getNeighbhdNodesToManage = function(graphNodesToManage) {
+                        //    return graphNodesToManage.filter(d=> !Object.getPrototypeOf(d).neighbhdActivation)
+                        //}
+
+                        // manage the criticalPath activation
+                        scope.$watch("manageCriticalPath", function(newVal) {
+                            resetGraphAttributes()
+                            var graphNodesToManage = getGraphNodesToManage()
+                            if (newVal) {
+                                graphNodesToManage.forEach(d=> Object.getPrototypeOf(d).enabledNode = false)
+                                var criticalpath = true
+                                handleNodeActivation(graphNodesToManage, criticalpath);
+                                handleLinkActivation(graphNodesToManage);
+                                scope.criticalPathButtonText = "Show the whole reviewGraph"
+                                scope.prunedGraphActivation = true
                             }
-                            // this is the first case to show the criticalPath as default
-                            else if (!newVal || !oldVal) {
-                                scope.clickCriticalPath()
+                            else {
+                                scope.criticalPathButtonText = "Show the prunedGraph"
+                                scope.prunedGraphActivation = false
                             }
                         });
 
@@ -713,7 +825,7 @@ define(
                             var midX = bounds.x + width / 2,
                                 midY = bounds.y + height / 2;
                             if (width == 0 || height == 0) return; // nothing to fit
-                            var scale = (paddingPercent || 0.75) / Math.max(width / fullWidth, height / fullHeight);
+                            var scale = (paddingPercent || 0.85) / Math.max(width / fullWidth, height / fullHeight);
                             var translate = [fullWidth / 2 - scale * midX, fullHeight / 2 - scale * midY];
                         
                             if (DEBUG) {
@@ -730,6 +842,9 @@ define(
                         }
 
                         scope.displayMainReview()
+
+                        // this is the first needed click to show the criticalPath as default
+                        scope.clickCriticalPath()
 
                     }
                 }
