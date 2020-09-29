@@ -68,6 +68,7 @@ define(
                     
                     // trigger rendering of the graph
                     $scope.$broadcast('render');
+
                 });
             };
         });
