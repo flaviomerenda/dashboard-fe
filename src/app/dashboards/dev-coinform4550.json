@@ -1303,9 +1303,7 @@
     "save_as_public": false
   },
    "solr": {
-       "server": "http://172.30.200.110:8070/test/api/v1/dboard/",
-        
-    "server_prod": "https://dashboard.coinform.eu/api/dboard/",
+    "server": "https://dashboard.coinform.eu/api/dboard/",
     "core_name": "coinfo4550",
     "core_list": [
       "claims",
