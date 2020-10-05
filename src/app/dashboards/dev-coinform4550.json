@@ -1,0 +1,1326 @@
+﻿{
+  "title": "on Coinform4550 Tweets",
+  "version": "v20201003",
+  "services": {
+    "query": {
+      "idQueue": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "list": {
+      },
+      "ids": [
+      ]
+    },
+    "filter": {
+      "idQueue": [
+        0,
+        1,  
+        2,
+        3,
+        4,
+        5
+      ],
+      "list": {
+      },
+      "ids": [
+      ]
+    }
+  },
+  "sideColumn"  : {
+      "title": "Filters",
+      "width": "50px",
+      "editable": true,
+      "collapse": true,
+      "collapsable": true,
+      "panels": [
+        {
+          "span": 5,
+          "editable": true,
+          "type": "facet",
+          "loadingEditor": false,
+          "status": "Stable",
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&facet=true&facet.field=categories&facet.field=credibility_label&facet.field=source_id&facet.field=organizations&facet.field=people&wt=json",
+            "basic_query": "q=-credibility_label%3A%22not%20verifiable%22&facet=true&facet.field=categories&facet.field=credibility_label&facet.field=source_id&facet.field=organizations&facet.field=people",
+            "custom": ""
+          },
+          "group": "default",
+          "style": {
+            "font-size": "9pt"
+          },
+          "overflow": "min-height",
+          "fields": [
+            "categories",
+            "credibility_label",
+            "organizations",
+            "people",
+            "lang_orig"
+          ],
+          "spyable": true,
+          "facet_limit": 10,
+          "maxnum_facets": 6,
+          "foundResults": true,
+          "header_title": "",
+          "toggle_element": null,
+          "show_queries": false,
+          "title": "Filters",
+          "exportSize": null,
+          "offset": 0,
+          "show_help_message": true,
+          "info_mode": "markdown",
+          "help_message": "Use this component to see (and define filters for) the main;\n\n* `categories` these are topics identified automatically using [Expert System](http://expertsystem.com)'s [Cogito](https://expertsystem.com/products/cogito-intelligence-platform/) natural language processing. \n* `credibility label`s: these are automatically assigned to documents based on a state-of-the-art misinformation detection algorithm that tries to link sentences in documents to previously fact-checked claims.  \n* `organizations`: which have been identified as being mentioned in the text\n* `people`: who have been mentioned in the text\n* `lang_orig`: language of the tweet (as detected by uor system)"
+        }
+      ]
+  },
+  "rows": [
+    {
+      "title": "About this Dashboard",
+      "height": "50px",
+      "editable": true,
+      "collapse": false,
+      "collapsable": true,
+      "panels": [
+        {
+          "error": false,
+          "span": 6,
+          "editable": true,
+          "type": "text",
+          "loadingEditor": false,
+          "status": "Stable",
+          "mode": "markdown",
+          "content": "# Dashboard on Coinform4550\n\nThis dashboard shows the results of executing the ESI Credibility Analysis (`acred`) on an evaluation dataset called [Coinform4550 (currently unreleased)](https://coinform.eu/)\n\nThe dataset consists of 4550 tweets which were linked by Fact Checkers to [ClaimReview](https://schema.org/ClaimReview)s. More specificaly, the [claim](https://schema.org/Claim) reviewed was stated to have [appeared](https://schema.org/appearance) in the tweet. Since the ClaimReview has a [rating value](https://schema.org/ratingValue), we have a very strong signal about the accuracy of the tweets.\n\nNote that `acred` does not use the `appearance` information directly, for assessing the credibility of the tweets. Instead it tries to match the content of the tweet directly to a large database of claim reviews.\n\n\n\nAs of end of September 2020, ESI's `acred` achieves 35% accuracy (the **social** information provided by the associated tweets can further be used to improve detection, similar to what the OU and UKOB/Stuttgart are doing).",
+          "style": {},
+          "title": "About this Dashboard",
+          "show_help_message": true,
+          "info_mode": "markdown",
+          "help_message": "Provides a short description about the dashboard, its goals and the sources used to populate the collection of documents."
+        },
+        {
+          "error": false,
+          "span": 4,
+          "editable": true,
+          "type": "text",
+          "loadingEditor": false,
+          "status": "Stable",
+          "mode": "markdown",
+          "content": "## Changelog\n\n#### v20201003\n* First version",
+          "style": {},
+          "title": "Development Notes"
+        }
+      ]
+    },
+    {
+      "title": "Active Filters",
+      "height": "50px",
+      "editable": false,
+      "collapse": true,
+      "collapsable": true,
+      "panels": [
+        {
+          "error": false,
+          "span": 8,
+          "editable": true,
+          "spyable": true,
+          "group": [
+            "default"
+          ],
+          "type": "filtering",
+          "title": "Overview of active filters",
+          "show_help_message": true,
+          "info_mode": "markdown",
+          "help_message": "### Overview of active filters for this dashboard\nThe *active filters* define which documents are shown in this dashboard. All other components in this dashboard (diagrams, tables, etc.) show data based on this set of filters.\n\nYou typically define this filters by using the filter components above (although some of the components below also allow you to click on specific values to define a new filter).\n\nYou can use this component to:\n\n*  **toggle** temporarily disable/enable a filter \n* **remove** a filter\n* **edit** a filter (mainly for more advanced users)\n\nYou can always reload the page to go back to the default set of filters."
+        },
+        {
+          "span": 2,
+          "editable": true,
+          "type": "hits",
+          "loadingEditor": false,
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&stats=true&stats.field=id&wt=json&rows=0\n",
+            "basic_query": "",
+            "custom": ""
+          },
+          "style": {
+            "font-size": "16pt",
+            "flex-direction": "row"
+          },
+          "arrangement": "horizontal",
+          "chart": "total",
+          "counter_pos": "above",
+          "donut": false,
+          "tilt": false,
+          "labels": true,
+          "spyable": true,
+          "show_queries": false,
+          "metrics": [
+            {
+              "type": "count",
+              "field": "id",
+              "decimalDigits": 0,
+              "label": "documents matching active filters",
+              "value": "960"
+            }
+          ],
+          "refresh": {
+            "enable": false,
+            "interval": 2
+          },
+          "title": "Overview",
+          "show_help_message": true,
+          "info_mode": "markdown",
+          "help_message": "Shows the total number of documents that match the currently *active filters*. This is useful to receive feedback when you are manually toggling or editing filters."
+        }
+      ]
+    },
+    {
+      "title": "Overview of MisinfoMe Labeled Documents",
+      "height": "150px",
+      "editable": true,
+      "collapse": false,
+      "collapsable": true,
+      "panels": [
+        {
+          "span": 2,
+          "editable": true,
+          "type": "hits",
+          "loadingEditor": false,
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=*:*&stats=true&stats.field=id&wt=json&rows=0\n",
+            "basic_query": "",
+            "custom": ""
+          },
+          "style": {
+            "font-size": "20pt",
+            "flex-direction": "row"
+          },
+          "arrangement": "horizontal",
+          "chart": "total",
+          "counter_pos": "above",
+          "donut": false,
+          "tilt": false,
+          "labels": true,
+          "spyable": true,
+          "show_queries": true,
+          "metrics": [
+            {
+              "type": "count",
+              "field": "id",
+              "decimalDigits": 0,
+              "label": "# docs matching the active filters",
+              "value": "960"
+            }
+          ],
+          "refresh": {
+            "enable": false,
+            "interval": 2
+          },
+          "title": "Collected",
+          "show_help_message": true,
+          "info_mode": "markdown",
+          "help_message": "This is the number of documents matching the *active filters* (set above)"
+        },
+        {
+          "span": 2,
+          "editable": true,
+          "type": "hits",
+          "loadingEditor": false,
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=*:*&stats=true&stats.field=id&wt=json&rows=0\n",
+            "basic_query": "",
+            "custom": "&fq=misinfome_label:*"
+          },
+          "style": {
+            "font-size": "20pt",
+            "flex-direction": "row"
+          },
+          "arrangement": "horizontal",
+          "chart": "total",
+          "counter_pos": "above",
+          "donut": false,
+          "tilt": false,
+          "labels": true,
+          "spyable": true,
+          "show_queries": true,
+          "metrics": [
+            {
+              "type": "count",
+              "field": "id",
+              "decimalDigits": 0,
+              "label": "# docs with a MisinfoMe label",
+              "value": "960"
+            }
+          ],
+          "refresh": {
+            "enable": false,
+            "interval": 2
+          },
+          "title": "Labeled Docs"
+        },
+        {
+          "span": 2,
+          "editable": true,
+          "type": "hits",
+          "loadingEditor": false,
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=*:*&stats=true&stats.field=id&wt=json&rows=0\n",
+            "basic_query": "",
+            "custom": "&fq=misinfome_label:(\"not_credible\" OR \"mostly_not_credible\")"
+          },
+          "style": {
+            "font-size": "20pt",
+            "flex-direction": "row"
+          },
+          "arrangement": "horizontal",
+          "chart": "total",
+          "counter_pos": "above",
+          "donut": false,
+          "tilt": false,
+          "labels": true,
+          "spyable": true,
+          "show_queries": true,
+          "metrics": [
+            {
+              "type": "count",
+              "field": "id",
+              "decimalDigits": 0,
+              "label": "# not credible docs",
+              "value": "353"
+            }
+          ],
+          "refresh": {
+            "enable": false,
+            "interval": 2
+          },
+          "title": "Not credible"
+        },
+        {
+          "span": 2,
+          "editable": true,
+          "type": "hits",
+          "loadingEditor": false,
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=*:*&stats=true&stats.field=id&wt=json&rows=0\n",
+            "basic_query": "",
+            "custom": "&fq=misinfome_label:(\"credible\" OR \"mostly_credible\")"
+          },
+          "style": {
+            "font-size": "20pt",
+            "flex-direction": "row"
+          },
+          "arrangement": "horizontal",
+          "chart": "total",
+          "counter_pos": "above",
+          "donut": false,
+          "tilt": false,
+          "labels": true,
+          "spyable": true,
+          "show_queries": true,
+          "metrics": [
+            {
+              "type": "count",
+              "field": "id",
+              "decimalDigits": 0,
+              "label": "# (mostly) Credible docs",
+              "value": "147"
+            }
+          ],
+          "refresh": {
+            "enable": false,
+            "interval": 2
+          },
+          "title": "Credible"
+        },
+        {
+          "span": 4,
+          "editable": true,
+          "type": "terms",
+          "loadingEditor": false,
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=*:*&wt=json&rows=0&facet=true&facet.field=misinfome_label&facet.limit=10&facet.missing=true&f.credibility_label.facet.sort=count&fq=source:politifact_real_news_articles",
+            "custom": ""
+          },
+          "mode": "count",
+          "field": "misinfome_label",
+          "stats_field": "",
+          "decimal_points": 0,
+          "exclude": [],
+          "missing": false,
+          "other": false,
+          "size": 10,
+          "pages": 10,
+          "sortBy": "count",
+          "order": "descending",
+          "style": {
+            "font-size": "10pt"
+          },
+          "donut": false,
+          "tilt": false,
+          "labels": true,
+          "logAxis": false,
+          "arrangement": "vertical",
+          "chart": "pie",
+          "counter_pos": "right",
+          "exportSize": 100,
+          "lastColor": "",
+          "spyable": true,
+          "show_queries": false,
+          "bar_chart_arrangement": "vertical",
+          "chartColors": [
+              "#C21807",
+              "#6495ED",
+              "#1A1110",
+              "#2E8B57",
+              "#00A693",
+              "#B43757",
+            "#BA43A9",
+            "#0A437C",
+            "#7EB26D",
+            "#E0752D",
+            "#EAB839",
+            "#508642",
+            "#6ED0E0",
+            "#EF843C",
+            "#E24D42",
+            "#1F78C1",
+            "#705DA0",
+            "#CCA300",
+            "#447EBC",
+            "#C15C17",
+            "#890F02",
+            "#6D1F62",
+            "#584477",
+            "#B7DBAB",
+            "#F4D598",
+            "#70DBED",
+            "#F9BA8F",
+            "#F29191",
+            "#82B5D8",
+            "#E5A8E2",
+            "#AEA2E0",
+            "#629E51",
+            "#E5AC0E",
+            "#64B0C8",
+            "#BF1B00",
+            "#0A50A1",
+            "#962D82",
+            "#614D93",
+            "#9AC48A",
+            "#F2C96D",
+            "#65C5DB",
+            "#F9934E",
+            "#EA6460",
+            "#5195CE",
+            "#D683CE",
+            "#806EB7",
+            "#3F6833",
+            "#967302",
+            "#2F575E",
+            "#99440A",
+            "#58140C",
+            "#052B51",
+            "#511749",
+            "#3F2B5B",
+            "#E0F9D7",
+            "#FCEACA",
+            "#CFFAFF",
+            "#F9E2D2",
+            "#FCE2DE",
+            "#BADFF4",
+            "#F9D9F9",
+            "#DEDAF7"
+          ],
+          "refresh": {
+            "enable": false,
+            "interval": 2
+          },
+          "title": "MisinfoMe Labels",
+          "show_help_message": true,
+          "info_mode": "markdown",
+          "help_message": "### Shows the distribution of *credibility labels* for the documents. \nThese have been **automatically** derived by MisinfoMe from `ClaimReview` alternateName or rating values."
+        }  
+      ]
+    },      
+    {
+      "title": "Overview of acred Rated Documents",
+      "height": "150px",
+      "editable": true,
+      "collapse": false,
+      "collapsable": true,
+      "panels": [
+        {
+          "span": 2,
+          "editable": true,
+          "type": "hits",
+          "loadingEditor": false,
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&stats=true&stats.field=id&wt=json&rows=0\n",
+            "basic_query": "",
+            "custom": ""
+          },
+          "style": {
+            "font-size": "20pt",
+            "flex-direction": "row"
+          },
+          "arrangement": "horizontal",
+          "chart": "total",
+          "counter_pos": "above",
+          "donut": false,
+          "tilt": false,
+          "labels": true,
+          "spyable": true,
+          "show_queries": true,
+          "metrics": [
+            {
+              "type": "count",
+              "field": "id",
+              "decimalDigits": 0,
+              "label": "# docs matching the active filters",
+              "value": "960"
+            }
+          ],
+          "refresh": {
+            "enable": false,
+            "interval": 2
+          },
+          "title": "Collected",
+          "show_help_message": true,
+          "info_mode": "markdown",
+          "help_message": "This is the number of documents matching the *active filters* (set above)"
+        },
+        {
+          "span": 2,
+          "editable": true,
+          "type": "hits",
+          "loadingEditor": false,
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&stats=true&stats.field=id&wt=json&rows=0\n",
+            "basic_query": "",
+            "custom": "&fq=credibility_label:*"
+          },
+          "style": {
+            "font-size": "20pt",
+            "flex-direction": "row"
+          },
+          "arrangement": "horizontal",
+          "chart": "total",
+          "counter_pos": "above",
+          "donut": false,
+          "tilt": false,
+          "labels": true,
+          "spyable": true,
+          "show_queries": true,
+          "metrics": [
+            {
+              "type": "count",
+              "field": "id",
+              "decimalDigits": 0,
+              "label": "# docs with an automated credibility rating",
+              "value": "960"
+            }
+          ],
+          "refresh": {
+            "enable": false,
+            "interval": 2
+          },
+          "title": "Rated Docs"
+        },
+        {
+          "span": 2,
+          "editable": true,
+          "type": "hits",
+          "loadingEditor": false,
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&stats=true&stats.field=id&wt=json&rows=0\n",
+            "basic_query": "",
+            "custom": "&fq=credibility_label:(\"not credible\" OR \"mostly not credible\")"
+          },
+          "style": {
+            "font-size": "20pt",
+            "flex-direction": "row"
+          },
+          "arrangement": "horizontal",
+          "chart": "total",
+          "counter_pos": "above",
+          "donut": false,
+          "tilt": false,
+          "labels": true,
+          "spyable": true,
+          "show_queries": true,
+          "metrics": [
+            {
+              "type": "count",
+              "field": "id",
+              "decimalDigits": 0,
+              "label": "# (mostly) not credible docs",
+              "value": "353"
+            }
+          ],
+          "refresh": {
+            "enable": false,
+            "interval": 2
+          },
+          "title": "Not credible"
+        },
+        {
+          "span": 2,
+          "editable": true,
+          "type": "hits",
+          "loadingEditor": false,
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&stats=true&stats.field=id&wt=json&rows=0\n",
+            "basic_query": "",
+            "custom": "&fq=credibility_label:(\"credible\" OR \"mostly credible\")"
+          },
+          "style": {
+            "font-size": "20pt",
+            "flex-direction": "row"
+          },
+          "arrangement": "horizontal",
+          "chart": "total",
+          "counter_pos": "above",
+          "donut": false,
+          "tilt": false,
+          "labels": true,
+          "spyable": true,
+          "show_queries": true,
+          "metrics": [
+            {
+              "type": "count",
+              "field": "id",
+              "decimalDigits": 0,
+              "label": "# (mostly) Credible docs",
+              "value": "147"
+            }
+          ],
+          "refresh": {
+            "enable": false,
+            "interval": 2
+          },
+          "title": "Credible"
+        },
+        {
+          "span": 4,
+          "editable": true,
+          "type": "terms",
+          "loadingEditor": false,
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&wt=json&rows=0&facet=true&facet.field=credibility_label&facet.limit=10&facet.missing=true&f.credibility_label.facet.sort=count",
+            "custom": ""
+          },
+          "mode": "count",
+          "field": "credibility_label",
+          "stats_field": "",
+          "decimal_points": 0,
+          "exclude": [],
+          "missing": false,
+          "other": false,
+          "size": 10,
+          "pages": 10,
+          "sortBy": "count",
+          "order": "descending",
+          "style": {
+            "font-size": "10pt"
+          },
+          "donut": false,
+          "tilt": false,
+          "labels": true,
+          "logAxis": false,
+          "arrangement": "vertical",
+          "chart": "pie",
+          "counter_pos": "right",
+          "exportSize": 100,
+          "lastColor": "",
+          "spyable": true,
+          "show_queries": false,
+          "bar_chart_arrangement": "vertical",
+          "chartColors": [
+              "#1A1110",
+              "#C21807",
+              "#2E8B57",
+              "#B43757",
+              "#6495ED",
+              "#00A693",
+            "#EAB839",
+            "#CCA300",
+            "#BA43A9",
+            "#0A437C",
+            "#7EB26D",
+            "#E0752D",
+            "#6ED0E0",
+            "#EF843C",
+            "#E24D42",
+            "#1F78C1",
+            "#705DA0",
+            "#447EBC",
+            "#C15C17",
+            "#890F02",
+            "#6D1F62",
+            "#584477",
+            "#B7DBAB",
+            "#F4D598",
+            "#70DBED",
+            "#F9BA8F",
+            "#F29191",
+            "#82B5D8",
+            "#E5A8E2",
+            "#AEA2E0",
+            "#629E51",
+            "#E5AC0E",
+            "#64B0C8",
+            "#BF1B00",
+            "#0A50A1",
+            "#962D82",
+            "#614D93",
+            "#9AC48A",
+            "#F2C96D",
+            "#65C5DB",
+            "#F9934E",
+            "#EA6460",
+            "#5195CE",
+            "#D683CE",
+            "#806EB7",
+            "#3F6833",
+            "#967302",
+            "#2F575E",
+            "#99440A",
+            "#58140C",
+            "#052B51",
+            "#3F2B5B",
+            "#E0F9D7",
+            "#FCEACA",
+            "#CFFAFF",
+            "#F9E2D2",
+            "#FCE2DE",
+            "#BADFF4",
+            "#F9D9F9",
+            "#DEDAF7"
+          ],
+          "refresh": {
+            "enable": false,
+            "interval": 2
+          },
+          "title": "Acred credibility",
+          "show_help_message": true,
+          "info_mode": "markdown",
+          "help_message": "### Shows the distribution of *credibility labels* for the documents. \nThese have been **automatically** calculated using a state-of-the-art artificial intelligence system by trying to link documents with *credibility signals* such as:\n\n* **previously fact-checked claims** similar to sentences in the document\n* the **reputation of the sites** where similar sentences have been published\n\n### Understanding credibility labels\nAs part of [Co-inform](https://coinform.eu) we have defined the following set of credibility labels:\n\n* **credible**\n* **mostly credible**\n* **credibility uncertain**\n* **mostly not credible**\n* **not credible**\n\nWe also have a sixth label, which is not really about *credibility*:\n\n* **not verifiable** indicates that our AI had trouble assessing the credibility for some reason\n\n#### Credibility vs accuracy\nNote that our AI predicts **credibility** of a document, not **accuracy**. This is because we do not believe current AI systems are capable of assessing the accuracy of an article, only humans can do this."
+        }          
+      ]
+    },
+    {
+      "title": "Acred predictions",
+      "height": "250px",
+      "editable": true,
+      "collapse": false,
+      "collapsable": true,
+      "panels": [
+        {
+          "span": 4,
+          "editable": true,
+          "type": "terms",
+          "loadingEditor": false,
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&wt=json&rows=0&facet=true&facet.field=credibility_label&facet.limit=10&facet.missing=true&f.credibility_label.facet.sort=count&fq=misinfome_label:(\"mostly_credible\" or \"credible\")",
+            "custom": "&fq=misinfome_label:(\"mostly_credible\" or \"credible\")"
+          },
+          "mode": "count",
+          "field": "credibility_label",
+          "stats_field": "",
+          "decimal_points": 0,
+          "exclude": [],
+          "missing": false,
+          "other": false,
+          "size": 10,
+          "pages": 10,
+          "sortBy": "count",
+          "order": "descending",
+          "style": {
+            "font-size": "10pt"
+          },
+          "donut": false,
+          "tilt": false,
+          "labels": true,
+          "logAxis": false,
+          "arrangement": "vertical",
+          "chart": "pie",
+          "counter_pos": "left",
+          "exportSize": 100,
+          "lastColor": "",
+          "spyable": true,
+          "show_queries": false,
+          "bar_chart_arrangement": "vertical",
+          "chartColors": [
+              "#1A1110",
+              "#00A693",
+              "#2E8B57",
+              "#C21807",
+              "#B43757",
+              "#6495ED",
+            "#BA43A9",
+            "#0A437C",
+            "#7EB26D",
+            "#E0752D",
+            "#EAB839",
+            "#508642",
+            "#6ED0E0",
+            "#EF843C",
+            "#E24D42",
+            "#1F78C1",
+            "#705DA0",
+            "#CCA300",
+            "#447EBC",
+            "#C15C17",
+            "#890F02",
+            "#6D1F62",
+            "#584477",
+            "#B7DBAB",
+            "#F4D598",
+            "#70DBED",
+            "#F9BA8F",
+            "#F29191",
+            "#82B5D8",
+            "#E5A8E2",
+            "#AEA2E0",
+            "#629E51",
+            "#E5AC0E",
+            "#64B0C8",
+            "#BF1B00",
+            "#0A50A1",
+            "#962D82",
+            "#614D93",
+            "#9AC48A",
+            "#F2C96D",
+            "#65C5DB",
+            "#F9934E",
+            "#EA6460",
+            "#5195CE",
+            "#D683CE",
+            "#806EB7",
+            "#3F6833",
+            "#967302",
+            "#2F575E",
+            "#99440A",
+            "#58140C",
+            "#052B51",
+            "#511749",
+            "#3F2B5B",
+            "#E0F9D7",
+            "#FCEACA",
+            "#CFFAFF",
+            "#F9E2D2",
+            "#FCE2DE",
+            "#BADFF4",
+            "#F9D9F9",
+            "#DEDAF7"
+          ],
+          "refresh": {
+            "enable": false,
+            "interval": 2
+          },
+          "title": "Labels for \"real\" news",
+          "show_help_message": true,
+          "info_mode": "markdown",
+          "help_message": "As you can see, rather than identify the articles as **credible**, `acred` identifies:\n\n* over  1/3 of the articles as being **not verifiable**\n* almost 1/4 of the artiles as **uncertain**. By looking at the explanations (see table of example below), we see that this is mainly due to ratings such as *other* and *mixed*.\n* 1/5 of the articles are correctly identified as **credible**\n* almost 1/5 are incorrectly labeled as **not credible**"
+        },
+        {
+          "span": 4,
+          "editable": true,
+          "type": "terms",
+          "loadingEditor": false,
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&wt=json&rows=0&facet=true&facet.field=credibility_label&facet.limit=10&facet.missing=true&f.credibility_label.facet.sort=count&fq=misinfome_label:(\"not_credible\")",
+            "custom": "&fq=misinfome_label:(\"not_credible\")"
+          },
+          "mode": "count",
+          "field": "credibility_label",
+          "stats_field": "",
+          "decimal_points": 0,
+          "exclude": [],
+          "missing": false,
+          "other": false,
+          "size": 10,
+          "pages": 10,
+          "sortBy": "count",
+          "order": "descending",
+          "style": {
+            "font-size": "10pt"
+          },
+          "donut": false,
+          "tilt": false,
+          "labels": true,
+          "logAxis": false,
+          "arrangement": "vertical",
+          "chart": "pie",
+          "counter_pos": "right",
+          "exportSize": 100,
+          "lastColor": "",
+          "spyable": true,
+          "show_queries": true,
+          "bar_chart_arrangement": "vertical",
+          "chartColors": [
+              "#1A1110",
+              "#C21807",
+              "#B43757",
+              "#2E8B57",
+              "#6495ED",
+              "#00A693",
+            "#E0752D",
+            "#BA43A9",
+            "#0A437C",
+            "#7EB26D",
+            "#EAB839",
+            "#508642",
+            "#7EB26D",
+            "#EAB839",
+            "#6ED0E0",
+            "#EF843C",
+            "#E24D42",
+            "#1F78C1",
+            "#BA43A9",
+            "#705DA0",
+            "#508642",
+            "#CCA300",
+            "#447EBC",
+            "#C15C17",
+            "#890F02",
+            "#0A437C",
+            "#6D1F62",
+            "#584477",
+            "#B7DBAB",
+            "#F4D598",
+            "#70DBED",
+            "#F9BA8F",
+            "#F29191",
+            "#82B5D8",
+            "#E5A8E2",
+            "#AEA2E0",
+            "#629E51",
+            "#E5AC0E",
+            "#64B0C8",
+            "#E0752D",
+            "#BF1B00",
+            "#0A50A1",
+            "#962D82",
+            "#614D93",
+            "#9AC48A",
+            "#F2C96D",
+            "#65C5DB",
+            "#F9934E",
+            "#EA6460",
+            "#5195CE",
+            "#D683CE",
+            "#806EB7",
+            "#3F6833",
+            "#967302",
+            "#2F575E",
+            "#99440A",
+            "#58140C",
+            "#052B51",
+            "#511749",
+            "#3F2B5B",
+            "#E0F9D7",
+            "#FCEACA",
+            "#CFFAFF",
+            "#F9E2D2",
+            "#FCE2DE",
+            "#BADFF4",
+            "#F9D9F9",
+            "#DEDAF7"
+          ],
+          "refresh": {
+            "enable": false,
+            "interval": 2
+          },
+          "title": "Labels for \"Fake\" news"
+        },
+{
+          "span": 4,
+          "editable": true,
+          "type": "terms",
+          "loadingEditor": false,
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&wt=json&rows=0&facet=true&facet.field=credibility_label&facet.limit=10&facet.missing=true&f.credibility_label.facet.sort=count&fq=misinfome_label:(\"mostly_credible\" or \"credible\")",
+            "custom": "&fq=misinfome_label:(\"not_verifiable\" OR \"uncertain\" OR \"check_me\")"
+          },
+          "mode": "count",
+          "field": "credibility_label",
+          "stats_field": "",
+          "decimal_points": 0,
+          "exclude": [],
+          "missing": false,
+          "other": false,
+          "size": 10,
+          "pages": 10,
+          "sortBy": "count",
+          "order": "descending",
+          "style": {
+            "font-size": "10pt"
+          },
+          "donut": false,
+          "tilt": false,
+          "labels": true,
+          "logAxis": false,
+          "arrangement": "vertical",
+          "chart": "pie",
+          "counter_pos": "right",
+          "exportSize": 100,
+          "lastColor": "",
+          "spyable": true,
+          "show_queries": true,
+          "bar_chart_arrangement": "vertical",
+          "chartColors": [
+              "#1A1110",
+              "#C21807",
+              "#6495ED",
+              "#B43757",
+              "#2E8B57",
+              "#00A693",
+            "#E0752D",
+            "#BA43A9",
+            "#0A437C",
+            "#7EB26D",
+            "#EAB839",
+            "#508642",
+            "#7EB26D",
+            "#EAB839",
+            "#6ED0E0",
+            "#EF843C",
+            "#E24D42",
+            "#1F78C1",
+            "#BA43A9",
+            "#705DA0",
+            "#508642",
+            "#CCA300",
+            "#447EBC",
+            "#C15C17",
+            "#890F02",
+            "#0A437C",
+            "#6D1F62",
+            "#584477",
+            "#B7DBAB",
+            "#F4D598",
+            "#70DBED",
+            "#F9BA8F",
+            "#F29191",
+            "#82B5D8",
+            "#E5A8E2",
+            "#AEA2E0",
+            "#629E51",
+            "#E5AC0E",
+            "#64B0C8",
+            "#E0752D",
+            "#BF1B00",
+            "#0A50A1",
+            "#962D82",
+            "#614D93",
+            "#9AC48A",
+            "#F2C96D",
+            "#65C5DB",
+            "#F9934E",
+            "#EA6460",
+            "#5195CE",
+            "#D683CE",
+            "#806EB7",
+            "#3F6833",
+            "#967302",
+            "#2F575E",
+            "#99440A",
+            "#58140C",
+            "#052B51",
+            "#511749",
+            "#3F2B5B",
+            "#E0F9D7",
+            "#FCEACA",
+            "#CFFAFF",
+            "#F9E2D2",
+            "#FCE2DE",
+            "#BADFF4",
+            "#F9D9F9",
+            "#DEDAF7"
+          ],
+          "refresh": {
+            "enable": false,
+            "interval": 2
+          },
+          "title": "Labels for \"Uncertain\" tweets"
+        }          
+      ]
+    },
+    {
+      "title": "Not credible details",
+      "height": "450px",
+      "editable": true,
+      "collapse": false,
+      "collapsable": true,
+      "panels": [
+        {
+          "span": 5,
+          "editable": true,
+          "type": "heatmap",
+          "loadingEditor": false,
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&wt=json&rows=0&facet=true&facet.pivot=credibility_label,organizations&facet.limit=5&facet.pivot.mincount=0",
+            "custom": "&fq=-misinfome_label:\"not_credible\""
+          },
+          "size": 0,
+          "row_field": "credibility_label",
+          "col_field": "misinfome_label",
+          "row_size": 6,
+          "color": "blue",
+          "spyable": true,
+          "transpose_show": false,
+          "transposed": true,
+          "show_queries": true,
+          "title": "Misinfome vs acred labels (except not credible)"
+        },
+        {
+          "span": 5,
+          "editable": true,
+          "type": "force",
+          "loadingEditor": false,
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&wt=json&facet=true&facet.pivot=credibility_label,people&f.credibility_label.facet.limit=6&f.people.facet.limit=10&rows=0",
+            "custom": ""
+          },
+          "facet_limit": "6,10",
+          "node_size_weight": 0.5,
+          "link_width_weight": 0.5,
+          "link_strength_weight": 0,
+          "link_distance_weight": 0,
+          "strength": -300,
+          "colors": "#693C5E, #ff7f0e, #1f77b4,  #2ca02c, #d62728, #9467bd, #8c564b, #e377c2, #7f7f7f, #bcbd22",
+          "mute_category_1": false,
+          "mute_category_2": false,
+          "spheres": false,
+          "spyable": true,
+          "show_queries": true,
+          "title": "People by doc credibility",
+          "facet_pivot_strings": [
+            "credibility_label",
+            "people"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Sample documents",
+      "height": "150px",
+      "editable": true,
+      "collapse": false,
+      "collapsable": true,
+      "panels": [
+        {
+          "span": 10,
+          "editable": true,
+          "type": "table",
+          "loadingEditor": false,
+          "status": "Stable",
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=-credibility_label%3A%22not%20verifiable%22&wt=json&rows=50",
+            "basic_query": "q=-credibility_label%3A%22not%20verifiable%22",
+            "custom": "&hl=false&fq=credibility_label:*&fl=id,content,contentLength,content_language,credibility_assessor,credibility_confidence,credibility_explanation,credibility_label,credibility_score,credibility_score_date,domain_credibility_confidence,domain_credibility_explanation,domain_credibility_label,domain_credibility_score,domain_credibility_score_date,lang,lang_orig,lastModified,last_update,publishedDate,retrieved_on,size,source,source_id,title,url,misinfome_label,misinfome_explanation"
+          },
+          "size": 10,
+          "pages": 5,
+          "offset": 0,
+          "sort": [
+            "publishedDate"
+          ],
+          "sortable": true,
+          "group": "default",
+          "style": {
+            "font-size": "9pt"
+          },
+          "overflow": "min-height",
+          "fields": [
+            "title",
+            "lang_orig",
+            "credibility_label",
+            "credibility_score"
+          ],
+          "important_fields": [
+            "content",
+            "contentLength",
+            "content_language",
+            "credibility_assessor",
+            "credibility_confidence",
+            "credibility_explanation",
+            "credibility_label",
+            "credibility_score",
+            "credibility_score_date",
+            "domain_credibility_confidence",
+            "domain_credibility_explanation",
+            "domain_credibility_label",
+            "domain_credibility_score",
+            "domain_credibility_score_date",
+            "lang",
+            "lang_orig",
+            "lastModified",
+            "last_update",
+            "publishedDate",
+            "retrieved_on",
+            "size",
+            "source",
+            "source_id",
+            "title",
+            "url"
+          ],
+          "highlight": [],
+          "header": true,
+          "paging": true,
+          "field_list": false,
+          "trimFactor": 300,
+          "normTimes": true,
+          "spyable": true,
+          "saveOption": "json",
+          "exportSize": 50,
+          "exportAll": true,
+          "displayLinkIcon": true,
+          "imageFields": [],
+          "imgFieldWidth": "auto",
+          "imgFieldHeight": "85px",
+          "show_queries": true,
+          "maxNumCalcTopFields": 20,
+          "calcTopFieldValuesFromAllData": false,
+          "subrowMaxChar": 300,
+          "subrowOffset": 0,
+          "refresh": {
+            "enable": false,
+            "interval": 2
+          },
+          "title": "Example Documents",
+          "enableSubrow": false,
+          "subrowField": "content",
+          "enableHyperlink": true,
+          "hyperlinkColumnHeader": "link",
+          "hyperlinkColumnForURI": "url",
+          "markdownFields": [
+            "credibility_explanation"
+          ],
+            "withReviewGraph": true
+        }
+      ]
+    }
+  ],
+  "editable": true,
+  "index": {
+    "interval": "none",
+    "pattern": "[logstash-]YYYY.MM.DD",
+    "default": "_all"
+  },
+  "style": "ci",
+  "failover": false,
+  "panel_hints": true,
+  "loader": {
+    "save_gist": true,
+    "save_elasticsearch": true,
+    "save_local": true,
+    "save_default": true,
+    "save_temp": true,
+    "save_temp_ttl_enable": true,
+    "save_temp_ttl": "30d",
+    "load_gist": true,
+    "load_elasticsearch": true,
+    "load_elasticsearch_size": 20,
+    "load_local": true,
+    "hide": false,
+    "dropdown_collections": true,
+    "save_as_public": false
+  },
+   "solr": {
+       "server": "http://172.30.200.110:8070/test/api/v1/dboard/",
+        
+    "server_prod": "https://dashboard.coinform.eu/api/dboard/",
+    "core_name": "coinfo4550",
+    "core_list": [
+      "claims",
+      "corona-claims",
+      "factcheckers",
+      "fakeNewsNet",
+      "fc-dev",
+      "generic",
+      "pilot-at",
+      "pilot-gr",
+      "pilot-se"
+    ],
+    "global_params": ""
+  },
+  "username": "guest",
+  "coinform": true,
+  "home": true
+}
