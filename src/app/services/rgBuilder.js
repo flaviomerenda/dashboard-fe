@@ -12,34 +12,6 @@ define([
         var DEBUG = false; // DEBUG mode
 
         module.service('rgBuilder', function() {
-
-            // extract node type
-            this.calcNodeType = function(d) {
-                var dt = d['@type'] || d['type'] || 'Thing';
-                var bot = ['ClaimReviewNormalizer', 'SentenceEncoder']
-                var org = ['Article', 'Tweet', 'WebSite', 'Dataset', 'Sentence', 'SentencePair']
-                if (dt.endsWith('Review')) {
-                    return 'Review';
-                } 
-                else if (dt == 'Rating') {
-                    return 'Review'; // incorrect, but OK for now, this is a bug upstream
-                } 
-                else if (bot.includes(dt)) {
-                    return 'Bot';
-                } 
-                else if (dt.endsWith('Reviewer')) {
-                    return 'Bot';
-                } 
-                else if (org.includes(dt)) {
-                    return 'CreativeWork'; // content
-                }
-                else if (dt.endsWith('Organization')) {
-                    return 'Organization';
-                } 
-                else {
-                    return dt;
-                }
-            }
             
             // TODO: transfer these values to a config file
             this.calcLinkDistance = function(link) {
@@ -101,6 +73,12 @@ define([
                 } 
                 else if (itType == "WebSite") {
                     return "#website";
+                } 
+                else if (itType == "WebPage") {
+                    return "#website";
+                }
+                else if (itType == "Tweet") {
+                    return "#tweet";
                 } 
                 else if (itType == "SentencePair") {
                     return "#sentPair";
