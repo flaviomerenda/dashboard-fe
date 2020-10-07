@@ -102,6 +102,12 @@ define([
                 else if (itType == "WebSite") {
                     return "#website";
                 } 
+                else if (itType == "WebPage") {
+                    return "#website";
+                }
+                else if (itType == "Tweet") {
+                    return "#tweet";
+                } 
                 else if (itType == "SentencePair") {
                     return "#sentPair";
                 } 
