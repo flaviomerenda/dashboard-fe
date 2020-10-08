@@ -1,3 +1,11 @@
+/* rgProcessor.js
+  Service for:
+ 1. enriching acred credibility review Graphs to make them compatible with D3js force-graphs
+   * both graphs contains nodes and links
+
+ 2. providing common extractor functions to access information about
+   nodes and links in the graph
+*/
 define([
     'angular',
     'underscore',
@@ -13,24 +21,27 @@ define([
 
         module.service('rgProcessor', function() {
 
-            // extract node type
+            // extract node type, this reduces many subtypes into top-level types
+            // Review, Bot, CreativeWork, Organization, Thing, ??
+            // e.g. TweetCredReview is just a Review
             this.calcNodeType = function(d) {
-                var dt = d['@type'] || d['type'] || 'Thing';
-                var bot = ['ClaimReviewNormalizer', 'SentenceEncoder']
-                var org = ['Article', 'Tweet', 'WebSite', 'Dataset', 'Sentence', 'SentencePair']
+                let dt = d['@type'] || d['type'] || 'Thing';
+                let botTypes = ['ClaimReviewNormalizer', 'SentenceEncoder']
+                let creativeWorkTypes = ['CreativeWork', 'Article', 'Tweet', 'WebSite',
+                                         'Dataset', 'Sentence', 'SentencePair']
                 if (dt.endsWith('Review')) {
                     return 'Review';
                 } 
                 else if (dt == 'Rating') {
                     return 'Review'; // incorrect, but OK for now, this is a bug upstream
                 } 
-                else if (bot.includes(dt)) {
+                else if (botTypes.includes(dt)) {
                     return 'Bot';
                 } 
                 else if (dt.endsWith('Reviewer')) {
                     return 'Bot';
                 } 
-                else if (org.includes(dt)) {
+                else if (creativeWorkTypes.includes(dt)) {
                     return 'CreativeWork'; // content
                 }
                 else if (dt.endsWith('Organization')) {
@@ -41,10 +52,14 @@ define([
                 }
             }
 
-            // calculate node size based on its type
+            // calculate initial node size based on its type
+            //  ClaimReview are always big
+            //  Other reviews grow bigger as they are based on more subReviews
+            //  All other nodes have minimum size
+            // Note that this initial size may be scaled later on using a transform 
             this.calcNodeSize = function(d) {
-                var minSize = 10;
-                var maxSize = 30;
+                var minSize = 50;
+                var maxSize = 70;
                 var maxReviewCount = 20;
                 var dt = d['@type'] || d['type'] || 'Thing';
                 if (dt == 'NormalisedClaimReview') {
@@ -61,23 +76,24 @@ define([
                 }
             }
 
-            // calculate node opacity based on its attributes
+            // calculate node opacity based on its attributes, currently
+            //   reviews get more opaque if they have more confidence
+            //   bots and content reviewed inherit the opacity of a near review
             this.calcNodeOpacity = function(d) {
-                var dt = this.calcNodeType(d);
-                var minOpacity = 0.2;
-                if (dt == 'Review') {
-                    var rating = d['reviewRating'] || {};
-                    var conf = rating['confidence'] || 0.7;
-                    var opacity = minOpacity + ((1 - minOpacity) * conf**2);
+                let dt = this.calcNodeType(d);
+                let minOpacity = 0.2;
+                if (dt == 'Review') { //based on confidence
+                    let rating = d['reviewRating'] || {};
+                    let conf = rating['confidence'] || 0.7;
+                    let opacity = minOpacity + ((1 - minOpacity) * conf**2);
                     return opacity;
                 } 
                 else if (dt == 'Bot') {
-                    // inherit the hierarchy level of the review
+                    // use the opacity of one of the bot's reviews, if any
                     var revNode = this.lookupSubject(d, 'author');
                     if (revNode) {  
                         return this.calcNodeOpacity(revNode);
-                    } 
-                    else {
+                    } else {
                         return minOpacity;
                     }
                 } 
@@ -86,8 +102,7 @@ define([
                     var revNode = this.lookupSubject(d, 'itemReviewed');
                     if (revNode) {
                         return this.calcNodeOpacity(revNode);
-                    }
-                    else {
+                    } else {
                         return minOpacity;
                     }
                 }
@@ -95,8 +110,9 @@ define([
 
             // calculate node scale
             this.calcNodeScale = function(d) {
-                var maxScale = 2.5; 
-                var maxReviewCount = 20;
+                let minScale = 2.0;
+                let maxScale = 3.5; 
+                let maxReviewCount = 20;
                 var dt1 = d['@type'] || d['type'] || 'Thing';
                 var dt2 = this.calcNodeType(d) 
                 if (dt1 == 'NormalisedClaimReview') {
@@ -106,7 +122,7 @@ define([
                     var rating = d['reviewRating'] || {};
                     var revCnt = Math.min(maxReviewCount, rating['reviewCount'] || 1);
                     var rate = revCnt / maxReviewCount;
-                    return Math.max(1.0, maxScale*rate);
+                    return Math.max(minScale, maxScale*rate);
                 }
                 else if (dt2 == 'CreativeWork') {
                     var revN = this.lookupSubject(d, 'itemReviewed');
@@ -114,11 +130,11 @@ define([
                         return this.calcNodeScale(revN);
                     }
                     else {
-                        return 1.0
+                        return minScale
                     }
-                    } 
+                } 
                 else {
-                    return 1.0
+                    return minScale
                 }
             }
 
@@ -206,24 +222,23 @@ define([
                     return 0.8;
                 }
             }
-        
+
+            this.inverseLinkRole = function(role) {
+                if (role == 'source') return 'target'
+                else return 'source';
+            }
+            
             // look for linked nodes
             this.lookupNodes = function(qnode, qrel, qnodeRole) {
                 if ('id' in qnode == false) {
                     console.log('Cannot lookup triple for node without id. Node: ', qnode);
                     return [];
                 };
-                if (qnodeRole == 'source') {
-                    var resRole = 'target';
-                }
-                else {
-                    var resRole = 'source';
-                };
-                var qnodeId = qnode['id'];
-                // TODO: fix the coinfo-apy bug and remove the option "basedOn"
-                var resIds = this.graph['links'].filter(link => ((link['rel'] == qrel) || 
-                                                            (link['rel'] == "basedOn")) && 
-                                                            (qnodeId == link[qnodeRole])).map(link => link[resRole])
+                let resRole = this.inverseLinkRole(qnodeRole);
+                let qnodeId = qnode['id'];
+                let resIds = this.graph['links']
+                    .filter(link => (link['rel'] == qrel) && (qnodeId == link[qnodeRole]))
+                    .map(link => link[resRole])
                 return resIds.map(n => this.nodeById(n));
             }
         
@@ -268,8 +283,25 @@ define([
             }
                 
             this.processGraph = function(graph) {
+                /* Modifies the input credibility review graph by calculating and adding
+                 d3 specific fields to nodes and links:
+                 new node fields:
+                   * id: either the identifier, '@id' of 'url' value
+                   * hierarchyLevel: int from the mainNode 
+                   * group: int based on the nodeType (e.g. Review, Bot, Thing)
+                   * originalOpacity: used to store "temporary" opacity //FIXME: we should be able to calculate opacity based on some global state, instead of introducing state here
+                   * opacity: used to store the "current" opacity
+                   * nodeSize: used by d3 to assign a size for the svg element for the node
+                   * nodeScale: used to transform the standard size of the svg element
+                   * enabledNode: 
 
-                this.graph = graph
+                 new link fields:
+                   * value
+                   * originalOpacity
+                   * opacity
+                 */
+                
+                this.graph = graph // FIXME: introduces state (used in some of the other "functions")
                 this.ntypes = Array.from(new Set(this.graph['nodes'].map(n => this.calcNodeType(n))));
 
                 for (var n of this.graph['nodes']) {
@@ -285,7 +317,10 @@ define([
                     n['group'] = this.ntypes.indexOf(nt);
                     n['originalOpacity'] = this.calcNodeOpacity(n);
                     n['opacity'] = n['originalOpacity'];
-                    n['nodeSize'] = this.calcNodeSize(n);
+                    let nsize = this.calcNodeSize(n);
+                    n['nodeSize'] = nsize;
+                    let nscale = this.calcNodeScale(n);
+                    //console.log('NodeSize for type ', nt, nsize, '*', nscale);
                     n['nodeScale'] = this.calcNodeScale(n);
                     n['enabledNode'] = true
                 }
@@ -294,15 +329,24 @@ define([
                     l['originalOpacity'] = this.calcLinkOpacity(l);
                     l['opacity'] = l['originalOpacity'];
                 };
+                
+                this.graph['mainItemReviewed'] = this.calcMainItemReviewed();
+                this.graph['id'] = this.graph.mainNode
+
+                if (DEBUG) {
+                    let hlevels = processedGraph['nodes'].
+                        filter(n => n.hierarchyLevel != null).
+                        map(   n => n['hierarchyLevel']);
+                    console.debug('min/max hierarchy levels: ', Math.min(...hlevels), Math.max(...hlevels))
+                }
+
                 return this.graph
             }
 
-            this.lookupCriticalNodes = function(node, rel, criticalPath=[node]) {
-                var pathNode = this.lookupObject(node, rel);
-                if (pathNode) {
-                    return this.lookupCriticalNodes(pathNode, rel, criticalPath.concat(pathNode));
-                }
-                return criticalPath
+            this.lookupCriticalNodes = function(node, rel) {
+                let directObjects = this.lookupNodes(node, rel, 'source');
+                return [node].concat(
+                    directObjects.flatMap(subNode => this.lookupCriticalNodes(subNode, rel)));
             }
 
             this.getCriticalLinkedNodes = function(criticalNode) {
@@ -333,18 +377,6 @@ define([
                 let s = new Set(arr);
                 let it = s.values();
                 return Array.from(it);
-            }
-
-            this.pruneGraph = function(graph) {
-                var mainNode = graph.nodes.filter(n => n.identifier == graph.mainNode)[0]
-                var nodeGroup = this.findCriticalPath(mainNode, 'isBasedOnKept')
-                var linkGroup = graph.links.filter(l =>
-                    nodeGroup.map(n => n.id).includes(l.source) && 
-                    nodeGroup.map(n => n.id).includes(l.target)
-                );
-                graph['nodes'] = this.removeDuplicates(nodeGroup)
-                graph['links'] = linkGroup
-                return graph
             }
 
         });

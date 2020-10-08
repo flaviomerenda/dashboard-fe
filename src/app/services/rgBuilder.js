@@ -76,6 +76,7 @@ define([
             this.calcSymbolId = function(d) {
                 var itType = d["@type"]
                 if (typeof itType == "undefined") {
+                    console.debug('untyped node ', d)
                     return "#thing";
                 } 
                 else if (itType == "NormalisedClaimReview") {
@@ -112,9 +113,14 @@ define([
                     return "#sentPair";
                 } 
                 else {
+                    console.debug('Unexpected node type, defaulting to thing', itType, d);
                     return "#thing";
                 }
             }
+
+            // Given a node object, return the icon type
+            //  Right now, this is just the symbolId without the # prefix
+            this.calcIconType = d => this.calcSymbolId(d).slice(1)
 
             // Given a node object, return the tooltip text
             this.itemToTooltipText = function(d) {

@@ -1,5 +1,25 @@
 /*
-  ## D3 Review Graph integrated in the Table panel.
+  Controls a CredibilityReview Graph model for a given co-inform document and 
+  displays it as a D3js-based view.
+
+  Call it from some html template/module using
+  ``` html
+  <div ng-controller='reviewGraph' 
+       ng-init="init(ciDoc)"   
+       ng-include="'app/partials/reviewGraph.html'"></div>
+  ``` 
+
+  This controller:
+  1. fetches the CredibilityReview Graph for the ciDoc using the solrSrv.
+  2. preprocesses the acred Graph using `rgProcessor` and stores it in `$scope.wholeGraph` (needed for the html template)
+    * see rgProcessor for more details, but it essentially adds
+      properties to the graph nodes and links so they can be displayed
+      as a d3 graph. This essentially delegates part of controlling
+      the model to the rgProcessor.
+  3. broadcasts a `render` event. This triggers the view template (and
+     hence an instance of the `reviewGraphDir`ective) to be inserted
+     in the parent DOM tree. The directive is really the controller as
+     it manages the click/tooltip/sidebar events.
 */
 
 define(
@@ -12,65 +32,38 @@ define(
         'use strict';
 
         var DEBUG = false; // DEBUG mode
-
         var module = angular.module('kibana.controllers');
         app.useModule(module);
 
         module.controller('reviewGraph', function ($scope, alertSrv, solrSrv, rgProcessor) {
-            // This controller preprocess and creates a d3 graph of an acred review.
-            // Nodes and links are generated taking into account different features.
-            // A force simulation spreads out nodes by their hierarchy and groups them by node type.
-            // The controller also manages click/tooltip/sidebar/table events.
             $scope.init = function (ciDoc) {
-                $scope.ciDoc = ciDoc;
-                $scope.getReviewGraph($scope.ciDoc);
-            };
-
-            // Load graph from json and add chart-specific fields to nodes and links
-            // The chart-specific fields are tailored to the d3-force requirements 
-            $scope.getReviewGraph = function (doc) {
-
-                // TODO: mode acred_to_d3_ReviewGraph one level up?
-                // preprocess the reviewGraph
-                var acred_to_d3_ReviewGraph = function(graph) {
-                    // add group property to nodes and value property to links
-                    // this is just so the current force chart implementation works, 
-                
-                    var processedGraph = rgProcessor.processGraph(graph)
-                    processedGraph['mainItemReviewed'] = rgProcessor.calcMainItemReviewed();
-                    processedGraph['mainNodeLabel'] = $scope.ciDoc.credibility_label
-                    processedGraph['id'] = $scope.reviewGraph.mainNode
-                
-                    if (DEBUG) {
-                        var hlevels = processedGraph['nodes'].filter(n => n.hierarchyLevel != null).map(n => n['hierarchyLevel']);
-                        console.debug('min/max hierarchy levels: ', Math.min(...hlevels), Math.max(...hlevels))
-                    }
-
-                    return processedGraph;
-                }
 
                 // request the corresponding reviewGraph
-                let rg = solrSrv.fetchReviewGraph(doc);
+                let rg = solrSrv.fetchReviewGraph(ciDoc);
                 rg.success(function(data, status) {
-                    var result = data['results'][0]
-                    $scope.reviewGraph = result['reviewGraph'];
-                    if ($scope.reviewGraph == null) {
+                    let result = data['results'][0]
+                    let reviewGraph = result['reviewGraph'];
+                    if (reviewGraph == null) {
                         alertSrv.set('Warning', 'No review available for this document. Sorry.');
+                        return;
                     }
-                    var processedData = acred_to_d3_ReviewGraph($scope.reviewGraph)
+                    var processedData = acred_to_d3_ReviewGraph(reviewGraph, ciDoc)
 
                     $scope.wholeGraph = processedData
                     if (DEBUG) {console.debug('wholeReviewGraph: ', $scope.wholeGraph)}
 
-                    // already preprocessed prunedGraph
-                    //$scope.prunedGraph = rgProcessor.pruneGraph(angular.copy(processedData))
-                    //if (DEBUG) {console.debug('prunedReviewGraph: ', $scope.prunedGraph)}
-                    
-                    // trigger rendering of the graph
-                    $scope.$broadcast('render');
-
+                    $scope.$broadcast('render'); // trigger rendering of the view
                 });
             };
+
+            // preprocess the reviewGraph to make it compatible with d3 and calculate
+            // view-related properties like size, hierarchyLevel, opacity, etc.
+            var acred_to_d3_ReviewGraph = function(graph, doc) {
+                var processedGraph = rgProcessor.processGraph(graph)
+                processedGraph['mainNodeLabel'] = doc.credibility_label; //$scope.ciDoc.credibility_label
+                return processedGraph;
+            }
+            
         });
     }
 );

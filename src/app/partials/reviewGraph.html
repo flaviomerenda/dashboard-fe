@@ -10,57 +10,49 @@
   <div class="review-graph-sidebar">
     <div ng-hide="hideSidebarWhenCriticalPath">
         <p>
-        <p class="icon-info" title="Click on an icon below to hide/display a node type in the reviewGraph"></p>
+          <p class="icon-info" title="Click on an icon below to hide/display a node type in the reviewGraph"></p>
         </p>
-        <!-- TODO: change the icon source from 'img/ICON_TYPE_symbol.svg' to href
         <button ng-click="sidebarGraphEvent('tweet:'+graph.id)" title="Tweet">
-            <svg>
-                <use id="tweet_sideButton_{{graph.id}}" xlink:href='#tweet'>
-            </svg>
-        </button>
-        -->
-        <p>
-        <button ng-click="sidebarGraphEvent('tweet:'+graph.id)" title="Tweet">
-            <img id="tweet_sideButton_{{graph.id}}" src='img/tweet_symbol.svg'/>
+          <img id="tweet_sideButton_{{wholeGraph.id}}" src='img/tweet_symbol.svg'/>
         </button>
         </p>
         <p>
-        <button ng-click="sidebarGraphEvent('revCred:'+graph.id)" title="ClaimReview">
-            <img id="revCred_sideButton_{{graph.id}}" src='img/revCred_symbol.svg'/>
-        </button>
+          <button ng-click="sidebarGraphEvent('revCred:'+graph.id)" title="ClaimReview">
+            <img id="revCred_sideButton_{{wholeGraph.id}}" src='img/revCred_symbol.svg'/>
+          </button>
         </p>
         <p>
-        <button ng-click="sidebarGraphEvent('claimRev:'+graph.id)" title="Review">
-            <img id="claimRev_sideButton_{{graph.id}}" src='img/claimRev_symbol.svg'/>
+          <button ng-click="sidebarGraphEvent('claimRev:'+graph.id)" title="Review">
+            <img id="claimRev_sideButton_{{wholeGraph.id}}" src='img/claimRev_symbol.svg'/>
         </button>
         <p>
         <button ng-click="sidebarGraphEvent('bot:'+graph.id)" title="Bot">
-        <img id="bot_sideButton_{{graph.id}}" src='img/bot_symbol.svg'/>
+        <img id="bot_sideButton_{{wholeGraph.id}}" src='img/bot_symbol.svg'/>
         </button>
         </p>
         <p>
         <button ng-click="sidebarGraphEvent('website:'+graph.id)" title="Web Site">
-            <img id="website_sideButton_{{graph.id}}" src='img/website_symbol.svg'/>
+            <img id="website_sideButton_{{wholeGraph.id}}" src='img/website_symbol.svg'/>
         </button>
         </p>
         <p>
         <button ng-click="sidebarGraphEvent('singleSent:'+graph.id)" title="Sentence">
-            <img id="singleSent_sideButton_{{graph.id}}" src='img/singleSent_symbol.svg'/>
+            <img id="singleSent_sideButton_{{wholeGraph.id}}" src='img/singleSent_symbol.svg'/>
         </button>
         </p>
         <p>
         <button ng-click="sidebarGraphEvent('sentPair:'+graph.id)" title="Sentence Pair"> 
-            <img id="sentPair_sideButton_{{graph.id}}" src='img/sentPair_symbol.svg'/>
+            <img id="sentPair_sideButton_{{wholeGraph.id}}" src='img/sentPair_symbol.svg'/>
         </button>
         </p>
         <p>
         <button ng-click="sidebarGraphEvent('article:'+graph.id)" title="Article">
-            <img id="article_sideButton_{{graph.id}}" src='img/article_symbol.svg'/>
+            <img id="article_sideButton_{{wholeGraph.id}}" src='img/article_symbol.svg'/>
         </button>
         </p>
         <p>
         <button ng-click="sidebarGraphEvent('thing:'+graph.id)" title="Thing">
-            <img id="thing_sideButton_{{graph.id}}" src='img/thing_symbol.svg'/>
+            <img id="thing_sideButton_{{wholeGraph.id}}" src='img/thing_symbol.svg'/>
         </button>
         </p>
     </div>
@@ -190,33 +182,3 @@
 </div>
 
 <p></p>
-
-<!--
-<div class="container">
-    <!-- Trigger the modal with a button - ->
-    <div ng-show="userReviewComment" data-toggle="modal" data-target="#myModal">
-  
-        <!-- Modal - ->
-        <div class="modal fade" id="myModal" role="dialog">
-            <div class="modal-dialog">
-            
-                <!-- Modal content- ->
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">If you want, insert your review comment please:</h4>
-                    </div>
-                    <div class="modal-body">
-                        <input type="text"></input>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Confirm</button>
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-                
-            </div>
-        </div>
-    </div>
-</div>
--->

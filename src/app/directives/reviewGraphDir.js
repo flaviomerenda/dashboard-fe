@@ -45,22 +45,27 @@ define(
                                                    ...graph.links.map(d => d.target)])
 
                         var findLinkedThing = function(qnode) {
+                            // FIXME: rename to lookupCreatedThings
+                            //  could we use rgProcessor.lookupNodes for this?
+                            //  and defined rgProcessor.lookupLinks
                             var qnodeId = qnode['id'];
-                            var thingLink = graph['links'].filter(link => (qnodeId == link['source']) && 
-                                                                 ((link['rel'] == 'creator') || link['rel'] == 'author')) // control author rel
+                            var thingLink = graph['links']
+                                .filter(link => (qnodeId == link['source']) && 
+                                        ((link['rel'] == 'creator') || link['rel'] == 'author')) // control author rel
                             var thingNode = thingLink.map(link => link['target']).map(n => rgProcessor.nodeById(n))
                             return [thingNode, thingLink];
                         }
 
-                        // clean the nodes array
+                        // remove orphan (unlinked) Things (and nodes/links created by those things)
                         var thingNodesToDelete = function(nodes, links, linkedNodes) {
-                            var nodeGroup = nodes.filter(d => rgBuilder.calcSymbolId(d).slice(1,) == 'thing');
+                            var nodeGroup = nodes.filter(d => rgBuilder.calcIconType(d) == 'thing');
                             var thingNodes = []
                             var thingLinks = []
+                            
                             thingNodes.push(...nodeGroup.filter(n => ![...linkedNodes]
                                 .includes(Object.getPrototypeOf(n).id))
                                 .map(n => Object.getPrototypeOf(n)));
-                            for (var n of nodeGroup) {
+                            for (var n of nodeGroup) { // remove things created or authored by a thing
                                 var thingNodeLink = findLinkedThing(n)
                                 if (thingNodeLink[0].length > 0) {
                                     thingNodes.push(Object.getPrototypeOf(n));
@@ -652,7 +657,7 @@ define(
                             // Update the current icon state
                             selectedIcon.iconState = iconState;
                             // Filter nodes selected by type over the sidebar
-                            var nodeGroup = nodes.filter(d => rgBuilder.calcSymbolId(d).slice(1,) == iconType);
+                            var nodeGroup = nodes.filter(d => rgBuilder.calcIconType(d) == iconType);
                             // change the properties of each node corresponding to the selected type
                             // handle node activation in order to show/hide nodes 
                             handleNodeActivation(nodeGroup)
@@ -668,7 +673,7 @@ define(
                         var organizationAsCard = function(selectedOrg) {
                             scope.organizationName = selectedOrg.name
                             scope.organizationUrl = selectedOrg.url
-                            scope.organizationIconType = rgBuilder.calcSymbolId(selectedOrg).slice(1)
+                            scope.organizationIconType = rgBuilder.calcIconType(selectedOrg)
                             scope.activateOrganizationCard = true;
                         }
 
@@ -677,7 +682,7 @@ define(
                             scope.botUrl = selectedBot.url
                             scope.botDescription = selectedBot.description
                             scope.botDateCreated = card.pubDate(selectedBot.dateCreated)
-                            scope.botIconType = rgBuilder.calcSymbolId(selectedBot).slice(1)
+                            scope.botIconType = rgBuilder.calcIconType(selectedBot)
                             scope.activateBotCard = true;
                         }
 
@@ -687,7 +692,7 @@ define(
                             scope.itRevTitle = (selectedItemReviewed.title || selectedItemReviewed.name)
                             scope.itRevUrl = (selectedItemReviewed.url)
                             scope.itRevDomain = (selectedItemReviewed.domain)
-                            scope.itRevCardIconType = rgBuilder.calcSymbolId(selectedItemReviewed).slice(1)
+                            scope.itRevCardIconType = rgBuilder.calcIconType(selectedItemReviewed)
                             scope.activateItemReviewedCard = true;
                         }
 
@@ -697,7 +702,7 @@ define(
                             scope.reviewConfidence = card.reviewConfidence(selectedReview.reviewRating.confidence)
                             scope.credibilityAssessor = getCredibilityAssessor(selectedReview)
                             scope.revExplanation = card.explanation(selectedReview.reviewRating.ratingExplanation)
-                            scope.revCardIconType = rgBuilder.calcSymbolId(selectedReview).slice(1)
+                            scope.revCardIconType = rgBuilder.calcIconType(selectedReview)
                             scope.activateReviewCard = true;
                         }
 
@@ -759,34 +764,11 @@ define(
                             sidebarIcons.nodes().forEach(d => d.iconState = false)
                         }
 
-                        // manage the criticalPath activation ("scope.prunedGraph" version)
-                        //scope.$watch("manageCriticalPath", function(newVal, oldVal) {
-                        //    resetGraphAttributes()
-                        //    if (newVal != oldVal) {
-                        //        if (newVal) {
-                        //            render_panel(scope.wholeGraph)
-                        //            scope.criticalPathButtonText = "Show the criticalPath"
-                        //        }
-                        //        else {
-                        //            render_panel(scope.prunedGraph)
-                        //            scope.criticalPathButtonText = "Show the whole reviewGraph"
-                        //        }
-                        //    }
-                        //    // this is the first case to show the criticalPath as default
-                        //    else if (!newVal || !oldVal) {
-                        //        scope.criticalPathButtonText = "Show the whole reviewGraph"
-                        //    }
-                        //});
-
                         var getGraphNodesToManage = function() {
                             var mainNode = (Object.getPrototypeOf(nodes.filter(n=> n.id == graph.id)[0]))
                             let criticalPath = rgProcessor.findCriticalPath(mainNode, 'isBasedOnKept')
                             return nodes.filter(n => !criticalPath.includes(Object.getPrototypeOf(n)));
                         }
-
-                        //var getNeighbhdNodesToManage = function(graphNodesToManage) {
-                        //    return graphNodesToManage.filter(d=> !Object.getPrototypeOf(d).neighbhdActivation)
-                        //}
 
                         // manage the criticalPath activation
                         scope.$watch("manageCriticalPath", function(newVal) {
@@ -797,11 +779,11 @@ define(
                                 var criticalpath = true
                                 handleNodeActivation(graphNodesToManage, criticalpath);
                                 handleLinkActivation(graphNodesToManage);
-                                scope.criticalPathButtonText = "Show the whole reviewGraph"
+                                scope.criticalPathButtonText = "Show discarded evidence"
                                 scope.prunedGraphActivation = true
                             }
                             else {
-                                scope.criticalPathButtonText = "Show the prunedGraph"
+                                scope.criticalPathButtonText = "Hide discarded evidence"
                                 scope.prunedGraphActivation = false
                             }
                         });
