@@ -113,7 +113,7 @@ define([
                     return "#sentPair";
                 } 
                 else {
-                    console.debug('Unexpected node type, defaulting to thing', itType, d);
+                    //console.debug('Unexpected node type, defaulting to thing', itType, d);
                     return "#thing";
                 }
             }

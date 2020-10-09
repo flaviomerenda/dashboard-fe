@@ -36,14 +36,16 @@ define(
                     // Function for rendering panel
                     function render_panel(graph) {
                 
-                        element.html("");
-
                         // get nodes and links
                         var nodes = graph.nodes.map(d => Object.create(d));
                         var links = graph.links.map(d => Object.create(d));
                         var linkedNodes = new Set([...graph.links.map(d => d.source), 
                                                    ...graph.links.map(d => d.target)])
 
+                        let gSearch = rgProcessor.search(graph);
+                        let gNodeMapper = rgProcessor.nodeMapper(graph);
+                        
+                        
                         var findLinkedThing = function(qnode) {
                             // FIXME: rename to lookupCreatedThings
                             //  could we use rgProcessor.lookupNodes for this?
@@ -52,7 +54,9 @@ define(
                             var thingLink = graph['links']
                                 .filter(link => (qnodeId == link['source']) && 
                                         ((link['rel'] == 'creator') || link['rel'] == 'author')) // control author rel
-                            var thingNode = thingLink.map(link => link['target']).map(n => rgProcessor.nodeById(n))
+                            var thingNode = thingLink
+                                .map(link => link['target'])
+                                .map(n => gSearch.nodeById(n))
                             return [thingNode, thingLink];
                         }
 
@@ -169,12 +173,12 @@ define(
                         })*/
 
                         var selectProperCard = function (selectedNode) {
-                            var nodeType = rgProcessor.calcNodeType(selectedNode);
+                            var nodeType = gNodeMapper.calcNodeType(selectedNode);
                             if (nodeType == 'Review') {
                                 scope.activateBotCard = false;
                                 scope.activateOrganizationCard = false;
                                 reviewAsCard(selectedNode);
-                                var relatedItemRev = rgProcessor.lookupObject(selectedNode, 'itemReviewed');
+                                var relatedItemRev = gSearch.lookupObject(selectedNode, 'itemReviewed');
                                 if (relatedItemRev) {
                                     itemReviewedAsCard(relatedItemRev);
                                 }
@@ -207,7 +211,7 @@ define(
                         var findNeighbhd = function(qnode) {
                             var qnodeId = qnode['id'];
                             var neighbhnLinks = graph['links'].filter(link => qnodeId == link['source'])
-                            var neighbhnNodes = neighbhnLinks.map(link => link['target']).map(n => rgProcessor.nodeById(n))
+                            var neighbhnNodes = neighbhnLinks.map(link => link['target']).map(n => gSearch.nodeById(n))
                             return [neighbhnNodes, neighbhnLinks];
                         }
 
@@ -320,8 +324,7 @@ define(
                                 "dateCreated": "",
                                 "requestFactCheck": true
                         };
-
-                        return coinformUserReviewDict;
+                            return coinformUserReviewDict;
                         }
 
                         const coinformUrl = "http://coinform.eu/";
@@ -349,7 +352,7 @@ define(
                         };
 
                         var itemReviewedUrl = (selectedReview) => {
-                            var itemRev = rgProcessor.lookupObject(selectedReview, 'itemReviewed') || {};
+                            var itemRev = gSearch.lookupObject(selectedReview, 'itemReviewed') || {};
                             if (itemRev.title) {
                                 return "http://coinform.eu/" + itemReviewedType(selectedReview) + "?title=" + itemRev.title.replace(/ /g, '&');
                             }
@@ -666,7 +669,7 @@ define(
                         };
 
                         var getCredibilityAssessor = function(selectedReview) {
-                            var reviewer = rgProcessor.lookupObject(selectedReview, 'author');
+                            var reviewer = gSearch.lookupObject(selectedReview, 'author');
                             return (reviewer.name || reviewer['@type'])
                         }
 
@@ -708,7 +711,7 @@ define(
 
                         scope.displayMainReview = function() {
                             let nodeGroup = d3v5.select("#nodeGroup_" + graph.id).selectAll("use");
-                            scope.mainNode = rgProcessor.nodeById(graph.id)
+                            scope.mainNode = gSearch.nodeById(graph.id)
                             nodeGroup.attr("transform", d => {
                                 let selectedFactor = (d.id == scope.mainNode.id) ? 2.0 : 1.0;
                                 let scale = (d.nodeScale || 1.0) * selectedFactor;
@@ -720,9 +723,9 @@ define(
 
                         scope.displayMainItemReviewed = function() {
                             let nodeGroup = d3v5.select("#nodeGroup_" + graph.id).selectAll("use");
-                            var crev = rgProcessor.nodeById(graph.id);
+                            var crev = gSearch.nodeById(graph.id);
                             if (crev) {
-                                var mainItRev = rgProcessor.lookupObject(crev, 'itemReviewed') || {};
+                                var mainItRev = gSearch.lookupObject(crev, 'itemReviewed') || {};
                             }
                             nodeGroup.attr("transform", d => {
                                 let selectedFactor = (d.id == mainItRev.id) ? 2.0 : 1.0;
@@ -766,7 +769,7 @@ define(
 
                         var getGraphNodesToManage = function() {
                             var mainNode = (Object.getPrototypeOf(nodes.filter(n=> n.id == graph.id)[0]))
-                            let criticalPath = rgProcessor.findCriticalPath(mainNode, 'isBasedOnKept')
+                            let criticalPath = gSearch.findCriticalPath(mainNode, 'isBasedOnKept')
                             return nodes.filter(n => !criticalPath.includes(Object.getPrototypeOf(n)));
                         }
 
@@ -827,7 +830,6 @@ define(
 
                         // this is the first needed click to show the criticalPath as default
                         scope.clickCriticalPath()
-
                     }
                 }
             }
