@@ -19,48 +19,117 @@ define([
         var module = angular.module('kibana.services');
         var DEBUG = false; // DEBUG mode
 
+        //////
+        // Some general schema-level functions and lists
+        /////
+        
+        // fields whose values can uniquely identify a node
+        let nodeIdFields = ['identifier', '@id', 'url', 'id'];
+
+        // given the role name in a link, return the inverse
+        let inverseLinkRole = function(role) {
+            if (role == 'source') return 'target'
+            else return 'source';
+        }
+
+        let nodeRef2Id = function(nodeRef) {
+            // a nodeRef can be an object with an id str value
+            //  or a str value, we assume it refers to a node in some graph 
+            let typ = typeof nodeRef;
+            if (typ === 'object') return nodeRef.id
+            else if (typ === 'string') return nodeRef
+            else throw "Unexpected nodeRef value " + typ + ':' + nodeRef;
+        }
+
+        
         /////
         //  Searcher constructor, object provides functions to search
         //  nodes or links in the graph
         /////
         function Searcher(graph) {
 
-            // given the role name in a link, return the inverse
-            let inverseLinkRole = function(role) {
-                if (role == 'source') return 'target'
-                else return 'source';
+            let linkedNodeIds = Array.from(
+                new Set([...graph.links.map(l => nodeRef2Id(l.source)),
+                         ...graph.links.map(l => nodeRef2Id(l.target))]))
+
+            // returns *all* possible identifier values 
+            let findNodeIds = n => nodeIdFields.map(field => n[field])
+                .filter(value => typeof value === 'string')
+            this.findNodeIds = findNodeIds;
+            
+            let findLinkedNodeIds = n => findNodeIds(n).filter(nId => linkedNodeIds.includes(nId))
+            
+            // returns an identifier string for a given node
+            let findNodeId = n => n['identifier'] || n['@id'] || n['url'] || n['id'];
+            this.findNodeId = findNodeId;
+
+            // returns true if the node has a link in the graph (including to itself)
+            this.isNodeLinked = d =>
+                linkedNodeIds.some(lnId => lnId == this.findNodeId(d))
+            
+            let allNodeIds2Nodes = new Map(
+                graph.nodes.flatMap(n => findNodeIds(n).map(nId => [nId, n])));
+            let nodeIds2Nodes = new Map(
+                graph.nodes.flatMap(n => findNodeIds(n)
+                                    .filter(nId => linkedNodeIds.includes(nId))
+                                    .map(nId => [nId, n])));
+            if (DEBUG) { // validate and print data about node indices
+                console.debug('Indexed ', allNodeIds2Nodes.size, 'nodeIds for ', graph.nodes.length, 'nodes.',
+                              'Indexed ', nodeIds2Nodes.size, 'nodeIds mentioned in edges.',
+                              'Found', linkedNodeIds.length, 'nodeIds connected by edges.');
+            
+                let keyTypes = Array.from(new Set([...allNodeIds2Nodes.keys()].map(k => typeof k)))
+                if (keyTypes.length != 1 && keyTypes[0] != 'string')
+                    console.error('Node index corrupt? id types:', keyTypes)
+                let valTypes = Array.from(new Set([...allNodeIds2Nodes.values()].map(v => typeof v)))
+                if (valTypes.length != 1 && valtypes[0] != 'object')
+                    console.error('Node index corrupt? value types:', valTypes)
             }
+            
             this.inverseLinkRole = inverseLinkRole;
             
             // given a node id, find a matching node object in the graph
             //  may return null, of course
-            let nodeById = function(nid) {
-                let matching = graph['nodes'].filter(n => n['id'] == nid);
-                if (matching.length > 0) {
-                    return matching[0];
-                }
-                return null;
+            let nodeById = function(nodeRefOrId) {
+                let nid = nodeRef2Id(nodeRefOrId); // in case we have a nodeRef instead of a string
+                return allNodeIds2Nodes.get(nid) || null;
             }
             this.nodeById = nodeById;
+
+            // fiven a nodeId
+            let lookupLinksByNodeId = function(nodeRefOrId) {
+                let nid = nodeRef2Id(nodeRefOrId); // in case we have a nodeRef instead of a string
+                return graph.links
+                    .filter(link => (nodeRef2Id(link.source) == nid) || (nodeRef2Id(link.target) == nid))
+            }
+            this.lookupLinksByNodeId = lookupLinksByNodeId;
             
             // Find nodes associated to a query node and link
             //  qnode: obj query node in the graph
             //  qrel: str name of a link type
             //  qnodeRole: str whether the qnode is the source or target
             let lookupNodes = function(qnode, qrel, qnodeRole) {
-                if ('id' in qnode == false) {
-                    console.log('Cannot lookup triple for node without id. Node: ', qnode);
+                let qnodeIds = findLinkedNodeIds(qnode);
+                if (qnodeIds.length == 0) {
+                    console.log('Cannot lookup triple for node without id. Node: ', qnode,
+                                'Available ids:', findNodeIds(qnode));
                     return [];
                 };
-                let resRole = inverseLinkRole(qnodeRole);
-                let qnodeId = qnode['id'];
-                let resIds = graph['links']
-                    .filter(link => (link['rel'] == qrel) && (qnodeId == link[qnodeRole]))
-                    .map(link => link[resRole])
-                return resIds.map(n => nodeById(n));
+                let resIds = graph.links
+                    .filter(link => link.rel == qrel)
+                    .filter(link => qnodeIds.includes(nodeRef2Id(link[qnodeRole])))
+                    .map(link => link[inverseLinkRole(qnodeRole)])
+                    .map(nodeRef2Id)
+                let result = resIds.map(nodeById);
+                return result;
             }
 
             this.lookupNodes = lookupNodes;
+
+            
+            let nodeRefMatches = function(nodeRef, nodeId) {
+                return nodeRef2Id(nodeRef) == nodeId
+            }
             
             // find a source node given a start node and a link type
             //  e.g. if g = [(n2, r1, n1), (n3, r1, n1)]
@@ -75,7 +144,7 @@ define([
             
             // find a target node given a start node and a link type
             this.lookupObject = function(node, rel) {
-                let matchingNodes = this.lookupNodes(node, rel, 'source');
+                let matchingNodes = lookupNodes(node, rel, 'source');
                 if (matchingNodes.length == 0) {
                     return undefined;
                 }
@@ -112,12 +181,27 @@ define([
                 return linkedNodes
             }
 
+            let outLinks = qnode => graph.links.filter(
+                link => nodeRef2Id(link.source) == (qnode.id || findNodeId(qnode)))
+            this.outLinks = outLinks;
+            
+            let inLinks = qnode => graph.links.filter(
+                link => nodeRef2Id(link.target) == (qnode.id || findNodeId(qnode)))
+            this.inLinks = inLinks;
+
+            this.findNeighbhd = function(qnode) {
+                return this.outLinks(qnode)
+                    .map(link => nodeRef2Id(link['target']))
+                    .map(nid => nodeById(nid))
+            }
+
             this.findCriticalPath = function(mainNode, rel='isBasedOnKept') {
                 let nodesInClosure = this.lookupNodesInRelClosure(mainNode, rel)
                 let neighNodes = nodesInClosure.flatMap(this.getReviewLinkedNodes);
                 return nodesInClosure.concat(neighNodes);
             }
-            
+
+
         };
 
         /////
@@ -127,6 +211,8 @@ define([
         function NodeMapper(graph) {
 
             let search = new Searcher(graph);
+
+            this.calcNodeId = n =>  n.identifier || n.id || search.findNodeId(n);
             
             // extract node type, this reduces many subtypes into top-level types
             // Review, Bot, CreativeWork, Organization, Thing, ??
@@ -138,27 +224,51 @@ define([
                                          'Dataset', 'Sentence', 'SentencePair']
                 if (dt.endsWith('Review')) {
                     return 'Review';
-                } 
-                else if (dt == 'Rating') {
+                } else if (dt == 'Rating') {
                     return 'Review'; // incorrect, but OK for now, this is a bug upstream
-                } 
-                else if (botTypes.includes(dt)) {
+                } else if (botTypes.includes(dt)) {
                     return 'Bot';
-                } 
-                else if (dt.endsWith('Reviewer')) {
+                } else if (dt.endsWith('Reviewer')) {
                     return 'Bot';
-                } 
-                else if (creativeWorkTypes.includes(dt)) {
+                } else if (creativeWorkTypes.includes(dt)) {
                     return 'CreativeWork'; // content
-                }
-                else if (dt.endsWith('Organization')) {
+                } else if (dt.endsWith('Organization')) {
                     return 'Organization';
-                } 
-                else {
+                } else {
                     return dt;
                 }
             }
 
+            // given a node d, return a symbol id
+            //  this is used to map nodes to symbols/icons and defined in src/index.html 
+            this.calcSymbol = function(d, defaultVal="thing") {
+                let itType = d["@type"] || d["type"] || "Thing";
+                let itType2SymbolId = {
+                    "Thing": "thing",
+                    "NormalisedClaimReview": "revCred",
+                    "ClaimReviewNormalizer": "bot",
+                    "SentenceEncoder": "bot",
+                    "Sentence": "singleSent",
+                    "Article": "article",
+                    "WebSite": "website",
+                    "WebPage": "website",
+                    "Tweet": "tweet",
+                    "SentencePair": "sentPair"
+                }
+                let match = itType2SymbolId[itType];
+                if (match) return match;
+
+                // match by postfix
+                if (itType.endsWith("Review")) {
+                    return "claimRev";
+                } else if (itType.endsWith("Reviewer")) {
+                    return "bot";
+                } 
+                return defaultVal;
+            }
+
+            this.calcSymbolId = d => "#" + this.calcSymbol(d);
+            
             // list of unique high-level NodeTypes
             this.ntypes = Array.from(new Set(graph['nodes'].map(this.calcNodeType)));
 
@@ -197,7 +307,7 @@ define([
                 } 
                 else {
                     // assume it's some content that was reviewed
-                    var revNode = search.lookupSubject(d, 'itemReviewed');
+                    var revNode = search.lookupSubject(d, "itemReviewed");
                     if (revNode) {
                         return this.calcNodeOpacity(revNode);
                     } else {
@@ -240,10 +350,11 @@ define([
             //    Bots and CreativeWorks inherit nearby Review depth
             this.calcNodeHierarchy = function(d) {
                 let maxHLevel = 10;
-                var dt = this.calcNodeType(d);
-                var topNid = graph['mainNode'];
+                let dt = this.calcNodeType(d);
+                let dId = this.calcNodeId(d)
+                let topNid = graph['mainNode'];
                 if (dt == "Review") {
-                    if (topNid == d['id']) {
+                    if (topNid == dId) {
                         return 0;
                     } 
                     var parentN = search.lookupSubject(d, 'isBasedOn');
@@ -353,44 +464,71 @@ define([
                    * opacity: 
                  */
                 
-                //this.graph = graph // FIXME: introduces state (used in some of the other "functions")
                 let nMapper = this.nodeMapper(graph);
                 let lMapper = this.linkMapper(graph);
+                let gSearch = this.search(graph);
 
-                for (var n of graph['nodes']) {
-                    var nid = n['identifier'] || n['@id'] || n['url'];
-                    n['id'] = nid;
+                let orphanNodes = graph.nodes.filter(n => !gSearch.isNodeLinked(n))
+                if (orphanNodes.length > 0) {
+                    console.log('Graph has ', orphanNodes.length, 'orphaned nodes', orphanNodes);
                 }
-                for (var n of graph['nodes']) {
-                    var hlevel = nMapper.calcNodeHierarchy(n);
-                    n['hierarchyLevel'] = hlevel;
+
+                let linksForCreatorOfIrrelevantThings = graph.nodes
+                    .filter(n => nMapper.calcSymbol(n) == 'thing') // select only unrelevant
+                    .flatMap(n => graph.links
+                             .filter(l => (l.rel == 'creator') || (l.rel == 'author')) // only creator link
+                             .filter(l => l.source == nMapper.calcNodeId(n)))
+                let irrelevantNodesForCreator = linksForCreatorOfIrrelevantThings
+                    .flatMap(link => [link.source, link.target])
+                    .map(nid => gSearch.nodeById(nid))
+                let nodesToRemove = orphanNodes.concat(irrelevantNodesForCreator)
+                let linksToRemove = linksForCreatorOfIrrelevantThings
+                if (linksForCreatorOfIrrelevantThings.length > 0) {
+                    console.log('Graph has ', linksForCreatorOfIrrelevantThings.length, ' links ',
+                                'describing authors of irrelevant things which can be removed',
+                                'Mapping to ', irrelevantNodesForCreator.length, 'nodes to remove',
+                               irrelevantNodesForCreator);
                 }
-                for (n of graph['nodes']) {
-                    var nt = nMapper.calcNodeType(n);
-                    n['group'] = nMapper.ntypes.indexOf(nt);
-                    n['originalOpacity'] = nMapper.calcNodeOpacity(n);
-                    n['opacity'] = n['originalOpacity'];
-                    let nscale = nMapper.calcNodeScale(n);
-                    n['nodeScale'] = nscale;
-                    n['enabledNode'] = true
-                }
-                for (var l of graph['links']) {
-                    l['value'] = lMapper.calcLinkValue(l);
-                    l['originalOpacity'] = lMapper.calcLinkOpacity(l);
-                    l['opacity'] = l['originalOpacity'];
+
+                let acred2D3NodeObj = n =>
+                    Object.assign(Object.create(n), {
+                        id: n.identifier || gSearch.findNodeId(n),
+                        otherId: n.id,
+                        hierarchyLevel: nMapper.calcNodeHierarchy(n), 
+                        group: nMapper.ntypes.indexOf(nMapper.calcNodeType(n)),
+                        originalOpacity: nMapper.calcNodeOpacity(n),
+                        opacity: nMapper.calcNodeOpacity(n),
+                        nodeScale: nMapper.calcNodeScale(n),
+                        enabledNode: true
+                    })
+
+                let acred2D3LinkObj = l =>
+                    Object.assign(Object.create(l), {
+                        value: lMapper.calcLinkValue(l),
+                        originalOpacity: lMapper.calcLinkOpacity(l),
+                        opacity: lMapper.calcLinkOpacity(l)
+                    })
+
+                let result = {
+                    "@context": "http://coinform.eu",
+                    "@type": "UICredReviewGraph",
+                    id: graph.mainNode,
+                    mainItemReviewed: this.calcMainItemReviewedLabel(graph),
+                    mainNode: graph.mainNode,
+                    nodes: graph.nodes.filter(n => !nodesToRemove.includes(n))
+                        .map(acred2D3NodeObj),
+                    links: graph.links.filter(l => !linksToRemove.includes(l))
+                        .map(acred2D3LinkObj)
                 };
-                
-                graph['mainItemReviewed'] = this.calcMainItemReviewedLabel(graph);
-                graph['id'] = graph.mainNode
-
                 if (DEBUG) {
-                    let hlevels = processedGraph['nodes'].
+                    let hlevels = result.nodes.
                         filter(n => n.hierarchyLevel != null).
                         map(   n => n['hierarchyLevel']);
                     console.debug('min/max hierarchy levels: ', Math.min(...hlevels), Math.max(...hlevels))
+                    console.log("processedGraph has ", result.nodes.length, 'nodes and',
+                            result.links.length, 'links');
                 }
-
-                return graph;
+                return result;
             }
 
         });

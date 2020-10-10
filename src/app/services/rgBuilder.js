@@ -1,3 +1,5 @@
+// rgBuilder service that...
+//
 define([
     'angular',
     'underscore',
@@ -13,33 +15,6 @@ define([
 
         module.service('rgBuilder', function() {
 
-            // extract node type
-            this.calcNodeType = function(d) {
-                var dt = d['@type'] || d['type'] || 'Thing';
-                var bot = ['ClaimReviewNormalizer', 'SentenceEncoder']
-                var org = ['Article', 'Tweet', 'WebSite', 'Dataset', 'Sentence', 'SentencePair']
-                if (dt.endsWith('Review')) {
-                    return 'Review';
-                } 
-                else if (dt == 'Rating') {
-                    return 'Review'; // incorrect, but OK for now, this is a bug upstream
-                } 
-                else if (bot.includes(dt)) {
-                    return 'Bot';
-                } 
-                else if (dt.endsWith('Reviewer')) {
-                    return 'Bot';
-                } 
-                else if (org.includes(dt)) {
-                    return 'CreativeWork'; // content
-                }
-                else if (dt.endsWith('Organization')) {
-                    return 'Organization';
-                } 
-                else {
-                    return dt;
-                }
-            }
             
             // TODO: transfer these values to a config file
             this.calcLinkDistance = function(link) {
@@ -70,57 +45,9 @@ define([
                 }
                 return 30;
             }
-        
-            // Given a node object, return the appropriate symbol id stored in src/index.html
-            // The symbol must be defined as part of the encompassing svg element.
-            this.calcSymbolId = function(d) {
-                var itType = d["@type"]
-                if (typeof itType == "undefined") {
-                    console.debug('untyped node ', d)
-                    return "#thing";
-                } 
-                else if (itType == "NormalisedClaimReview") {
-                    return "#revCred";
-                } 
-                else if (itType.endsWith("Review")) {
-                    return "#claimRev";
-                } 
-                else if (itType == "ClaimReviewNormalizer") {
-                    return "#bot";
-                } 
-                else if (itType == "SentenceEncoder") {
-                    return "#bot";
-                } 
-                else if (itType.endsWith("Reviewer")) {
-                    return "#bot";
-                } 
-                else if (itType == "Sentence") {
-                    return "#singleSent";
-                } 
-                else if (itType == "Article") {
-                    return "#article";
-                } 
-                else if (itType == "WebSite") {
-                    return "#website";
-                } 
-                else if (itType == "WebPage") {
-                    return "#website";
-                }
-                else if (itType == "Tweet") {
-                    return "#tweet";
-                } 
-                else if (itType == "SentencePair") {
-                    return "#sentPair";
-                } 
-                else {
-                    //console.debug('Unexpected node type, defaulting to thing', itType, d);
-                    return "#thing";
-                }
-            }
 
-            // Given a node object, return the icon type
-            //  Right now, this is just the symbolId without the # prefix
-            this.calcIconType = d => this.calcSymbolId(d).slice(1)
+            // deprecated: use rgProcessor.calcSymbol instead
+            // this.calcIconType = d => this.calcSymbolId(d).slice(1) 
 
             // Given a node object, return the tooltip text
             this.itemToTooltipText = function(d) {

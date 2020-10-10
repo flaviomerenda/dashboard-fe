@@ -35,56 +35,13 @@ define(
 
                     // Function for rendering panel
                     function render_panel(graph) {
-                
-                        // get nodes and links
-                        var nodes = graph.nodes.map(d => Object.create(d));
-                        var links = graph.links.map(d => Object.create(d));
-                        var linkedNodes = new Set([...graph.links.map(d => d.source), 
-                                                   ...graph.links.map(d => d.target)])
-
                         let gSearch = rgProcessor.search(graph);
                         let gNodeMapper = rgProcessor.nodeMapper(graph);
-                        
-                        
-                        var findLinkedThing = function(qnode) {
-                            // FIXME: rename to lookupCreatedThings
-                            //  could we use rgProcessor.lookupNodes for this?
-                            //  and defined rgProcessor.lookupLinks
-                            var qnodeId = qnode['id'];
-                            var thingLink = graph['links']
-                                .filter(link => (qnodeId == link['source']) && 
-                                        ((link['rel'] == 'creator') || link['rel'] == 'author')) // control author rel
-                            var thingNode = thingLink
-                                .map(link => link['target'])
-                                .map(n => gSearch.nodeById(n))
-                            return [thingNode, thingLink];
-                        }
 
-                        // remove orphan (unlinked) Things (and nodes/links created by those things)
-                        var thingNodesToDelete = function(nodes, links, linkedNodes) {
-                            var nodeGroup = nodes.filter(d => rgBuilder.calcIconType(d) == 'thing');
-                            var thingNodes = []
-                            var thingLinks = []
-                            
-                            thingNodes.push(...nodeGroup.filter(n => ![...linkedNodes]
-                                .includes(Object.getPrototypeOf(n).id))
-                                .map(n => Object.getPrototypeOf(n)));
-                            for (var n of nodeGroup) { // remove things created or authored by a thing
-                                var thingNodeLink = findLinkedThing(n)
-                                if (thingNodeLink[0].length > 0) {
-                                    thingNodes.push(Object.getPrototypeOf(n));
-                                    thingNodes.push(...thingNodeLink[0]);
-                                    thingLinks.push(...thingNodeLink[1])
-                                }
-                            }
-                            var cleanNodes = nodes.filter(n => !thingNodes.includes(Object.getPrototypeOf(n)));
-                            var cleanLinks = links.filter(l => !thingLinks.includes(Object.getPrototypeOf(l)));
-                            return [cleanNodes, cleanLinks]
-                        };
-
-                        var cleanGraph = thingNodesToDelete(nodes, links, linkedNodes)
-                        nodes = cleanGraph[0]
-                        links = cleanGraph[1]
+                        // get nodes and links
+                        let nodes = graph.nodes; //.map(d => Object.create(d));
+                        let links = graph.links; //.map(d => Object.create(d));
+                        
 
                         // get the current element where to add the graph
                         // get the height and width parent values
@@ -204,15 +161,8 @@ define(
                         }
 
                         var clickedNode = function(d) {
-                            scope.selectedNode = Object.getPrototypeOf(d);
+                            scope.selectedNode = d;
                             selectProperCard(scope.selectedNode)
-                        }
-
-                        var findNeighbhd = function(qnode) {
-                            var qnodeId = qnode['id'];
-                            var neighbhnLinks = graph['links'].filter(link => qnodeId == link['source'])
-                            var neighbhnNodes = neighbhnLinks.map(link => link['target']).map(n => gSearch.nodeById(n))
-                            return [neighbhnNodes, neighbhnLinks];
                         }
 
                         var handleNeighbhd = function(neighbhdNodes, neighbhLinks, alfa=0.2) {
@@ -255,7 +205,7 @@ define(
                                 })
                         
                             var use = result.append("use")
-                                .attr("xlink:href", rgBuilder.calcSymbolId)
+                                .attr("xlink:href", gNodeMapper.calcSymbolId)
                                 .attr("transform", d => {
                                     let selectedFactor = (d.id == selectedNodeId) ? 2.0 : 1.0;
                                     let scale = (d.nodeScale || 1.0) * selectedFactor;
@@ -272,8 +222,10 @@ define(
                                     return "scale(" + scale  + ")"
                                 })
                                 if (scope.prunedGraphActivation == true) {
-                                    var neighbhd = findNeighbhd(d)
-                                    handleNeighbhd(neighbhd[0], neighbhd[1])
+                                    let targetNodes = gSearch.findNeighbhd(d)
+                                    let outLinks = gSearch.outLinks(d)
+                                    // var [targetNodes, outLinks] = findNeighbhd(d)
+                                    handleNeighbhd(targetNodes, outLinks)
                                 }
                                 scope.$apply(function() { 
                                     clickedNode(d);
@@ -541,7 +493,7 @@ define(
 
                         var handleNodeActivation = function(nodeGroup, criticalPath=false, alfa=0.2) {
                             nodeGroup.forEach(n => {
-                                var np = Object.getPrototypeOf(n);
+                                var np = n; //Object.getPrototypeOf(n);
                                 // handle neighbhd nodes
                                 if ((np.neighbhdActivation == true) && (criticalPath)) {
                                     np.opacityFilter = true;
@@ -604,7 +556,7 @@ define(
                                 l.source.index).includes(nod.index));
 
                             linkGroup.map(l => {
-                                var lp = Object.getPrototypeOf(l);
+                                var lp = l; //Object.getPrototypeOf(l);
                                 // handle neighbhd links
                                 if (lp.neighbhdActivation == true) {
                                     lp.opacityFilter = true;
@@ -620,11 +572,11 @@ define(
                                 }
                                 else {                            
                                     var targetNodeOpacity = targetNodes.filter(n => 
-                                        (n.index == l.target.index) && ((Object.getPrototypeOf(n).opacityFilter 
-                                            ? Object.getPrototypeOf(n).opacityFilter : false) == false));
+                                        (n.index == l.target.index) && ((n.opacityFilter 
+                                            ? n.opacityFilter : false) == false));
                                     var sourceNodeOpacity = sourceNodes.filter(n => 
-                                        (n.index == l.source.index) && ((Object.getPrototypeOf(n).opacityFilter 
-                                            ? Object.getPrototypeOf(n).opacityFilter : false) == false));
+                                        (n.index == l.source.index) && ((n.opacityFilter 
+                                            ? n.opacityFilter : false) == false));
                                     if ((targetNodeOpacity.length) && (sourceNodeOpacity.length)) {
                                         newLinkOpacity = originalOpacity;
                                     }
@@ -660,7 +612,7 @@ define(
                             // Update the current icon state
                             selectedIcon.iconState = iconState;
                             // Filter nodes selected by type over the sidebar
-                            var nodeGroup = nodes.filter(d => rgBuilder.calcIconType(d) == iconType);
+                            var nodeGroup = nodes.filter(d => gNodeMapper.calcSymbol(d) == iconType);
                             // change the properties of each node corresponding to the selected type
                             // handle node activation in order to show/hide nodes 
                             handleNodeActivation(nodeGroup)
@@ -670,13 +622,14 @@ define(
 
                         var getCredibilityAssessor = function(selectedReview) {
                             var reviewer = gSearch.lookupObject(selectedReview, 'author');
+                            if (!reviewer) console.log('No author for ', selectedReview, '?')
                             return (reviewer.name || reviewer['@type'])
                         }
 
                         var organizationAsCard = function(selectedOrg) {
                             scope.organizationName = selectedOrg.name
                             scope.organizationUrl = selectedOrg.url
-                            scope.organizationIconType = rgBuilder.calcIconType(selectedOrg)
+                            scope.organizationIconType = gNodeMapper.calcSymbol(selectedOrg)
                             scope.activateOrganizationCard = true;
                         }
 
@@ -685,7 +638,7 @@ define(
                             scope.botUrl = selectedBot.url
                             scope.botDescription = selectedBot.description
                             scope.botDateCreated = card.pubDate(selectedBot.dateCreated)
-                            scope.botIconType = rgBuilder.calcIconType(selectedBot)
+                            scope.botIconType = gNodeMapper.calcSymbol(selectedBot)
                             scope.activateBotCard = true;
                         }
 
@@ -695,7 +648,7 @@ define(
                             scope.itRevTitle = (selectedItemReviewed.title || selectedItemReviewed.name)
                             scope.itRevUrl = (selectedItemReviewed.url)
                             scope.itRevDomain = (selectedItemReviewed.domain)
-                            scope.itRevCardIconType = rgBuilder.calcIconType(selectedItemReviewed)
+                            scope.itRevCardIconType = gNodeMapper.calcSymbol(selectedItemReviewed)
                             scope.activateItemReviewedCard = true;
                         }
 
@@ -705,13 +658,13 @@ define(
                             scope.reviewConfidence = card.reviewConfidence(selectedReview.reviewRating.confidence)
                             scope.credibilityAssessor = getCredibilityAssessor(selectedReview)
                             scope.revExplanation = card.explanation(selectedReview.reviewRating.ratingExplanation)
-                            scope.revCardIconType = rgBuilder.calcIconType(selectedReview)
+                            scope.revCardIconType = gNodeMapper.calcSymbol(selectedReview)
                             scope.activateReviewCard = true;
                         }
 
                         scope.displayMainReview = function() {
                             let nodeGroup = d3v5.select("#nodeGroup_" + graph.id).selectAll("use");
-                            scope.mainNode = gSearch.nodeById(graph.id)
+                            scope.mainNode = gSearch.nodeById(graph.mainNode)
                             nodeGroup.attr("transform", d => {
                                 let selectedFactor = (d.id == scope.mainNode.id) ? 2.0 : 1.0;
                                 let scale = (d.nodeScale || 1.0) * selectedFactor;
@@ -723,7 +676,7 @@ define(
 
                         scope.displayMainItemReviewed = function() {
                             let nodeGroup = d3v5.select("#nodeGroup_" + graph.id).selectAll("use");
-                            var crev = gSearch.nodeById(graph.id);
+                            var crev = gSearch.nodeById(graph.mainNode);
                             if (crev) {
                                 var mainItRev = gSearch.lookupObject(crev, 'itemReviewed') || {};
                             }
@@ -732,7 +685,7 @@ define(
                                 let scale = (d.nodeScale || 1.0) * selectedFactor;
                                 return "scale(" + scale  + ")"
                             });
-                            var ItemReviewed = Object.getPrototypeOf(nodeGroup.filter(n => n.id == mainItRev.id).node().__data__);
+                            var ItemReviewed = nodeGroup.filter(n => n.id == mainItRev.id).node().__data__;
                             scope.selectedNode = ItemReviewed
                             selectProperCard(scope.selectedNode)
                         };
@@ -746,18 +699,18 @@ define(
                         var resetGraphAttributes = function() {
                             // reset attributes of each node (opacity, opacityFilter)
                             nodes.forEach(n => {
-                                var np = Object.getPrototypeOf(n);
+                                var np = n; //Object.getPrototypeOf(n);
                                 (np.opacity = np.originalOpacity) && (np.opacityFilter = false);
                             });
                             updateNodeIconOpacity(d3v5.select("#nodeGroup_" + graph.id).selectAll("use"));
                             // reset attributes of each link (opacity, opacityFilter)
                             links.forEach(l => {
-                                var lp = Object.getPrototypeOf(l);
+                                var lp = l; //Object.getPrototypeOf(l);
                                 (lp.opacity = lp.originalOpacity) && (lp.opacityFilter = false);
                             });
                             updateLinkIconOpacity(d3v5.select("#linkGroup_" + graph.id).selectAll("polyline"));
                             // reset activation flag of each node
-                            nodes.forEach(d=> Object.getPrototypeOf(d).enabledNode = true)
+                            nodes.forEach(d=> d.enabledNode = true)
                             // reset the sidebar attributes
                             var sidebarIcons = d3v5.selectAll("img")
                             sidebarIcons.nodes().filter(d => d.id.includes('sideButton'))
@@ -768,9 +721,9 @@ define(
                         }
 
                         var getGraphNodesToManage = function() {
-                            var mainNode = (Object.getPrototypeOf(nodes.filter(n=> n.id == graph.id)[0]))
+                            var mainNode = (nodes.filter(n=> n.id == graph.mainNode)[0])
                             let criticalPath = gSearch.findCriticalPath(mainNode, 'isBasedOnKept')
-                            return nodes.filter(n => !criticalPath.includes(Object.getPrototypeOf(n)));
+                            return nodes.filter(n => !criticalPath.includes(n));
                         }
 
                         // manage the criticalPath activation
@@ -778,7 +731,7 @@ define(
                             resetGraphAttributes()
                             var graphNodesToManage = getGraphNodesToManage()
                             if (newVal) {
-                                graphNodesToManage.forEach(d=> Object.getPrototypeOf(d).enabledNode = false)
+                                graphNodesToManage.forEach(d=> d.enabledNode = false)
                                 var criticalpath = true
                                 handleNodeActivation(graphNodesToManage, criticalpath);
                                 handleLinkActivation(graphNodesToManage);
