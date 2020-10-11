@@ -1,11 +1,102 @@
 # ReviewGraph component implementation
 
-The reviewGraph component is implemented as follows.
-* controller: `src/app/controllers/reviewGraph.js` delegates to
-  * `src/app/services/rgProcessor.js`
-* view: `src/app/partials/reviewGraph.html`
+The reviewGraph component looks as follows:
+![reviewGraph view](reviewGraph_view.png "Rendered ReviewGraph component with annotations of the main subcomponents")
+
+The component is implemented as follows.
+* **model**: at its core, we have an
+  [`acred`](https://github.com/rdenaux/acred) `CredibilityReview`
+  serialized as a `Graph`. However, there is a lot of additional
+  information needed for displaying the graph and managing state and
+  events. To keep track of this information we define a
+  `UICredReviewGraph`, which serves as our model and drives the
+  view. Currently, there are also a sizeable number of properties at
+  the `scope` level which are used to coordinate between the various
+  subcomponents in the view like the d3js force-graph, the sidebar and
+  the selected node details.
+* **view**: `src/app/partials/reviewGraph.html`
   * uses an element managed by `src/app/directives/reviewGraphDir.js` which delegates to
     * `src/app/services/rgBuilder.js`
+* **controller**: `src/app/controllers/reviewGraph.js` delegates to
+  * `src/app/services/rgProcessor.js`
+
+Obviously this follows the MVC pattern for UI components development,
+mainly because Banana and Angular already provide that framework and
+there's no good reason to deviate from it.
+
+
+## View
+Implemented in [`partials/reviewGraph.html`](../src/app/partials/reviewGraph.html) (of course the dashboard css is used to format the html elements).
+The view is relatively simple and defines:
+* title `.review-graph-explanation` (sic)
+* main graph `.review-graph`
+  * sidebar `.review-graph-sidebar`
+    * contains buttons with the icons calling `sidebarGraphEvent(nodeType:graphId)`
+  * the actual graph `.review-graph-render` rendered by the `reviewGraphDir`ective, which adds:
+    * an svg node with a top-level `g` container
+      `.review-graph-container` which in turn has subgroups for links
+      and nodes
+* view buttons `.rg-critical-path-bar`
+  * "fit to view" calls `zoomFit()`
+  * "show/hide discarded evidence" calls `clickCriticalPath()`
+* node details `.ciDocument` (sic)
+  * shows different cards depending on current selection
+    * given by state flags `activateReviewCard`, `activateItemReviewedCard`, `activateBotCard` or `activateOrganizationCard`
+    
+### `reviewGraphDir`ective 
+This is the **real** controller and does most of the work of:
+* inserting the svg element in the view 
+* building the svg tree which looks as follows (we list the element type, the class or id and the [D3js selector](https://github.com/d3/d3-selection)):
+  * g `.review-graph-container` selector `container`
+    * g `#linkGroup_{{graph.id}}` selector `link`
+      * polyline instances for each link in the graph
+    * g `.nodes` selector `node`
+      * g for each node in the graph. With attributes `stroke`, `fill`
+        and `id`
+        * `use` svg node to re-use svg elements by id. We set
+          attributes `xlink:href`, `transform` (scale), `style`
+          (opacity).
+* defining the simulation, i.e. assign forces to the nodes 
+* handling events 
+  * `drag` 
+
+## Model
+
+### acred Credibility Review Graph
+At its core, we have an [acred](https://github.com/rdenaux/acred) [Credibility Review](https://arxiv.org/abs/2008.12742v1), but formatted as a Graph rather than as the usual nested trees. The Graph is just a JSON object with fields:
+* `nodes`: a list of individual objects for a wide variety of schema.org compatible data items. The main types are Reviews, CreativeWorks, Person, Bot, Organizations, etc.
+* `links`: a list. Each element is an object with fields:
+  * `rel` with the name of relation
+  * `source`: with a string identifying a node
+  * `target`: with a string identifying a node
+* `mainNode`: a string identifying the node that is the main
+  `CredibilityReview`, all the other nodes are essentially
+  evidence/context needed to better understand this node.
+* `@context` is always `http://coinform.eu`
+* `@type` is always Graph
+
+### UICredReviewGraph
+The main point of the reviewGraph component is to display this graph and help users to explore it and perform tasks. For display purposes and managing state (e.g. hiding/showing nodes), we need to keep track of additional information. Therefore, we extend the `acred` `Graph` into a, newly defined, `UICredReviewGraph`. It extends:
+* the graph with properties:
+  * `id`, same as the `mainNode`
+  * `mainItemReviewed`: actually a calculated label for the
+    `mainNode.itemReviewed`, typically an Article, Tweet or Sentnece.
+  * nodes and links are copied and extended as described below.
+* for nodes the following properties are added:
+  * `id`: either the identifier, '@id' of 'url' value
+  * `hierarchyLevel`: int with depth from the mainNode 
+  * `group`: int based on the nodeType (e.g. Review, Bot, Thing)
+  * `nodeSize`: deprecated, useful only if using svg circle
+  * `nodeScale`: used to transform the standard size of the svg element
+  * `enabledNode`: bool currently fixed to true
+* for links:
+  * `value`: float, currently fixed value
+* for both nodes and links:
+  * `opacity`: used to store the "current" opacity
+  * `originalOpacity`: used to store "temporary" opacity //FIXME: we should be able to calculate opacity based on some global state, instead of introducing state here
+
+### Other State
+At the moment all other state is stored in the angular `scope`
 
 ## Controller
 Implemented in `src/app/controllers/reviewGraph.js` 
@@ -24,40 +115,15 @@ where `ciDoc` is a co-inform document. The controller fetches an `acred` credibi
   D3js force graph and handles events.
 
 ### Service `rgProcessor`
-1. enriches acred credibility review Graphs to make them compatible with D3js force-graphs. Both graphs contains nodes and links, but the enriching process adds fields:
-   * for nodes:
-     * `id`: either the identifier, '@id' of 'url' value
-     * `hierarchyLevel`: int with depth from the mainNode 
-     * `group`: int based on the nodeType (e.g. Review, Bot, Thing)
-     * `nodeSize`: deprecated, useful only if using svg circle
-     * `nodeScale`: used to transform the standard size of the svg element
-     * `enabledNode`: bool currently fixed to true
-   * for links:
-     * `value`: float, currently fixed value
-   * for both nodes and links:
-     * `opacity`: used to store the "current" opacity
-     * `originalOpacity`: used to store "temporary" opacity //FIXME: we should be able to calculate opacity based on some global state, instead of introducing state here
-   * Adds calculated field values value, originalOpacity and opacity to links
-
- 2. providing common extractor functions to access and calculate
-   information about nodes and links in the graph. These are available
-   via the `search`, `nodeMapper` and `linkMapper` properties.
+1. Converts the acred credibility review Graph into a
+   `UICredReviewGraph` which is compatible with D3js
+   force-graphs. Both graphs contain nodes and links, but the
+   enriching process adds fields relevant for displaying the graph and
+   managing state and UI events. See the [model section](#Model).
+2. provides common extractor functions to access and calculate
+   information about nodes and links in the graph (both the original
+   acred Graph as well as for the `UICredReviewGraph`). These are
+   available via the `search`, `nodeMapper` and `linkMapper`
+   properties.
 
 
-## View
-Implemented in `src/app/partials/reviewGraph.html` (of course the dashboard css is used to format the html elements).
-The view is relatively simple and defines:
-* title `.review-graph-explanation` (sic)
-* main graph `.review-graph`
-  * sidebar `.review-graph-sidebar`
-    * contains buttons with the icons calling `sidebarGraphEvent(nodeType:graphId)`
-  * the actual graph `.review-graph-render` rendered by the `reviewGraphDir`ective
-* view buttons `.rg-critical-path-bar`
-  * "fit to view" calls `zoomFit()`
-  * "show/hide discarded evidence" calls `clickCriticalPath()`
-* doc details `.ciDocument` (sic)
-  * shows different cards depending on current selection
-    * given by state flags `activateReviewCard`, `activateItemReviewedCard`, `activateBotCard` or `activateOrganizationCard`
-    
-### `reviewGraphDir`ective 
-This is the **real** controller and does most of the work

@@ -446,8 +446,16 @@ define([
             }
                 
             this.processGraph = function(graph) {
-                /* Modifies the input credibility review graph by calculating and adding
-                 d3 specific fields to nodes and links:
+                /* Converts the input acred credibility review Graph into a D3js compatible Graph.
+                   
+                 In reality, both graph formats are pretty similar
+                 with nodes and links as the main properties
+                 describing the graph. To differentiate, we use type
+                 "UICredReviewGraph" for the new graph. It wraps the
+                 original nodes and links in new JS Object instances
+                 and adds d3 specific fields thes new node and link
+                 objects:
+
                  new node fields:
                    * id: either the identifier, '@id' of 'url' value
                    * hierarchyLevel: int with depth from the mainNode 
