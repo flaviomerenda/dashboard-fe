@@ -16,35 +16,6 @@ define([
         module.service('rgBuilder', function() {
 
             
-            // TODO: transfer these values to a config file
-            this.calcLinkDistance = function(link) {
-                var rel = link.rel || "isRelatedTo";
-                if (rel == "sentA") { //sentPair to query sent
-                    return 60;
-                } 
-                else if (rel == "sentB") { //sentPair to db sent
-                    return 20;
-                } 
-                else if (rel == "isBasedOn") {
-                    return 20;
-                } 
-                else if (rel == "appearance") {
-                    return 30;
-                } 
-                else if (rel == "author") {
-                    return 60;
-                } 
-                else if (rel == "itemReviewed") {
-                    return 40; 
-                } 
-                else if (rel == "basedOn") {
-                    return 30;
-                } 
-                else if (rel == "creator") {
-                    return 60;
-                }
-                return 30;
-            }
 
             // deprecated: use rgProcessor.calcSymbol instead
             // this.calcIconType = d => this.calcSymbolId(d).slice(1) 
@@ -141,15 +112,6 @@ define([
                 }
             }
 
-            // assingn a force to a node subset
-            this.isolate_force = function(force, nodeFilter, nodes) {
-                let init = force.initialize;
-                force.initialize = function() { 
-                    let fnodes = nodes.filter(nodeFilter);
-                    init.call(force, fnodes); 
-                };
-                return force;
-            }
 
         });
     }

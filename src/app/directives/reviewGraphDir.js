@@ -11,6 +11,7 @@
         The d3v5 library has been updated from v5.7.0 up to v5.16.0.
 
     TODO: resize -> rend from scratch
+    TODO: convert this to a component? https://docs.angularjs.org/guide/component 
 
     see: https://docs.angularjs.org/guide/directive
 */
@@ -97,6 +98,120 @@ define(
                 }
             }
 
+            /**
+             * Modify elements by setting style-related attributes
+             * based on their associated data values.
+             */
+            function setElementStyleAttributes(d3Selectors, graph) {
+                let gNodeMapper = rgProcessor.nodeMapper(graph);
+
+                const colorScale = d3v5.scaleOrdinal(d3v5.schemeCategory10);
+                /** 
+                 * Calculates a color for a node based on its group
+                 * and hierarchyLevel.
+                 * 
+                 * @param d a node in a UICredReviewGraph
+                 */
+                function colorByGroupAndHLevel(d) {
+                    return colorScale(d.group + (d.hierarchyLevel || 0));
+                }
+                
+                d3Selectors.link
+                    /*.attr("id", d => {
+                        // note UICredReviewGraph link source and target are objects,
+                        // not strings like the standard acred graph
+                        let source = d.source.index
+                        let target = d.target.index
+                        return "link_" + source + "_" + target;
+                    })*/
+                    .attr("stroke-width", d => Math.max(1, Math.sqrt(d.value)))
+                    .attr("stroke", "#999")
+                    .attr("stroke-opacity", d => d.opacity || 0.6)
+                    .attr("fill", d => "none")
+                    .attr("stroke-dasharray", d => {
+                        let rel = d.rel;
+                        if (rel == "itemReviewed") {
+                            return "2 1";
+                        } else {
+                            return null;
+                        }
+                    })
+                    .attr("marker-mid", d => "url(#arrow)");
+                d3Selectors.nodeUse
+                    .attr("xlink:href", gNodeMapper.calcSymbolId)
+                    .attr("transform", gNodeMapper.calcNodeTransform(null))
+                    .attr("style", d => "opacity:" + (d.opacity || 0.8));
+                d3Selectors.node //.attr("id", d => "node_" + d.id)
+                    .attr("stroke", colorByGroupAndHLevel)
+                    .attr("fill", colorByGroupAndHLevel)
+                    .attr("stroke-width", 1.5)
+            }
+
+            function createSimulationPositionalForces(currEl, graph) {
+                // assign force to a specific list of nodes
+                function isolate_force(force, nodes) {
+                    let init = force.initialize;
+                    force.initialize = function() { 
+                        init.call(force, nodes); 
+                    };
+                    return force;
+                }
+
+                // assign a simulation force depending by the node hierarchy level on the horizontal axis
+                let yForces = [graph.maxHLevel] //FIXME: only uses maxHLevel?
+                    .map( hLevel => {
+                        let targetY = hLevel * currEl.clientHeight / (1 + graph.maxHLevel)
+                        let hLevelFilter = n => n.hierarchyLevel == hLevel;
+                        let targetNodes = graph.nodes.filter(hLevelFilter);
+                        return ["hierarchy_y_" + hLevel,
+                                isolate_force(d3v5.forceY(targetY), targetNodes)]
+                    });
+                return new Map(yForces);
+            }
+
+            /**
+             * Creates simulation forces for the graph to be displayed inside a currEl
+             *
+             * @param currEl html Element where the graph should be
+             *   displayed, forces should aim to fit inside the
+             *   boundaries of this element
+             * @param graph UICredReviewGraph 
+             * @returns Map of force names to force objects
+             * @see https://github.com/d3/d3-force#forces
+             */
+            function createSimulationForces(currEl, graph) {
+                /** all nodes repulse each other  */
+                let charge = d3force.forceManyBody().strength(-400); // TODO: transfer -400 value to a config file
+
+                // applies the force to the source and target node of each link.
+                let link_force = d3force.forceLink(graph.links)
+                    .id(d => d.id) // refer to nodes via id field, https://github.com/d3/d3-force#link_id
+                    .distance(rgProcessor.linkMapper(graph).calcLinkDistance); // let distance depend on...?
+
+
+                /** Center mass of all nodes should be close to the center of the view */
+                let center = d3force.forceCenter(currEl.clientWidth / 2, currEl.clientHeight / 2);
+
+                let positionalForces = createSimulationPositionalForces(currEl, graph);
+                
+                return new Map([
+                    ['charge', charge],
+                    ['center', center],
+                    ['links', link_force],
+                    ...positionalForces
+                ])
+            }
+
+            /**
+             * Creates a Simulation for the graph nodes
+             *
+             * @see https://github.com/d3/d3-force#simulation
+             */
+            function createSimulation(currEl, graph) {
+                let simulation = d3force.forceSimulation(graph.nodes);
+                return simulation;
+            }
+            
             let link = function(scope, element) {
 
                 // Receive and handle render events
@@ -119,49 +234,20 @@ define(
                     let nodes = graph.nodes; 
                     let links = graph.links; 
 
-                    // get the current element where to add the graph
+                    // Create svg element tree for the graph and return selectors
                     let d3Selectors = createElementSelectors(element[0], graph);
 
+                    // add attributes to all link elements as given by the link group selector
+                    setElementStyleAttributes(d3Selectors, graph);
+                    
                     console.log("Defining forceSimulation")
-                    // applies the force to the source and target node of each link.
-                    var link_force = d3force.forceLink(links)
-                        .id(d => d.id)
-                        .distance(rgBuilder.calcLinkDistance); // let distance depend on...?
+                    let simulation = createSimulation(element[0], graph);
+                    let simForces = createSimulationForces(element[0], graph);
+                    simForces.forEach((force, name) => simulation.force(name, force));
 
-                    var simulation = d3force.forceSimulation()
-                        // TODO: transfer -400 value to a config file
-                        .force("charge_force", d3force.forceManyBody().strength(-400))
-                        .force("center_force", d3force.forceCenter(width / 2, height / 2))
-                        .nodes(nodes)
-                        .force("links", link_force);
 
-                    // filter the Hierarchy levels
-                    let hLevels = nodes.filter(n => typeof n.hierarchyLevel == "number")
-                        .map(n => n.hierarchyLevel || 0);
-                    let maxHLevel = Math.max(...hLevels);
-                    if (DEBUG) {console.debug("Max HLevel: ", maxHLevel, "of", hLevels)};
-
-                    // assign a simulation force depending by the node hierarchy level on the horizontal axis
-                    [...Array(maxHLevel).keys()].forEach(hLevel => {
-                        let targetY = hLevel * height / (1 + maxHLevel)
-                        let hLevelFilter = n => n.hierarchyLevel == hLevel;
-                        simulation.force("hierarchy_y_" + hLevel, 
-                                         rgBuilder.isolate_force(d3v5.forceY(targetY), hLevelFilter, nodes))
-                    });
-                        
-                    // assign a simulation force depending by the node group on the vertical axis
-                    /*let groups = nodes.filter(n => typeof n.group == "number")
-                      .map(n => n.group || 0)
-                      let maxGroup = Math.max(...groups);
-                      if (DEBUG) {console.debug("Max Groups: ", maxGroup, "of", groups);}
-                      // assign a simulation force depending by the node group
-                      [...Array(maxGroup).keys()].forEach(group => {
-                      let targetX = group * width / (1 + maxGroup);
-                      let groupFilter = n => n.group == group;
-                      simulation.force("group_x_" + group,
-                      rgBuilder.isolate_force(d3v5.forceX(targetX), groupFilter));
-                      })*/
-
+                    // the rest is event handling and setting of initial state?
+                    
                     var selectProperCard = function (selectedNode) {
                         var nodeType = gNodeMapper.calcNodeType(selectedNode);
                         if (nodeType == 'Review') {
@@ -225,11 +311,6 @@ define(
                     }
 
 
-                    const colorScale = d3v5.scaleOrdinal(d3v5.schemeCategory10);
-                        
-                    var colorByGroupAndHLevel = function(d) {
-                        return colorScale(d.group + (d.hierarchyLevel || 0));
-                    }
 
                     // create usr feedback (review)
                     var getCoinformUserReviewSchema = () => {
@@ -352,28 +433,6 @@ define(
                         //postReview(inaccurateUserReview)
                     }
 
-                    // add attributes to all link elements as given by the link group selector
-                    d3Selectors.link
-                        .attr("id", d => {
-                            // note UICredReviewGraph link source and target are objects,
-                            // not strings like the standard acred graph
-                            let source = d.source.index
-                            let target = d.target.index
-                            return "link_" + source + "_" + target;
-                        })
-                        .attr("stroke-width", d => Math.max(1, Math.sqrt(d.value)))
-                        .attr("stroke", "#999")
-                        .attr("stroke-opacity", d => d.opacity || 0.6)
-                        .attr("fill", d => "none")
-                        .attr("stroke-dasharray", d => {
-                            let rel = d.rel;
-                            if (rel == "itemReviewed") {
-                                return "2 1";
-                            } else {
-                                return null;
-                            }
-                        })
-                        .attr("marker-mid", d => "url(#arrow)");
                     
 
                     // these functions allow to move the pointer to an object, 
@@ -402,23 +461,11 @@ define(
                     }
 
                     console.log("Adding node svg elts");
-                    function calcNodeTransform(selectedNodeId) {
-                        return d => {
-                            let selectedFactor = (d.id == selectedNodeId) ? 2.0 : 1.0;
-                            let scale = (d.nodeScale || 1.0) * selectedFactor;
-                            return "scale(" + scale  + ")";
-                        }
-                    }
-                    
-                    d3Selectors.nodeUse
-                        .attr("xlink:href", gNodeMapper.calcSymbolId)
-                        .attr("transform", calcNodeTransform(null))
-                        .attr("style", d => "opacity:" + (d.opacity || 0.8));
 
                     d3Selectors.nodeUse.on("click", d => {
                         if (DEBUG) {console.debug("clicked on ", d)};
-                        use.attr("transform", calcNodeTransform(d.id)) //recalculate based on current selected nodeId
-                        if (scope.prunedGraphActivation == true) {
+                        d3Selectors.nodeUse.attr("transform", gNodeMapper.calcNodeTransform(d.id)) //recalculate transform for all nodes based on current selected nodeId?
+                        if (scope.prunedGraphActivation) {
                             let targetNodes = gSearch.findNeighbhd(d)
                             let outLinks = gSearch.outLinks(d)
                             handleNeighbhd(targetNodes, outLinks)
@@ -428,11 +475,8 @@ define(
                         });
                     });
                     
-                    d3Selectors.node.attr("id", d => "node_" + d.id)
-                        .attr("stroke", colorByGroupAndHLevel)
-                        .attr("fill", colorByGroupAndHLevel)
-                        .attr("stroke-width", 1.5)
-                        .call(drag(simulation));
+
+                    d3Selectors.node.call(drag(simulation));
                         
                     console.log("Setting node titles");
                                 
@@ -456,14 +500,6 @@ define(
                             .attr("transform", d => "translate(" + d.x + "," + d.y + ")");
                     });
 
-                    var linkedByIndex = {};
-                    links.forEach(function(d) {
-                        linkedByIndex[d.source.index + "," + d.target.index] = 1;
-                    });
-
-                    var isConnected = function (a, b) {
-                        return linkedByIndex[a.index + "," + b.index] || linkedByIndex[b.index + "," + a.index];
-                    }
 
                     var activeArrows = function(active) {
                         var linkGroup = d3v5.select("#linkGroup_" + graph.id);
@@ -483,6 +519,15 @@ define(
                         }
                     }
 
+                    var linkedByIndex = {};
+                    links.forEach(function(d) {
+                        linkedByIndex[d.source.index + "," + d.target.index] = 1;
+                    });
+
+                    var isConnected = function (a, b) {
+                        return linkedByIndex[a.index + "," + b.index] || linkedByIndex[b.index + "," + a.index];
+                    }
+                    
                     d3Selectors.node.on("mouseover", function(d) {
                         d3Selectors.node.classed("node-active", function(o) {
                             var thisOpacity = isConnected(d, o) ? true : false;
@@ -692,28 +737,23 @@ define(
                     }
 
                     scope.displayMainReview = function() {
+                        // FIXME: we should only need to set the scope.selectedNode here
+                        // everything else should be handled by a watcher
                         let nodeGroup = d3v5.select("#nodeGroup_" + graph.id).selectAll("use");
-                        scope.mainNode = gSearch.nodeById(graph.mainNode)
-                        nodeGroup.attr("transform", d => {
-                            let selectedFactor = (d.id == scope.mainNode.id) ? 2.0 : 1.0;
-                            let scale = (d.nodeScale || 1.0) * selectedFactor;
-                            return "scale(" + scale  + ")"
-                        });
-                        scope.selectedNode = scope.mainNode
+                        let mainNode = gSearch.nodeById(graph.mainNode)
+                        nodeGroup.attr("transform", gNodeMapper.calcNodeTransform(mainNode.id));
+                        scope.selectedNode = mainNode
                         selectProperCard(scope.selectedNode);
                     };
 
                     scope.displayMainItemReviewed = function() {
+                        // FIXME: only set scope.selectedNode, rest should be automatic
                         let nodeGroup = d3v5.select("#nodeGroup_" + graph.id).selectAll("use");
                         var crev = gSearch.nodeById(graph.mainNode);
                         if (crev) {
                             var mainItRev = gSearch.lookupObject(crev, 'itemReviewed') || {};
                         }
-                        nodeGroup.attr("transform", d => {
-                            let selectedFactor = (d.id == mainItRev.id) ? 2.0 : 1.0;
-                            let scale = (d.nodeScale || 1.0) * selectedFactor;
-                            return "scale(" + scale  + ")"
-                        });
+                        nodeGroup.attr("transform", gNodeMapper.calcNodeTransform(mainItRev.id));
                         var ItemReviewed = nodeGroup.filter(n => n.id == mainItRev.id).node().__data__;
                         scope.selectedNode = ItemReviewed
                         selectProperCard(scope.selectedNode)

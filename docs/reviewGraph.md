@@ -53,11 +53,16 @@ This is the **real** controller and does most of the work of:
     * g `.nodes` selector `node`
       * g for each node in the graph. With attributes `stroke`, `fill`
         and `id`
-        * `use` svg node to re-use svg elements by id. We set
-          attributes `xlink:href`, `transform` (scale), `style`
-          (opacity).
-* defining the simulation, i.e. assign forces to the nodes 
+        * `use` svg node to re-use svg elements by id. Selector:
+          `nodeUse`. We set attributes `xlink:href`, `transform`
+          (scale), `style` (opacity).
+* defining the [force simulation](https://github.com/d3/d3-force#simulation) to compute a layout and based on [forces](https://github.com/d3/d3-force#forces). Currently we define the following forces:
+  * **charge** causing all nodes to repel each other
+  * **center** causing the center of gravity to be at a certain point
+  * **links** defines preferred distances for specific relation types
+  * **positional** assigns preferred positions to certain nodes (currently not really used)
 * handling events 
+  * selector `nodeUse` on `click`
   * `drag` 
 
 ## Model
@@ -96,7 +101,59 @@ The main point of the reviewGraph component is to display this graph and help us
   * `originalOpacity`: used to store "temporary" opacity //FIXME: we should be able to calculate opacity based on some global state, instead of introducing state here
 
 ### Other State
-At the moment all other state is stored in the angular `scope`
+At the moment all other state is stored in the angular `scope`, but not declared in the controller. Most is declared/introduced in the directive:
+* `wholeGraph` points to the UICredReviewGraph
+* `selectedNode` points to a node in the graph. At the moment we have
+  a very simple selection model, just a single node can be selected at
+  a time.
+* related to discarded evidence in the graph:
+  * `prunedGraphActivation`: boolean indicates that discarded evidence
+     should be hidden
+  * `manageCriticalPath`: boolean indicates that discarded evidence
+    should be hidden. Same as `prunedGraphActivation`!!
+  * `criticalPathButtonText`: str label for the button
+* related to selected node details:
+  * `activateBotCard`: 
+  * `activateOrganizationCard`
+  * `activateReviewCard`
+  * org card
+    * `organizationName`
+    * `organizationUrl`
+    * `organizationIconType`
+  * bot card
+    * `botName`
+    * `botUrl`
+    * `botDescription`
+    * `botDateCreated`
+    * `botIconType`
+  * itemReviewed card
+    * `pubDate`
+    * `viewableContent`
+    * `itRevTitle`
+    * `itRevUrl`
+    * `itRevDomain`
+    * `itRevCardIconType`
+  * review card
+    * `credibilitylabel`
+    * `credLabelDescription`
+    * `reviewConfidence`
+    * `credibilityAssessor`
+    * `revExplanation`
+    * `revCardIconType`
+
+
+Event handlers on `scope`:
+* related to node details (cards)
+  * `rateReviewAsAccurate`
+  * `rateReviewAsInaccurate`
+* related to the sidebar:
+  * `sidbarGraphEvent`
+* related to the title
+  * `displayMainReview`
+  * `displayMainItemReviewed`
+* related to the view buttons
+  * `clickCriticalPath`
+  * `zoomFit`
 
 ## Controller
 Implemented in `src/app/controllers/reviewGraph.js` 

@@ -321,7 +321,7 @@ define([
             //  Other reviews grow bigger as they are based on more subReviews
             //  CreativeWork inherit the scale of a review
             //  all other nodes have minimum scale
-            this.calcNodeScale = function(d) {
+            let calcNodeScale = function(d) {
                 let minScale = 2.0;
                 let maxScale = 3.5; 
                 let dt1 = d['@type'] || d['type'] || 'Thing';
@@ -343,13 +343,21 @@ define([
                     return minScale
                 }
             }
-
+            this.calcNodeScale = calcNodeScale;
+            
+            this.calcNodeTransform = function(selectedNodeId) {
+                return d => {
+                    let selectedFactor = (d.id == selectedNodeId) ? 2.0 : 1.0;
+                    let scale = (d.nodeScale || 1.0) * selectedFactor;
+                    return "scale(" + scale  + ")";
+                }
+            }
+            
             // given a node, return an int for the depth level of the node in the graph
             //  depth is given by:
             //    the `isBasedOn` relation for Reviews
             //    Bots and CreativeWorks inherit nearby Review depth
-            this.calcNodeHierarchy = function(d) {
-                let maxHLevel = 10;
+            this.calcNodeHierarchy = function(d, defaultVal = 10) {
                 let dt = this.calcNodeType(d);
                 let dId = this.calcNodeId(d)
                 let topNid = graph['mainNode'];
@@ -362,7 +370,7 @@ define([
                         return 1 + this.calcNodeHierarchy(parentN);
                     }
                     console.log('Could not find parent node')
-                    return maxHLevel;
+                    return defaultVal;
                 } else if (dt == 'Bot') {
                     // inherit the hierarchy level of the review
                     var revN = search.lookupSubject(d, 'author');
@@ -370,14 +378,14 @@ define([
                         return this.calcNodeHierarchy(revN);
                     }
                     // orphan bot
-                    return maxHLevel;
+                    return defaultVal;
                 } else {
                     // assume it's some CreativeWork that was reviewed
                     var nReviewer = search.lookupSubject(d, 'itemReviewed');
                     if (nReviewer) {
                         return this.calcNodeHierarchy(nReviewer);
                     }
-                    return maxHLevel;
+                    return defaultVal;
                 }
             }
         }
@@ -395,7 +403,27 @@ define([
             this.calcLinkValue = function(link) {
                 return 2.0;
             }
-            
+
+            /**
+             * Given a link, return a distance value 
+             */
+            this.calcLinkDistance = function(link) {
+                if (!link.rel) console.log('Cannot compute link distance for', link);
+                let rel = link.rel || "isRelatedTo";
+                let rel2Distance = {
+                    // TODO: transfer these values to a config file?
+                    itemReviewed: 40,
+                    sentA: 60, //sentPair to query sent
+                    sentB: 20, //sentPair to db sent
+                    isBasedOn: 20,
+                    basedOn: 30,
+                    appearance: 30,
+                    author: 60,
+                    creator: 60
+                }
+                return rel2Distance[rel] || 30;
+            }
+
             // given a link in a graph, calculate its opacity
             //   this is done based on the link type
             //   sometimes the opacity is inherited from one of the nodes    
@@ -497,12 +525,20 @@ define([
                                 'Mapping to ', irrelevantNodesForCreator.length, 'nodes to remove',
                                irrelevantNodesForCreator);
                 }
+                
+                let relevantNodes = graph.nodes.filter(n => !nodesToRemove.includes(n));
+                let relevantLinks = graph.links.filter(l => !linksToRemove.includes(l));
+
+                let hLevels = relevantNodes.map(n => nMapper.calcNodeHierarchy(n, -1));
+                let maxHLevel = Math.max(...hLevels)
+                let hLevelsHisto = Array.from(new Set(hLevels)).map(hl => [hl, hLevels.filter(l => hl == l).length])
+                console.log('Max HLevel: ', maxHLevel, ' of ', hLevels.length, ' histo: ', hLevelsHisto);
 
                 let acred2D3NodeObj = n =>
                     Object.assign(Object.create(n), {
                         id: n.identifier || gSearch.findNodeId(n),
                         otherId: n.id,
-                        hierarchyLevel: nMapper.calcNodeHierarchy(n), 
+                        hierarchyLevel: nMapper.calcNodeHierarchy(n, maxHLevel), 
                         group: nMapper.ntypes.indexOf(nMapper.calcNodeType(n)),
                         originalOpacity: nMapper.calcNodeOpacity(n),
                         opacity: nMapper.calcNodeOpacity(n),
@@ -517,16 +553,16 @@ define([
                         opacity: lMapper.calcLinkOpacity(l)
                     })
 
+
                 let result = {
                     "@context": "http://coinform.eu",
                     "@type": "UICredReviewGraph",
                     id: graph.mainNode,
                     mainItemReviewed: this.calcMainItemReviewedLabel(graph),
                     mainNode: graph.mainNode,
-                    nodes: graph.nodes.filter(n => !nodesToRemove.includes(n))
-                        .map(acred2D3NodeObj),
-                    links: graph.links.filter(l => !linksToRemove.includes(l))
-                        .map(acred2D3LinkObj)
+                    maxHLevel: maxHLevel,
+                    nodes: relevantNodes.map(acred2D3NodeObj),
+                    links: relevantLinks.map(acred2D3LinkObj)
                 };
                 if (DEBUG) {
                     let hlevels = result.nodes.
