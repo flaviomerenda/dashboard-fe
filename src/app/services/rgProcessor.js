@@ -457,9 +457,9 @@ define([
         
         module.service('rgProcessor', function() {
 
-            this.search = graph => new Searcher(graph);
-            this.nodeMapper = graph => new NodeMapper(graph);
-            this.linkMapper = graph => new LinkMapper(graph);
+            this.search = graph => (graph) ? new Searcher(graph) : null;
+            this.nodeMapper = graph => (graph) ? new NodeMapper(graph) : null;
+            this.linkMapper = graph => (graph) ? new LinkMapper(graph) : null;
             
             // given a graph, return the label for the main item reviewed...
             //   FIXME: creating a label for an item is a separate function

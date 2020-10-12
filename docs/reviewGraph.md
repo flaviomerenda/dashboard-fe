@@ -86,6 +86,9 @@ The main point of the reviewGraph component is to display this graph and help us
   * `id`, same as the `mainNode`
   * `mainItemReviewed`: actually a calculated label for the
     `mainNode.itemReviewed`, typically an Article, Tweet or Sentnece.
+  * `mainNodeLabel` the credibility of the document?
+  * `maxHLevel`: int of the maximum `hierarchyLevel` over all nodes in
+    the graph
   * nodes and links are copied and extended as described below.
 * for nodes the following properties are added:
   * `id`: either the identifier, '@id' of 'url' value

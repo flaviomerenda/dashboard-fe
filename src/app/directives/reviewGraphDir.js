@@ -31,7 +31,7 @@ define(
         
         angular
         .module('kibana.controllers')
-        .directive('reviewGraphDir', function (alertSrv, card, rgBuilder, rgProcessor) {
+        .directive('reviewGraphDir', function (alertSrv, rgBuilder, rgProcessor) {
 
             /**
              * Adds SVG elements to the `element` for the nodes and
@@ -248,41 +248,8 @@ define(
 
                     // the rest is event handling and setting of initial state?
                     
-                    var selectProperCard = function (selectedNode) {
-                        var nodeType = gNodeMapper.calcNodeType(selectedNode);
-                        if (nodeType == 'Review') {
-                            scope.activateBotCard = false;
-                            scope.activateOrganizationCard = false;
-                            reviewAsCard(selectedNode);
-                            var relatedItemRev = gSearch.lookupObject(selectedNode, 'itemReviewed');
-                            if (relatedItemRev) {
-                                itemReviewedAsCard(relatedItemRev);
-                            }
-                        }
-                        else if (nodeType == 'CreativeWork') {
-                            scope.activateReviewCard = false;
-                            scope.activateBotCard = false;
-                            scope.activateOrganizationCard = false;
-                            itemReviewedAsCard(selectedNode)
-                        }
-                        else if (nodeType == 'Bot') {
-                            scope.activateReviewCard = false;
-                            scope.activateItemReviewedCard = false;
-                            scope.activateOrganizationCard = false;
-                            botAsCard(selectedNode)
-                        }
-                        else if (nodeType == 'Organization') {
-                            scope.activateReviewCard = false;
-                            scope.activateItemReviewedCard = false;
-                            scope.activateBotCard = false;
-                            organizationAsCard(selectedNode)
-                        }
-                    }
 
-                    var clickedNode = function(d) {
-                        scope.selectedNode = d;
-                        selectProperCard(scope.selectedNode)
-                    }
+
 
                     var handleNeighbhd = function(neighbhdNodes, neighbhLinks, alfa=0.2) {
                         neighbhdNodes.filter(n => n.opacityFilter).forEach(n => {
@@ -462,9 +429,13 @@ define(
 
                     console.log("Adding node svg elts");
 
+                    var clickedNode = function(d) {
+                        scope.$emit('selectNode', d);
+                    }
+
                     d3Selectors.nodeUse.on("click", d => {
                         if (DEBUG) {console.debug("clicked on ", d)};
-                        d3Selectors.nodeUse.attr("transform", gNodeMapper.calcNodeTransform(d.id)) //recalculate transform for all nodes based on current selected nodeId?
+                        // d3Selectors.nodeUse.attr("transform", gNodeMapper.calcNodeTransform(d.id)) //recalculate transform for all nodes based on current selected nodeId?
                         if (scope.prunedGraphActivation) {
                             let targetNodes = gSearch.findNeighbhd(d)
                             let outLinks = gSearch.outLinks(d)
@@ -694,70 +665,6 @@ define(
                         handleLinkActivation(nodeGroup)
                     };
 
-                    var getCredibilityAssessor = function(selectedReview) {
-                        var reviewer = gSearch.lookupObject(selectedReview, 'author');
-                        if (!reviewer) console.log('No author for ', selectedReview, '?')
-                        return (reviewer.name || reviewer['@type'])
-                    }
-                    
-                    var organizationAsCard = function(selectedOrg) {
-                        scope.organizationName = selectedOrg.name
-                        scope.organizationUrl = selectedOrg.url
-                        scope.organizationIconType = gNodeMapper.calcSymbol(selectedOrg)
-                        scope.activateOrganizationCard = true;
-                    }
-                    
-                    var botAsCard = function(selectedBot) {
-                        scope.botName = (selectedBot.name || selectedBot['@type'])
-                        scope.botUrl = selectedBot.url
-                        scope.botDescription = selectedBot.description
-                        scope.botDateCreated = card.pubDate(selectedBot.dateCreated)
-                        scope.botIconType = gNodeMapper.calcSymbol(selectedBot)
-                        scope.activateBotCard = true;
-                    }
-
-                    var itemReviewedAsCard = function(selectedItemReviewed) {
-                        scope.pubDate = card.pubDate(selectedItemReviewed.publishedDate)
-                        scope.viewableContent = card.viewableContent((selectedItemReviewed.content || selectedItemReviewed.text))
-                        scope.itRevTitle = (selectedItemReviewed.title || selectedItemReviewed.name)
-                        scope.itRevUrl = (selectedItemReviewed.url)
-                        scope.itRevDomain = (selectedItemReviewed.domain)
-                        scope.itRevCardIconType = gNodeMapper.calcSymbol(selectedItemReviewed)
-                        scope.activateItemReviewedCard = true;
-                    }
-                    
-                    var reviewAsCard = function(selectedReview) {
-                        scope.credibilitylabel = card.ratingLabel(selectedReview.reviewRating)
-                        scope.credLabelDescription = card.credLabelDescription(scope.credibilitylabel)
-                        scope.reviewConfidence = card.reviewConfidence(selectedReview.reviewRating.confidence)
-                        scope.credibilityAssessor = getCredibilityAssessor(selectedReview)
-                        scope.revExplanation = card.explanation(selectedReview.reviewRating.ratingExplanation)
-                        scope.revCardIconType = gNodeMapper.calcSymbol(selectedReview)
-                        scope.activateReviewCard = true;
-                    }
-
-                    scope.displayMainReview = function() {
-                        // FIXME: we should only need to set the scope.selectedNode here
-                        // everything else should be handled by a watcher
-                        let nodeGroup = d3v5.select("#nodeGroup_" + graph.id).selectAll("use");
-                        let mainNode = gSearch.nodeById(graph.mainNode)
-                        nodeGroup.attr("transform", gNodeMapper.calcNodeTransform(mainNode.id));
-                        scope.selectedNode = mainNode
-                        selectProperCard(scope.selectedNode);
-                    };
-
-                    scope.displayMainItemReviewed = function() {
-                        // FIXME: only set scope.selectedNode, rest should be automatic
-                        let nodeGroup = d3v5.select("#nodeGroup_" + graph.id).selectAll("use");
-                        var crev = gSearch.nodeById(graph.mainNode);
-                        if (crev) {
-                            var mainItRev = gSearch.lookupObject(crev, 'itemReviewed') || {};
-                        }
-                        nodeGroup.attr("transform", gNodeMapper.calcNodeTransform(mainItRev.id));
-                        var ItemReviewed = nodeGroup.filter(n => n.id == mainItRev.id).node().__data__;
-                        scope.selectedNode = ItemReviewed
-                        selectProperCard(scope.selectedNode)
-                    };
 
                     // create a criticalPath click event
                     scope.clickCriticalPath = function() {
@@ -813,6 +720,11 @@ define(
                         }
                     });
 
+                    scope.$watch("selectedNode", function(newVal, oldVal) {
+                        let newId = (newVal) ? newVal.id : null;
+                        d3Selectors.nodeUse.attr("transform", gNodeMapper.calcNodeTransform(newId))
+                    });
+                    
                     console.log("Register zoom handler")
                     var zoom = d3v5.zoom()
                         .scaleExtent([0.1, 4])
@@ -848,7 +760,7 @@ define(
                             .call(zoom.transform, transform);
                     }
                     
-                    scope.displayMainReview()
+                    //scope.selectMainReviewNode()
 
                     // this is the first needed click to show the criticalPath as default
                     scope.clickCriticalPath()

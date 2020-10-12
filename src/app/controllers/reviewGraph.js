@@ -35,7 +35,10 @@ define(
         var module = angular.module('kibana.controllers');
         app.useModule(module);
 
-        module.controller('reviewGraph', function ($scope, alertSrv, solrSrv, rgProcessor) {
+        module.controller('reviewGraph', function ($scope, alertSrv, solrSrv, rgProcessor, card) {
+            var gNodeMapper = rgProcessor.nodeMapper($scope.wholeGraph);
+            var gSearch = rgProcessor.search($scope.wholeGraph);
+            
             $scope.init = function (ciDoc) {
 
                 // request the corresponding reviewGraph
@@ -47,22 +50,134 @@ define(
                         alertSrv.set('Warning', 'No review available for this document. Sorry.');
                         return;
                     }
-                    var processedData = acred_to_d3_ReviewGraph(reviewGraph, ciDoc)
-
-                    $scope.wholeGraph = processedData
+                    let uiGraph = acred_to_UICredReviewGraph(reviewGraph, ciDoc)
+                    $scope.wholeGraph = uiGraph;
                     if (DEBUG) {console.debug('wholeReviewGraph: ', $scope.wholeGraph)}
 
+                    gNodeMapper = rgProcessor.nodeMapper($scope.wholeGraph);
+                    gSearch = rgProcessor.search($scope.wholeGraph);
+                    console.log('Broadcasting rendering', gNodeMapper);
                     $scope.$broadcast('render'); // trigger rendering of the view
+                    selectMainReviewNode();
                 });
             };
 
+            
             // preprocess the reviewGraph to make it compatible with d3 and calculate
             // view-related properties like size, hierarchyLevel, opacity, etc.
-            var acred_to_d3_ReviewGraph = function(graph, doc) {
+            let acred_to_UICredReviewGraph = function(graph, doc) {
                 var processedGraph = rgProcessor.processGraph(graph)
                 processedGraph['mainNodeLabel'] = doc.credibility_label; //$scope.ciDoc.credibility_label
                 return processedGraph;
             }
+
+            let selectMainReviewNode = () => {
+                let mainNode = gSearch.nodeById($scope.wholeGraph.mainNode)
+                $scope.selectedNode = mainNode;
+            }
+            $scope.selectMainReviewNode = selectMainReviewNode;
+
+            $scope.selectMainItemReviewed = function() {
+                // FIXME: only set scope.selectedNode, rest should be automatic
+                let crev = gSearch.nodeById($scope.wholeGraph.mainNode);
+                if (!crev) return;
+                let mainItRev = gSearch.lookupObject(crev, 'itemReviewed');
+                if (!mainItRev) return;
+                $scope.selectedNode = mainItRev;
+            };
+            
+            $scope.$on("selectNode", function(event, newNode) {
+                // TODO: validate newNode?
+                $scope.selectedNode = newNode;
+            })
+            
+            $scope.$watch("selectedNode", function(newVal, oldVal) {
+                // console.log('selectedNode ', oldVal, ' => ', newVal);
+                selectProperCard(newVal);
+            })
+
+            var selectProperCard = function (selectedNode) {
+                let scope = $scope;
+                if (!gNodeMapper) {
+                    console.log('No gNodeMapper for wholeGraph', $scope.wholeGraph,
+                                'and selected node', selectedNode);
+                    return;
+                }
+                let nodeType = gNodeMapper.calcNodeType(selectedNode);
+                if (nodeType == 'Review') {
+                    scope.activateBotCard = false;
+                    scope.activateOrganizationCard = false;
+                    reviewAsCard(selectedNode);
+                    var relatedItemRev = gSearch.lookupObject(selectedNode, 'itemReviewed');
+                    if (relatedItemRev) {
+                        itemReviewedAsCard(relatedItemRev);
+                    }
+                } else if (nodeType == 'CreativeWork') {
+                    scope.activateReviewCard = false;
+                    scope.activateBotCard = false;
+                    scope.activateOrganizationCard = false;
+                    itemReviewedAsCard(selectedNode)
+                } else if (nodeType == 'Bot') {
+                    scope.activateReviewCard = false;
+                    scope.activateItemReviewedCard = false;
+                    scope.activateOrganizationCard = false;
+                    botAsCard(selectedNode)
+                } else if (nodeType == 'Organization') {
+                    scope.activateReviewCard = false;
+                    scope.activateItemReviewedCard = false;
+                    scope.activateBotCard = false;
+                    organizationAsCard(selectedNode)
+                }
+            }
+
+            let organizationAsCard = function(selectedOrg) {
+                let scope = $scope;
+                scope.organizationName = selectedOrg.name
+                scope.organizationUrl = selectedOrg.url
+                scope.organizationIconType = gNodeMapper.calcSymbol(selectedOrg)
+                scope.activateOrganizationCard = true;
+            }
+                    
+            let botAsCard = function(selectedBot) {
+                let scope = $scope;
+                scope.botName = (selectedBot.name || selectedBot['@type'])
+                scope.botUrl = selectedBot.url
+                scope.botDescription = selectedBot.description
+                scope.botDateCreated = card.pubDate(selectedBot.dateCreated)
+                scope.botIconType = gNodeMapper.calcSymbol(selectedBot)
+                scope.activateBotCard = true;
+            }
+
+            let itemReviewedAsCard = function(selectedItemReviewed) {
+                let scope = $scope;
+                scope.pubDate = card.pubDate(selectedItemReviewed.publishedDate)
+                scope.viewableContent = card.viewableContent((selectedItemReviewed.content || selectedItemReviewed.text))
+                scope.itRevTitle = (selectedItemReviewed.title || selectedItemReviewed.name)
+                scope.itRevUrl = (selectedItemReviewed.url)
+                scope.itRevDomain = (selectedItemReviewed.domain)
+                scope.itRevCardIconType = gNodeMapper.calcSymbol(selectedItemReviewed)
+                scope.activateItemReviewedCard = true;
+            }
+                    
+            let reviewAsCard = function(selectedReview) {
+                let scope = $scope;
+                scope.credibilitylabel = card.ratingLabel(selectedReview.reviewRating)
+                scope.credLabelDescription = card.credLabelDescription(scope.credibilitylabel)
+                scope.reviewConfidence = card.reviewConfidence(selectedReview.reviewRating.confidence)
+                scope.credibilityAssessor = getCredibilityAssessor(selectedReview)
+                scope.revExplanation = card.explanation(selectedReview.reviewRating.ratingExplanation)
+                scope.revCardIconType = gNodeMapper.calcSymbol(selectedReview)
+                scope.activateReviewCard = true;
+            }
+
+            let getCredibilityAssessor = function(selectedReview) {
+                var reviewer = gSearch.lookupObject(selectedReview, 'author');
+                if (!reviewer) console.log('No author for ', selectedReview, '?')
+                return (reviewer.name || reviewer['@type'])
+            }
+                    
+            
+            
             
         });
     }
