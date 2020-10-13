@@ -199,7 +199,7 @@ define(
                     ['center', center],
                     ['links', link_force],
                     ...positionalForces
-                ])
+                ]);
             }
 
             /**
@@ -247,36 +247,6 @@ define(
 
 
                     // the rest is event handling and setting of initial state?
-                    
-
-
-
-                    var handleNeighbhd = function(neighbhdNodes, neighbhLinks, alfa=0.2) {
-                        neighbhdNodes.filter(n => n.opacityFilter).forEach(n => {
-                            n.opacityFilter = false;
-                            n.opacity = alfa;
-                            n.neighbhdActivation = true;
-                            n.enabledNode = true;
-                        });
-                        updateNodeIconOpacity(d3v5.select("#nodeGroup_" + graph.id).selectAll("use"));
-                        neighbhLinks.filter(l => l.opacityFilter).forEach(l => {
-                            l.opacityFilter = false;
-                            l.opacity = alfa;
-                            l.neighbhdActivation = true;
-                            l.enabledNode = true;
-                        });
-                        updateLinkIconOpacity(d3v5.select("#linkGroup_" + graph.id).selectAll("polyline"));
-                        // reset activation flag of each node
-                        //neighbhdNodes.forEach(d=> d.enabledNode = true)
-                        // reset the sidebar attributes
-                        //var sidebarIcons = d3v5.selectAll("img")
-                        //sidebarIcons.nodes().filter(d => d.id.includes('sideButton'))
-                        // reset the buttons opacity
-                        //sidebarIcons.attr("style", d => "opacity:" + "1")
-                        // reset the state of the sidebar icons
-                        //sidebarIcons.nodes().forEach(d => d.iconState = false)
-                    }
-
 
 
                     // create usr feedback (review)
@@ -429,21 +399,23 @@ define(
 
                     console.log("Adding node svg elts");
 
-                    var clickedNode = function(d) {
-                        scope.$emit('selectNode', d);
-                    }
-
+                    /**
+                     * Mark any hidden nodes as `alwaysShow`
+                     * Since this may affect their visibility, update all opacities
+                     */
+                    let showIfHidden = function(nodes) {
+                        nodes.filter(n => n.opacity == hiddenOpacityVal)
+                            .forEach(n => { n.alwaysShow = true; });
+                        updateGraphElementOpacities();
+                    };
+                    
                     d3Selectors.nodeUse.on("click", d => {
                         if (DEBUG) {console.debug("clicked on ", d)};
-                        // d3Selectors.nodeUse.attr("transform", gNodeMapper.calcNodeTransform(d.id)) //recalculate transform for all nodes based on current selected nodeId?
-                        if (scope.prunedGraphActivation) {
-                            let targetNodes = gSearch.findNeighbhd(d)
-                            let outLinks = gSearch.outLinks(d)
-                            handleNeighbhd(targetNodes, outLinks)
+                        if (!scope.showDiscardedEvidence) {
+                            // show hidden nodes of new selection
+                            showIfHidden(gSearch.findNeighbhd(d))
                         }
-                        scope.$apply(function() { 
-                            clickedNode(d);
-                        });
+                        scope.$emit('selectNode', d); // tell parent scopes about selection
                     });
                     
 
@@ -501,12 +473,12 @@ define(
                     
                     d3Selectors.node.on("mouseover", function(d) {
                         d3Selectors.node.classed("node-active", function(o) {
-                            var thisOpacity = isConnected(d, o) ? true : false;
+                            var thisOpacity = isConnected(d, o);
                             this.setAttribute('fill-opacity', thisOpacity);
                             return thisOpacity;
                         });
                         d3Selectors.link.classed("link-active", function(o) {
-                            return o.source === d || o.target === d ? true : false;
+                            return (o.source.id === d.id || o.target.id === d.id);
                         });
                         var active = true;
                         activeArrows(active)
@@ -519,209 +491,110 @@ define(
                         activeArrows()
                     });
 
-                    var updateNodeIconOpacity = function (nodeGroup) {
-                        nodeGroup.attr("style", d => "opacity:" + d.opacity)
-                    }
-                        
-                    var updateLinkIconOpacity = function (linkGroup) {
-                        linkGroup
-                            .attr("stroke-opacity", l => l.opacity)
-                            .attr("marker-mid", d => {
-                                if (d.opacity == 0) {
-                                    return ""
-                                }
-                                else {
-                                    return "url(#arrow)"
-                                }
-                            });
-                    }
-
-                    var handleNodeActivation = function(nodeGroup, criticalPath=false, alfa=0.2) {
-                        nodeGroup.forEach(n => {
-                            var np = n; //Object.getPrototypeOf(n);
-                            // handle neighbhd nodes
-                            if ((np.neighbhdActivation == true) && (criticalPath)) {
-                                np.opacityFilter = true;
-                                var originalOpacity = alfa;
-                            } 
-                            else {
-                                originalOpacity = np.originalOpacity
+                    const hiddenOpacityVal = 0.0;
+                    
+                    /**
+                     * Calculates the current node opacity based the current state.
+                     * The main state to take into account is:
+                     *  * the value of the `alwaysOn` property on each node
+                     *  * whether the sidebar button for the matching nodeType is enabled or not
+                     *  * whether discarded nodes should be shown and the node is such a node
+                     */
+                    let calcCurrentNodeOpacity = n => {
+                        if (n.alwaysShow)  return n.originalOpacity;
+                        if ((scope.selectedNode.id == n.id)) return n.originalOpacity;
+                        let nodeSymbol = gNodeMapper.calcSymbol(n);
+                        let sbnt = scope.sideBarNodeTypes.find(nt => nt.id == nodeSymbol);
+                        if (sbnt) {
+                            let sideBarNodeTypesEnabled = (sbnt.style.opacity == 1);
+                            if (!sideBarNodeTypesEnabled) {
+                                return hiddenOpacityVal;
                             }
-                            var nodeActive = np.opacityFilter ? false : true;
-                            var newNodeOpacity = nodeActive ? 0 : originalOpacity;
-                            // handle the sidebar actions
-                            if (criticalPath == false) {
-                                if ((np.neighbhdActivation == true) && (np.enabledNode == false) && (np.opacityFilter == false)) {
-                                    newNodeOpacity = 0;
-                                    // Update node opacity
-                                    np.opacity = newNodeOpacity;
-                                    // Update node flag activation
-                                    np.opacityFilter = nodeActive;
-                                    }
-                                else if ((np.neighbhdActivation == true) && (np.enabledNode == false) && (np.opacityFilter == true)) {
-                                    newNodeOpacity = alfa;
-                                    // Update node opacity
-                                    np.opacity = newNodeOpacity;
-                                    // Update node flag activation
-                                    np.opacityFilter = nodeActive;
-                                }
-                                if (np.enabledNode == true) {
-                                    if ((np.neighbhdActivation == true) && (np.opacityFilter == true)) {
-                                        newNodeOpacity = alfa;
-                                    }
-                                    // Update node opacity
-                                    np.opacity = newNodeOpacity;
-                                    // Update node flag activation
-                                    np.opacityFilter = nodeActive;
-                                }
-                            }
-                            else {
-                                // Update node opacity
-                                np.opacity = newNodeOpacity;
-                                // Update node flag activation
-                                np.opacityFilter = nodeActive;
-                            }
-                        });
-                        // Hide/show selected nodes icons
-                        updateNodeIconOpacity(d3v5.select("#nodeGroup_" + graph.id).selectAll("use"));
-                    }
-                        
-                    var handleLinkActivation = function(nodeGroup, alfa=0.2) {
-                        // Hide/show related links
-                        // Filter links related to selected nodes
-                        var linkGroup = links.filter(l =>
-                                                     nodeGroup.map(n => n.index).includes(l.source.index) || 
-                                                     nodeGroup.map(n => n.index).includes(l.target.index)
-                                                    );
-                        // Isolate target nodes
-                        var targetNodes = nodes.filter(nod => linkGroup.map(l => 
-                                                                            l.target.index).includes(nod.index));
-                        // Isolate source nodes                     
-                        var sourceNodes = nodes.filter(nod => linkGroup.map(l => 
-                                                                            l.source.index).includes(nod.index));
-
-                        linkGroup.map(l => {
-                            var lp = l; //Object.getPrototypeOf(l);
-                            // handle neighbhd links
-                            if (lp.neighbhdActivation == true) {
-                                lp.opacityFilter = true;
-                                originalOpacity = alfa;
-                            } 
-                            else {
-                                var originalOpacity = lp.originalOpacity
-                            }
-                            // Determine if current link is visible
-                            var linkActive = lp.opacityFilter ? false : true;
-                            if (linkActive) {
-                                var newLinkOpacity = 0;
-                            }
-                            else {                            
-                                var targetNodeOpacity = targetNodes.filter(n => 
-                                                                           (n.index == l.target.index) && ((n.opacityFilter 
-                                                                                                            ? n.opacityFilter : false) == false));
-                                var sourceNodeOpacity = sourceNodes.filter(n => 
-                                                                           (n.index == l.source.index) && ((n.opacityFilter 
-                                                                                                            ? n.opacityFilter : false) == false));
-                                if ((targetNodeOpacity.length) && (sourceNodeOpacity.length)) {
-                                    newLinkOpacity = originalOpacity;
-                                }
-                                else {
-                                    newLinkOpacity = 0;
-                                }
-                            }
-                            // Update link opacity
-                            lp.opacity = newLinkOpacity
-                            // Update link flag activation
-                            lp.opacityFilter = linkActive;
-                        });
-                        // Hide/show selected nodes icons
-                        updateLinkIconOpacity(d3v5.select("#linkGroup_" + graph.id).selectAll("polyline"));
-                    }
-
-                    scope.sidebarGraphEvent = function(nodeIconId){
-                        // Sidebar actions
-                        var iconType = nodeIconId.split(":")[0]
-                        var iconId = nodeIconId.split(":")[1]
-                        var sideIconId = iconType + "_sideButton_" + iconId;
-                        // Hide/show the selected sidebar icon
-                        // Store the original opacity of a sidebar button
-                        var selectedIcon = d3v5.select("#" + sideIconId).node()
-                        var currentIconOpacity = 1
-                        // Define the current sidebar icon state
-                        var iconState = selectedIcon.iconState ? false : true;
-                        var newIconOpacity = iconState ? 0.3 : currentIconOpacity;
-                        // Hide or show the elements
-                        selectedIcon.style.opacity = newIconOpacity;
-                        // Update the current icon opacity
-                        selectedIcon.origIconOpacity = currentIconOpacity;
-                        // Update the current icon state
-                        selectedIcon.iconState = iconState;
-                        // Filter nodes selected by type over the sidebar
-                        var nodeGroup = nodes.filter(d => gNodeMapper.calcSymbol(d) == iconType);
-                        // change the properties of each node corresponding to the selected type
-                        // handle node activation in order to show/hide nodes 
-                        handleNodeActivation(nodeGroup)
-                        // handle link activation in order to show/hide links 
-                        handleLinkActivation(nodeGroup)
+                        }
+                        if (n.isDiscardedEvidence && !scope.showDiscardedEvidence) {
+                            return hiddenOpacityVal;
+                        }
+                        return n.originalOpacity;
                     };
 
-
-                    // create a criticalPath click event
-                    scope.clickCriticalPath = function() {
-                        scope.manageCriticalPath = !scope.manageCriticalPath
-                        //scope.hideSidebarWhenCriticalPath = !scope.hideSidebarWhenCriticalPath
-                    }
-
-                    var resetGraphAttributes = function() {
-                        // reset attributes of each node (opacity, opacityFilter)
-                        nodes.forEach(n => {
-                            var np = n; //Object.getPrototypeOf(n);
-                            (np.opacity = np.originalOpacity) && (np.opacityFilter = false);
-                        });
-                        updateNodeIconOpacity(d3v5.select("#nodeGroup_" + graph.id).selectAll("use"));
-                        // reset attributes of each link (opacity, opacityFilter)
-                        links.forEach(l => {
-                            var lp = l; //Object.getPrototypeOf(l);
-                            (lp.opacity = lp.originalOpacity) && (lp.opacityFilter = false);
-                        });
-                        updateLinkIconOpacity(d3v5.select("#linkGroup_" + graph.id).selectAll("polyline"));
-                        // reset activation flag of each node
-                        nodes.forEach(d=> d.enabledNode = true)
-                        // reset the sidebar attributes
-                        var sidebarIcons = d3v5.selectAll("img")
-                        sidebarIcons.nodes().filter(d => d.id.includes('sideButton'))
-                        // reset the buttons opacity
-                        sidebarIcons.attr("style", d => "opacity:" + "1")
-                        // reset the state of the sidebar icons
-                        sidebarIcons.nodes().forEach(d => d.iconState = false)
-                    }
-
-                    var getGraphNodesToManage = function() {
-                        var mainNode = (nodes.filter(n=> n.id == graph.mainNode)[0])
-                        let criticalPath = gSearch.findCriticalPath(mainNode, 'isBasedOnKept')
-                        return nodes.filter(n => !criticalPath.includes(n));
-                    }
-
-                    // manage the criticalPath activation
-                    scope.$watch("manageCriticalPath", function(newVal) {
-                        resetGraphAttributes()
-                        var graphNodesToManage = getGraphNodesToManage()
-                        if (newVal) {
-                            graphNodesToManage.forEach(d=> d.enabledNode = false)
-                            var criticalpath = true
-                            handleNodeActivation(graphNodesToManage, criticalpath);
-                            handleLinkActivation(graphNodesToManage);
-                            scope.criticalPathButtonText = "Show discarded evidence"
-                            scope.prunedGraphActivation = true
+                    /**
+                     * Calculates the current link opacity based on the current state.
+                     * Links are hidden whenever one of its nodes are hidden.
+                     */
+                    let calcCurrentLinkOpacity = (l, nId2Opacity) => {
+                        if (nId2Opacity) {
+                            if ((nId2Opacity.get(l.source.id) == hiddenOpacityVal) ||
+                                (nId2Opacity.get(l.target.id) == hiddenOpacityVal)) {
+                                return hiddenOpacityVal;
+                            }
+                            // console.log('link', l, 'is visible with opacity', l.originalOpacity);
+                            return l.originalOpacity;
                         }
-                        else {
-                            scope.criticalPathButtonText = "Hide discarded evidence"
-                            scope.prunedGraphActivation = false
+                        console.warning("This method is much faster if you provide pre-calculated opacities for nodes");
+                        let srcNode = gSearch.nodeById(l.source.id);
+                        let tgtNode = gSearch.nodeById(l.target.id);
+                        if (!(srcNode && tgtNode)) {
+                            console.error('Could not find one of the nodes for ', l);
+                            return hiddenOpacityVal;
                         }
+                        if ((srcNode.opacity == hiddenOpacityVal) ||
+                            (tgtNode.opacity == hiddenOpacityVal)) {
+                            return hiddenOpacityVal;
+                        }
+                        console.log('link', l, 'is visible with opacity', l.originalOpacity);
+                        return l.originalOpacity;
+                    };
+
+                    /**
+                     * Recalculates styling attributes for nodes and
+                     * links to hide/show them based on the current
+                     * model state.
+                     *
+                     * @see calcCurrentNodeOpacity
+                     * @see calcCurrentLinkOpacity
+                     */
+                    let updateGraphElementOpacities = () => {
+                        nodes.forEach(n => n.opacity = calcCurrentNodeOpacity(n));
+                        let nId2Opacity = new Map(nodes.map(n => [n.id, n.opacity]));
+                        // console.log('Found', [...nId2Opacity.values()]
+                        //    .filter(v => v == hiddenOpacityVal),
+                        //             'of', nId2Opacity.size, 'hidden nodes');
+                        
+                        links.forEach(l => l.opacity = calcCurrentLinkOpacity(l, nId2Opacity));
+                        let lIdx2Opacity = new Map(links.map(l => [l.index, l.opacity]));
+                        // console.log('Found', [...lIdx2Opacity.values()]
+                        //    .filter(v => v == hiddenOpacityVal),
+                        //             'of', links.length, 'hidden links');
+                        
+                        d3Selectors.nodeUse //update node opacities
+                            .attr("style", d => "opacity:" + d.opacity);
+                        d3Selectors.link //update link opacities
+                            .attr("stroke-opacity", l => l.opacity)
+                            .attr("marker-mid",
+                                  d => (d.opacity == hiddenOpacityVal) ? "" : "url(#arrow)");
+                    };
+                        
+                    scope.$on("toggleNodesByType", function(event, nodeType, show) {
+                        // console.log("Received event toggleNodesByType for", nodeType,
+                        //             "asking to show?", show);
+                        updateGraphElementOpacities();
+                    });
+
+                    // hide/show discarded evidence nodes and links
+                    scope.$watch("showDiscardedEvidence", function(newVal) {
+                        if (!newVal) {
+                            // hide again any nodes marked as alwaysShow
+                            nodes
+                                .filter(n => n.id != scope.selectedNode.id)
+                                .filter(n => n.alwaysShow)
+                                .forEach(n => n.alwaysShow = false);
+                        }
+                        updateGraphElementOpacities();
                     });
 
                     scope.$watch("selectedNode", function(newVal, oldVal) {
                         let newId = (newVal) ? newVal.id : null;
+                        // console.log('Chang to selectedNode from', oldVal, 'to', newVal);
                         d3Selectors.nodeUse.attr("transform", gNodeMapper.calcNodeTransform(newId))
                     });
                     
@@ -758,12 +631,7 @@ define(
                         d3Selectors.svg.transition()
                             .duration(transitionDuration || 0) // milliseconds
                             .call(zoom.transform, transform);
-                    }
-                    
-                    //scope.selectMainReviewNode()
-
-                    // this is the first needed click to show the criticalPath as default
-                    scope.clickCriticalPath()
+                    };
                 }
             }
 
@@ -771,7 +639,7 @@ define(
             return {
                 restrict: 'A', // only match attribute name in html template
                 link: link
-            }
+            };
         });
     }
 );

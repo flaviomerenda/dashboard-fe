@@ -12,48 +12,12 @@
         <p>
           <p class="icon-info" title="Click on an icon below to hide/display a node type in the reviewGraph"></p>
         </p>
-        <button ng-click="sidebarGraphEvent('tweet:'+wholeGraph.id)" title="Tweet">
-          <img id="tweet_sideButton_{{wholeGraph.id}}" src='img/tweet_symbol.svg'/>
-        </button>
-        </p>
-        <p>
-          <button ng-click="sidebarGraphEvent('revCred:'+wholeGraph.id)" title="ClaimReview">
-            <img id="revCred_sideButton_{{wholeGraph.id}}" src='img/revCred_symbol.svg'/>
+        <p ng-repeat="nodeType in sideBarNodeTypes">
+          <button ng-click="sidebarGraphEvent(nodeType.id+':'+wholeGraph.id)"
+                  ng-style="nodeType.style"
+                  title="nodeType.description">
+            <img id="{{nodeType.id}}_sideButton_{{wholeGraph.id}}" src="img/{{nodeType.id}}_symbol.svg"'>
           </button>
-        </p>
-        <p>
-          <button ng-click="sidebarGraphEvent('claimRev:'+wholeGraph.id)" title="Review">
-            <img id="claimRev_sideButton_{{wholeGraph.id}}" src='img/claimRev_symbol.svg'/>
-        </button>
-        <p>
-        <button ng-click="sidebarGraphEvent('bot:'+wholeGraph.id)" title="Bot">
-        <img id="bot_sideButton_{{wholeGraph.id}}" src='img/bot_symbol.svg'/>
-        </button>
-        </p>
-        <p>
-        <button ng-click="sidebarGraphEvent('website:'+wholeGraph.id)" title="Web Site">
-            <img id="website_sideButton_{{wholeGraph.id}}" src='img/website_symbol.svg'/>
-        </button>
-        </p>
-        <p>
-        <button ng-click="sidebarGraphEvent('singleSent:'+wholeGraph.id)" title="Sentence">
-            <img id="singleSent_sideButton_{{wholeGraph.id}}" src='img/singleSent_symbol.svg'/>
-        </button>
-        </p>
-        <p>
-        <button ng-click="sidebarGraphEvent('sentPair:'+wholeGraph.id)" title="Sentence Pair"> 
-            <img id="sentPair_sideButton_{{wholeGraph.id}}" src='img/sentPair_symbol.svg'/>
-        </button>
-        </p>
-        <p>
-        <button ng-click="sidebarGraphEvent('article:'+wholeGraph.id)" title="Article">
-            <img id="article_sideButton_{{wholeGraph.id}}" src='img/article_symbol.svg'/>
-        </button>
-        </p>
-        <p>
-        <button ng-click="sidebarGraphEvent('thing:'+wholeGraph.id)" title="Thing">
-            <img id="thing_sideButton_{{wholeGraph.id}}" src='img/thing_symbol.svg'/>
-        </button>
         </p>
     </div>
   </div>
@@ -65,7 +29,7 @@
 
 <div class="rg-critical-path-bar">
     <button class="titleButtons" ng-click="zoomFit()">Fit the reviewGraph</button>
-    <button class="titleButtons" ng-click="clickCriticalPath()">{{criticalPathButtonText}}</button>
+    <button class="titleButtons" ng-click="toggleShowDiscarded()">{{criticalPathButtonText}}</button>
 </div>
 
 <p></p>

@@ -63,7 +63,26 @@ This is the **real** controller and does most of the work of:
   * **positional** assigns preferred positions to certain nodes (currently not really used)
 * handling events 
   * selector `nodeUse` on `click`
+    * triggers the `selectNode` event for the associated graph node
+    * when in hide-discarded mode,
+      *  update node's fields `opacityFilter, opacity, neighbhdActivation, enabledNode`
+      *  update all d3Selectors.nodeUse `style` attibutes with new `opacity`
+      *  update link's fields `opacityFilter, opacity, neighbhdActivation, enabledNode`
+      *  update all d3Selectors.link `stroke-opacity` and `marker-mid` attributes
   * `drag` 
+* handlers
+  * `handleNodeActivation`
+    * called when a sidebar button is pressed and when the
+      `showDiscardedEvidence` is set to false
+  * **TODO** set up a handler to calculate the opacity for a node:
+    * a node is hidden when it's `alwaysShow` flag hasn't been set and: 
+      * the matching `sideBarNodeType` has `style.opacity != 1` **or**
+      * it is a discarded node and not `showDiscardedEvidence`
+    * in all other circumstances the node is shown with its `originalOpacity`
+    * this means we need to recalculate the node's style when
+      * `showDiscardedEvidence` changes
+      * a `toggleNodesByType` event occurs (from sidebar)
+      * the node's `alwaysShow` flag changes
 
 ## Model
 
@@ -96,12 +115,16 @@ The main point of the reviewGraph component is to display this graph and help us
   * `group`: int based on the nodeType (e.g. Review, Bot, Thing)
   * `nodeSize`: deprecated, useful only if using svg circle
   * `nodeScale`: used to transform the standard size of the svg element
-  * `enabledNode`: bool currently fixed to true
+  * `enabledNode`: bool by default true, set to false for all discarded nodes, opposite of `hidden`?
+  * `isDiscardedEvidence`: bool is true when the node is not one of
+    the *critical nodes* in the `isBasedOnKept` closure (+ neighbouring nodes).
 * for links:
   * `value`: float, currently fixed value
 * for both nodes and links:
-  * `opacity`: used to store the "current" opacity
-  * `originalOpacity`: used to store "temporary" opacity //FIXME: we should be able to calculate opacity based on some global state, instead of introducing state here
+  * `hidden` (was `opacityFilter`): bool true when the node should be hidden (ie when not `showDiscardedEvidence`)
+  * `opacity`: float in [0,1], defaults to the same as `originalOpacity`, but may change as nodes are hiddent for a variety of reasons (e.g. hide types of nodes or hide discarded nodes)
+  * `originalOpacity`: default opacity assigned to the node/link  //FIXME: we should be able to calculate opacity based on some global state, instead of introducing state here
+  * `neighbhdActivation` bool ?? true if node was hidden, but got activated via a neighbouring node
 
 ### Other State
 At the moment all other state is stored in the angular `scope`, but not declared in the controller. Most is declared/introduced in the directive:
@@ -110,11 +133,15 @@ At the moment all other state is stored in the angular `scope`, but not declared
   a very simple selection model, just a single node can be selected at
   a time.
 * related to discarded evidence in the graph:
-  * `prunedGraphActivation`: boolean indicates that discarded evidence
-     should be hidden
-  * `manageCriticalPath`: boolean indicates that discarded evidence
-    should be hidden. Same as `prunedGraphActivation`!!
+  * `showDiscardedEvidence` (was `manageCriticalPath` **and**
+    `prunedGraphActivation`): boolean when true, the discarded
+    evidence (nodes and links) should be shown in the UI.
   * `criticalPathButtonText`: str label for the button
+* related to the sidebar:
+  * `sideBarNodeTypes` with fields:
+    * `id` the high-level node type, aligned with `nodeMapper.calcSymbol`
+    * `description`: a short description of the node type
+    * 
 * related to selected node details:
   * `activateBotCard`: 
   * `activateOrganizationCard`
@@ -155,7 +182,7 @@ Event handlers on `scope`:
   * `displayMainReview`
   * `displayMainItemReviewed`
 * related to the view buttons
-  * `clickCriticalPath`
+  * `toggleShowDiscarded` (was `clickCriticalPath`) 
   * `zoomFit`
 
 ## Controller

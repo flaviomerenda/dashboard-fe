@@ -195,8 +195,17 @@ define([
                     .map(nid => nodeById(nid))
             }
 
-            this.findCriticalPath = function(mainNode, rel='isBasedOnKept') {
-                let nodesInClosure = this.lookupNodesInRelClosure(mainNode, rel)
+            /**
+             * Given a startNode and a relation, return nodes in the
+             * graph that can be reached by following the relation, as
+             * well as neighbouring nodes.
+             * 
+             * @param startNode a node in the graph
+             * @param rel string a relation type
+             * @returns an array of nodes in the graph
+             */
+            this.findCriticalNodes = function(startNode, rel='isBasedOnKept') {
+                let nodesInClosure = this.lookupNodesInRelClosure(startNode, rel)
                 let neighNodes = nodesInClosure.flatMap(this.getReviewLinkedNodes);
                 return nodesInClosure.concat(neighNodes);
             }
@@ -534,6 +543,8 @@ define([
                 let hLevelsHisto = Array.from(new Set(hLevels)).map(hl => [hl, hLevels.filter(l => hl == l).length])
                 console.log('Max HLevel: ', maxHLevel, ' of ', hLevels.length, ' histo: ', hLevelsHisto);
 
+                let criticalNodes = gSearch.findCriticalNodes(gSearch.nodeById(graph.mainNode), 'isBasedOnKept');
+
                 let acred2D3NodeObj = n =>
                     Object.assign(Object.create(n), {
                         id: n.identifier || gSearch.findNodeId(n),
@@ -543,6 +554,7 @@ define([
                         originalOpacity: nMapper.calcNodeOpacity(n),
                         opacity: nMapper.calcNodeOpacity(n),
                         nodeScale: nMapper.calcNodeScale(n),
+                        isDiscardedEvidence: !criticalNodes.includes(n),
                         enabledNode: true
                     })
 

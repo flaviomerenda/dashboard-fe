@@ -38,6 +38,13 @@ define(
         module.controller('reviewGraph', function ($scope, alertSrv, solrSrv, rgProcessor, card) {
             var gNodeMapper = rgProcessor.nodeMapper($scope.wholeGraph);
             var gSearch = rgProcessor.search($scope.wholeGraph);
+
+            /**
+             * When true, the discarded evidence (nodes and links)
+             * should be shown in the UI, otherwise they should be
+             * hidden.
+             */
+            $scope.showDiscardedEvidence = false;
             
             $scope.init = function (ciDoc) {
 
@@ -59,6 +66,7 @@ define(
                     console.log('Broadcasting rendering', gNodeMapper);
                     $scope.$broadcast('render'); // trigger rendering of the view
                     selectMainReviewNode();
+                    $scope.showDiscardedEvidence = false; // by default hide 
                 });
             };
 
@@ -71,6 +79,71 @@ define(
                 return processedGraph;
             }
 
+            /**
+             * Model for the buttons in the sidebar
+             */
+            $scope.sideBarNodeTypes = [
+                {id: "tweet",
+                 description: "Tweet",
+                 style: {opacity: 1}},
+                {id: "revCred",
+                 description: "Review",
+                 style: {opacity: 1}},
+                {id: "claimRev",
+                 description: "ClaimReview",
+                 style: {opacity: 1}},
+                {id: "bot",
+                 description: "Bot",
+                 style: {opacity: 1}},
+                {id: "website",
+                 description: "Web Site",
+                 style: {opacity: 1}},
+                {id: "singleSent",
+                 description: "Sentence or Claim",
+                 style: {opacity: 1}},
+                {id: "sentPair",
+                 description: "Sentence Pair",
+                 style: {opacity: 1}},
+                {id: "article",
+                 description: "Article or WebPage",
+                 style: {opacity: 1}},
+                {id: "thing",
+                 description: "Anything else",
+                 style: {opacity: 1}}
+            ];
+
+            $scope.sidebarGraphEvent = function(nodeIconId){
+                let iconType = nodeIconId.split(":")[0];
+                $scope.sideBarNodeTypes.filter(nt => nt.id == iconType)
+                    .forEach(nt => {
+                        let currOpacity = nt.style.opacity;
+                        let show = (currOpacity == 0.3);
+                        let newOpacity = show ? 1.0 : 0.3;
+                        nt.style.opacity = newOpacity;
+                        $scope.$broadcast("toggleNodesByType", nt.id, show);
+                    });
+            };
+            
+            /////
+            //  Handlers and events for showing or hiding the discarded evidence
+            /////
+            
+            /**
+             * Toggle the value of `showDiscardedEvidence`
+             */
+            $scope.toggleShowDiscarded = function() {
+                $scope.showDiscardedEvidence = !$scope.showDiscardedEvidence;
+            };
+
+            $scope.$watch("showDiscardedEvidence", function(newVal) {
+                let showOrHide = (newVal) ? "Hide" : "Show";
+                $scope.criticalPathButtonText = showOrHide + " discarded evidence";
+            })
+
+
+            ////
+            // Handlers and events for selecting a node
+            ////
             let selectMainReviewNode = () => {
                 let mainNode = gSearch.nodeById($scope.wholeGraph.mainNode)
                 $scope.selectedNode = mainNode;
@@ -88,14 +161,17 @@ define(
             
             $scope.$on("selectNode", function(event, newNode) {
                 // TODO: validate newNode?
-                $scope.selectedNode = newNode;
+                //console.log('setting selectedNode to', newNode, 'from', $scope.selectedNode);
+                $scope.$apply(() => $scope.selectedNode = newNode);
             })
             
             $scope.$watch("selectedNode", function(newVal, oldVal) {
-                // console.log('selectedNode ', oldVal, ' => ', newVal);
                 selectProperCard(newVal);
             })
 
+            /////
+            // Handlers and events for node details (ie cards)
+            /////
             var selectProperCard = function (selectedNode) {
                 let scope = $scope;
                 if (!gNodeMapper) {
@@ -175,10 +251,6 @@ define(
                 if (!reviewer) console.log('No author for ', selectedReview, '?')
                 return (reviewer.name || reviewer['@type'])
             }
-                    
-            
-            
-            
         });
     }
 );
