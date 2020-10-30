@@ -11,7 +11,7 @@ define(
         var module = angular.module('kibana.controllers');
         app.useModule(module);
 
-        module.controller('crowdAcred', function ($scope, alertSrv, solrSrv, rgProcessor, card) {
+        module.controller('crowdAcred', function ($scope, alertSrv, solrSrv, rgProcessor) {
 
             $scope.$watch("wholeGraph.reviewedAsInaccurate", function(newVal) {
                 if (!$scope.wholeGraph) {
@@ -138,7 +138,7 @@ define(
                 "reviewRating": {
                     "context": "string",
                     "@type": "Rating",
-                    "ratingValue": "NCF|CFS|NV",
+                    "ratingValue": "",
                     "confidence": 1,
                     "reviewAspect": "checkworthiness",
                     "ratingExplanation": "mock-auto-generated-explanation"
@@ -235,7 +235,7 @@ define(
                 "reviewRating": {
                     "context": "string",
                     "@type": "Rating",
-                    "ratingValue": "0|1|2|3|4|5",
+                    "ratingValue": "",
                     "bestRating": "5",
                     "worstRating": "0",
                     "alternateName": "different topics"|"not equivalent but on same topic"|"not equivalent but share details"|"roughly equivalent”|“mostly equivalen”|“completely equivalent",
@@ -267,7 +267,7 @@ define(
                 "reviewRating": {
                  "context": "string",
                  "@type": "Rating",
-                 "ratingValue": "agree|disagree|discuss|unrelated",
+                 "ratingValue": "",
                  "confidence": 1,
                  "reviewAspect": "stance",
                  "ratingExplanation": "mock-auto-generated-explanation"
@@ -284,29 +284,53 @@ define(
                 // submit review
                 if (formType == "checkWorthiness") {
                     let value = $scope.checkWorthinessReview.reviewRating.ratingValue
-                    if (value == "CFS") {
-                        $scope.activeDialog = "simplifyClaim"
-                    } else {
-                        $scope.activeDialog = "rephraseClaim"
+                    if (value) {
+                        if (value == "CFS") {
+                            $scope.activeDialog = "simplifyClaim"
+                        } else {
+                            $scope.activeDialog = "rephraseClaim"
+                        }
+                    }
+                    else {
+                        alertSrv.set('Warning', 'Insert one of the listed values for the task');
                     }
                 }
                 if (formType == "rephraseClaim") {
-                    $scope.activeDialog = "endForm"
+                    if ($scope.rephraseClaimReview.normalizedClaim.text) {
+                        $scope.activeDialog = "endForm"
+                        $scope.wholeGraph.reviewedAsInaccurate = false
+                    } else {
+                        alertSrv.set('Warning', 'Insert your rephrased sentence or skip the task');
+                    }
                 }
                 if (formType == "simplifyClaim") {
-                    $scope.activeDialog = "sentenceSimilarity"
+                    if ($scope.simplifyClaimReview.normalizedClaim.text) {
+                        $scope.activeDialog = "sentenceSimilarity"
+                    } else {
+                        alertSrv.set('Warning', 'Insert your simplified sentence or skip the task');
+                    }
                 }
                 if (formType == "sentenceSimilarity") {
-                    $scope.activeDialog = "stanceDetection"
+                    if ($scope.sentenceSimilarityReview.reviewRating.ratingValue) {
+                        $scope.activeDialog = "stanceDetection"
+                    } else {
+                        alertSrv.set('Warning', 'Insert one of the listed values for the task');
+                    }
                 }
                 if (formType == "stanceDetection") {
-                    $scope.activeDialog = "endForm"
+                    if ($scope.stanceDetectionReview.reviewRating.ratingValue) {
+                        $scope.activeDialog = "endForm"
+                        $scope.wholeGraph.reviewedAsInaccurate = false
+                    } else {
+                        alertSrv.set('Warning', 'Insert one of the listed values for the task');
+                    }
                 }
             }
 
             $scope.skipForm = function(formType) {
                 if (formType == "rephraseClaim") {
                     $scope.activeDialog = "endForm"
+                    $scope.wholeGraph.reviewedAsInaccurate = false
                 }
                 if (formType == "simplifyClaim") {
                     $scope.activeDialog = "sentenceSimilarity"
@@ -315,6 +339,7 @@ define(
 
             $scope.leaveForm = function() {
                 $scope.activeDialog = null
+                $scope.wholeGraph.reviewedAsInaccurate = false
             }
 
         });
