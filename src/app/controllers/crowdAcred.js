@@ -291,46 +291,24 @@ define(
                             $scope.activeDialog = "rephraseClaim"
                         }
                     }
-                    else {
-                        alertSrv.set('Warning', 'Insert one of the listed values for the task');
-                    }
                 }
-                if (formType == "rephraseClaim") {
-                    if ($scope.rephraseClaimReview.normalizedClaim.text) {
+                if (formType == "rephraseClaim" && $scope.rephraseClaimReview.normalizedClaim.text) {
                         $scope.activeDialog = "endForm"
-                        $scope.wholeGraph.reviewedAsInaccurate = false
-                    } else {
-                        alertSrv.set('Warning', 'Insert your rephrased sentence or skip the task');
-                    }
                 }
-                if (formType == "simplifyClaim") {
-                    if ($scope.simplifyClaimReview.normalizedClaim.text) {
+                if (formType == "simplifyClaim" && $scope.simplifyClaimReview.normalizedClaim.text) {
                         $scope.activeDialog = "sentenceSimilarity"
-                    } else {
-                        alertSrv.set('Warning', 'Insert your simplified sentence or skip the task');
-                    }
                 }
-                if (formType == "sentenceSimilarity") {
-                    if ($scope.sentenceSimilarityReview.reviewRating.ratingValue) {
+                if (formType == "sentenceSimilarity" && $scope.sentenceSimilarityReview.reviewRating.ratingValue) {
                         $scope.activeDialog = "stanceDetection"
-                    } else {
-                        alertSrv.set('Warning', 'Insert one of the listed values for the task');
-                    }
                 }
-                if (formType == "stanceDetection") {
-                    if ($scope.stanceDetectionReview.reviewRating.ratingValue) {
+                if (formType == "stanceDetection" && $scope.stanceDetectionReview.reviewRating.ratingValue) {
                         $scope.activeDialog = "endForm"
-                        $scope.wholeGraph.reviewedAsInaccurate = false
-                    } else {
-                        alertSrv.set('Warning', 'Insert one of the listed values for the task');
-                    }
                 }
             }
 
             $scope.skipForm = function(formType) {
                 if (formType == "rephraseClaim") {
                     $scope.activeDialog = "endForm"
-                    $scope.wholeGraph.reviewedAsInaccurate = false
                 }
                 if (formType == "simplifyClaim") {
                     $scope.activeDialog = "sentenceSimilarity"
@@ -339,7 +317,6 @@ define(
 
             $scope.leaveForm = function() {
                 $scope.activeDialog = null
-                $scope.wholeGraph.reviewedAsInaccurate = false
             }
 
         });
