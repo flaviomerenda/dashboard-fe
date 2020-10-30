@@ -325,7 +325,7 @@ define(
                         // TODO: changing with the current dashboard user information
                         coinformUserReviewSchema.author.url = mockUserUrl();
                         coinformUserReviewSchema.author.identifier = mockDevUser;
-                        coinformUserReviewSchema.text = prompt("If you want, insert your review comment please:", "Write your comment here");
+                        //coinformUserReviewSchema.text = prompt("If you want, insert your review comment please:", "Write your comment here");
                         coinformUserReviewSchema.itemReviewed.context = "http://schema.org";
                         coinformUserReviewSchema.itemReviewed.type = itemReviewedType(selectedReview);
                         coinformUserReviewSchema.itemReviewed.url = itemReviewedUrl(selectedReview);
@@ -365,7 +365,10 @@ define(
                             console.debug("User says review ", selectedReview, "is inaccurate");
                             console.debug("The user review feedback is: ", inaccurateUserReview);
                         };
-                        mockPostReview();
+                        if (selectedReview.id == graph.mainNode) {
+                            scope.wholeGraph.reviewedAsInaccurate = true;
+                        }
+                        //mockPostReview();
                         // TODO: activate no-mock POST request
                         //postReview(inaccurateUserReview)
                     }

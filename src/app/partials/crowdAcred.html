@@ -1,0 +1,154 @@
+<div ng-show="activeDialog == 'checkWorthiness'">
+    <div class="modal-backdrop"></div>
+    <div class="modal fade hide in" tabindex="-1" aria-hidden="true" style="display: block;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>{{checkWorthinessForm.title}}</h2>
+                <h4>{{checkWorthinessForm.subtitle}}</h4>
+            </div>
+            <div class="modal-body">
+                <label>{{checkWorthinessForm.question}}</label>
+                <br>
+                <ul><li><label><i><b>{{checkWorthinessForm.sentence}}</b></i></label></ul></li>
+                <br>
+                <div ng-repeat="(key, value) in checkWorthinessForm.values">
+                    <label class="radio">
+                        <input type="radio" ng-model="checkWorthinessReview.reviewRating.ratingValue" value="{{key}}"> {{value}}
+                    </label>
+                </div>
+            </div>
+        <div class="modal-footer">
+            <button class="btn btn-danger" ng-click="leaveForm()">Close</button>
+            <button class="btn btn-primary" ng-click="submitForm('checkWorthiness')">Continue</button>
+        </div>
+        </div>
+    </div>
+</div>
+
+<div ng-show="activeDialog == 'rephraseClaim'">
+    <div class="modal-backdrop"></div>
+    <div class="modal hide fade in" tabindex="-1" aria-hidden="true" style="display: block;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>{{rephraseClaimForm.title}}</h2>
+                <h4>{{rephraseClaimForm.subtitle}}</h4>
+            </div>
+                <div class="modal-body">
+                    <label>{{rephraseClaimForm.question}}</label>
+                    <br>
+                    <ul><li><label><i><b>{{rephraseClaimForm.sentence}}</b></i></label></ul></li>
+                    <br>
+                    <label>
+                        {{rephraseClaimForm.value}} 
+                        <textarea class="crowd-acred-text-box" ng-model="rephraseClaimReview.reviewRating.ratingValue"></textarea>
+                    </label>
+                </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" ng-click="leaveForm()">Close</button>
+                <button class="btn btn-danger" ng-click="skipForm('rephraseClaim')">Skip</button>
+                <button class="btn btn-primary" ng-click="submitForm('rephraseClaim')">Continue</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div ng-show="activeDialog == 'simplifyClaim'">
+    <div class="modal-backdrop"></div>
+    <div class="modal hide fade in" tabindex="-1" aria-hidden="true" style="display: block;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>{{simplifyClaimForm.title}}</h2>
+                <h4>{{simplifyClaimForm.subtitle}}</h4>
+            </div>
+                <div class="modal-body">
+                    <label>{{simplifyClaimForm.question}}</label>
+                    <br>
+                    <ul><li><label><i><b>{{simplifyClaimForm.sentence}}</b></i></label></ul></li>
+                    <br>
+                    <label>
+                        {{simplifyClaimForm.value}} 
+                        <textarea class="crowd-acred-text-box" ng-model="simplifyClaimReview.reviewRating.ratingValue"></textarea>
+                    </label>
+                </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" ng-click="leaveForm()">Close</button>
+                <button class="btn btn-danger" ng-click="skipForm('simplifyClaim')">Skip</button>
+                <button class="btn btn-primary" ng-click="submitForm('simplifyClaim')">Continue</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div ng-show="activeDialog == 'sentenceSimilarity'">
+    <div class="modal-backdrop"></div>
+    <div class="modal hide fade in" tabindex="-1" aria-hidden="true" style="display: block;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>{{sentenceSimilarityForm.title}}</h2>
+                <h4>{{sentenceSimilarityForm.subtitle}}</h4>
+            </div>
+            <div class="modal-body">
+                <label>{{sentenceSimilarityForm.question}}</label>
+                <br>
+                <div ng-repeat="value in sentenceSimilarityForm.sentencePair">
+                    <ul><li><label><i><b>{{value}}</b></i></label></ul></li>
+                </div>
+                <br>
+                <div ng-repeat="(key, value) in sentenceSimilarityForm.values">
+                    <label class="radio">
+                        <input type="radio" ng-model="sentenceSimilarityReview.reviewRating.ratingValue" value="{{key}}"> {{value}}
+                    </label>
+                </div>
+            </div>
+        <div class="modal-footer">
+            <button class="btn btn-danger" ng-click="leaveForm()">Close</button>
+            <button class="btn btn-primary" ng-click="submitForm('sentenceSimilarity')">Continue</button>
+        </div>
+        </div>
+    </div>
+</div>
+
+<div ng-show="activeDialog == 'stanceDetection'">
+    <div class="modal-backdrop"></div>
+    <div class="modal hide fade in" tabindex="-1" aria-hidden="true" style="display: block;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>{{stanceDetectionForm.title}}</h2>
+                <h4>{{stanceDetectionForm.subtitle}}</h4>
+            </div>
+            <div class="modal-body">
+                <label>{{stanceDetectionForm.question}}</label>
+                <br>
+                <div ng-repeat="value in stanceDetectionForm.sentencePair">
+                    <ul><li><label><i><b>{{value}}</b></i></label></ul></li>
+                </div>
+                <br>
+                <div ng-repeat="(key, value) in stanceDetectionForm.values">
+                    <label class="radio">
+                        <input type="radio" ng-model="stanceDetectionReview.reviewRating.ratingValue" value="{{key}}"> {{value}}
+                    </label>
+                </div>
+            </div>
+        <div class="modal-footer">
+            <button class="btn btn-danger" ng-click="leaveForm()">Close</button>
+            <button class="btn btn-primary" ng-click="submitForm('stanceDetection')">Continue</button>
+        </div>
+        </div>
+    </div>
+</div>
+
+<div ng-show="activeDialog == 'endForm'">
+    <div class="modal-backdrop"></div>
+    <div class="modal hide fade in" tabindex="-1" aria-hidden="true" style="display: block;">
+        <div class="modal-content">
+            <div class="modal-body" style="text-align:center">
+                <br>
+                    <h3>Thank you for your time and your helpful feedback!</h3>
+                <br>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" ng-click="leaveForm()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

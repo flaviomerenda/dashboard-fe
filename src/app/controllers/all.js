@@ -5,4 +5,5 @@ define([
     './sideColumn',
     './ciDocument',
     './reviewGraph',
+    './crowdAcred',
 ], function () {});
