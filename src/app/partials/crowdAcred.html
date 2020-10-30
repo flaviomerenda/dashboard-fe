@@ -1,27 +1,25 @@
 <div ng-show="activeDialog == 'checkWorthiness'">
     <form>
     <div class="modal-backdrop"></div>
-    <div class="modal fade hide in" tabindex="-1" aria-hidden="true" style="display: block;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>{{checkWorthinessForm.title}}</h2>
-                <h4>{{checkWorthinessForm.subtitle}}</h4>
+    <div class="modal">
+        <div class="modal-header">
+            <h2>{{checkWorthinessForm.title}}</h2>
+            <h4>{{checkWorthinessForm.subtitle}}</h4>
+        </div>
+        <div class="modal-body">
+            <label>{{checkWorthinessForm.question}}</label>
+            <br>
+            <ul><li><label><i><b>{{checkWorthinessForm.sentence}}</b></i></label></ul></li>
+            <br>
+            <div ng-repeat="(key, value) in checkWorthinessForm.values">
+                <label class="radio">
+                    <input type="radio" ng-model="checkWorthinessReview.reviewRating.ratingValue" value="{{key}}" required> {{value}}
+                </label>
             </div>
-            <div class="modal-body">
-                <label>{{checkWorthinessForm.question}}</label>
-                <br>
-                <ul><li><label><i><b>{{checkWorthinessForm.sentence}}</b></i></label></ul></li>
-                <br>
-                <div ng-repeat="(key, value) in checkWorthinessForm.values">
-                    <label class="radio">
-                        <input type="radio" ng-model="checkWorthinessReview.reviewRating.ratingValue" value="{{key}}" required> {{value}}
-                    </label>
-                </div>
-            </div>
+        </div>
         <div class="modal-footer">
             <button class="btn btn-danger" ng-click="leaveForm()">Close</button>
             <button type="submit" class="btn btn-primary" ng-click="submitForm('checkWorthiness')">Continue</button>
-        </div>
         </div>
     </div>
     </form>
@@ -30,27 +28,25 @@
 <div ng-show="activeDialog == 'rephraseClaim'">
     <form>
         <div class="modal-backdrop"></div>
-        <div class="modal hide fade in" tabindex="-1" aria-hidden="true" style="display: block;">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2>{{rephraseClaimForm.title}}</h2>
-                    <h4>{{rephraseClaimForm.subtitle}}</h4>
+        <div class="modal">
+            <div class="modal-header">
+                <h2>{{rephraseClaimForm.title}}</h2>
+                <h4>{{rephraseClaimForm.subtitle}}</h4>
+            </div>
+                <div class="modal-body">
+                    <label>{{rephraseClaimForm.question}}</label>
+                    <br>
+                    <ul><li><label><i><b>{{rephraseClaimForm.sentence}}</b></i></label></ul></li>
+                    <br>
+                    <label>
+                        {{rephraseClaimForm.value}} 
+                        <textarea class="crowd-acred-text-box" ng-model="rephraseClaimReview.normalizedClaim.text" required></textarea>
+                    </label>
                 </div>
-                    <div class="modal-body">
-                        <label>{{rephraseClaimForm.question}}</label>
-                        <br>
-                        <ul><li><label><i><b>{{rephraseClaimForm.sentence}}</b></i></label></ul></li>
-                        <br>
-                        <label>
-                            {{rephraseClaimForm.value}} 
-                            <textarea class="crowd-acred-text-box" ng-model="rephraseClaimReview.normalizedClaim.text" required></textarea>
-                        </label>
-                    </div>
-                <div class="modal-footer">
-                    <button class="btn btn-danger" ng-click="leaveForm()">Close</button>
-                    <button class="btn btn-danger" ng-click="skipForm('rephraseClaim')">Skip</button>
-                    <button type="submit" class="btn btn-primary" ng-click="submitForm('rephraseClaim')">Continue</button>
-                </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" ng-click="leaveForm()">Close</button>
+                <button class="btn btn-danger" ng-click="skipForm('rephraseClaim')">Skip</button>
+                <button type="submit" class="btn btn-primary" ng-click="submitForm('rephraseClaim')">Continue</button>
             </div>
         </div>
     </form>
@@ -59,7 +55,7 @@
 <div ng-show="activeDialog == 'simplifyClaim'">
     <form>
         <div class="modal-backdrop"></div>
-        <div class="modal hide fade in" tabindex="-1" aria-hidden="true" style="display: block;">
+        <div class="modal">
             <div class="modal-content">
                 <div class="modal-header">
                     <h2>{{simplifyClaimForm.title}}</h2>
@@ -88,7 +84,7 @@
 <div ng-show="activeDialog == 'sentenceSimilarity'">
     <form>
         <div class="modal-backdrop"></div>
-        <div class="modal hide fade in" tabindex="-1" aria-hidden="true" style="display: block;">
+        <div class="modal">
             <div class="modal-content">
                 <div class="modal-header">
                     <h2>{{sentenceSimilarityForm.title}}</h2>
@@ -107,10 +103,10 @@
                         </label>
                     </div>
                 </div>
-            <div class="modal-footer">
-                <button class="btn btn-danger" ng-click="leaveForm()">Close</button>
-                <button type="submit" class="btn btn-primary" ng-click="submitForm('sentenceSimilarity')">Continue</button>
-            </div>
+                <div class="modal-footer">
+                    <button class="btn btn-danger" ng-click="leaveForm()">Close</button>
+                    <button type="submit" class="btn btn-primary" ng-click="submitForm('sentenceSimilarity')">Continue</button>
+                </div>
             </div>
         </div>
     </form>
@@ -119,7 +115,7 @@
 <div ng-show="activeDialog == 'stanceDetection'">
     <form>
         <div class="modal-backdrop"></div>
-        <div class="modal hide fade in" tabindex="-1" aria-hidden="true" style="display: block;">
+        <div class="modal">
             <div class="modal-content">
                 <div class="modal-header">
                     <h2>{{stanceDetectionForm.title}}</h2>
@@ -138,19 +134,19 @@
                         </label>
                     </div>
                 </div>
-            <div class="modal-footer">
-                <button class="btn btn-danger" ng-click="leaveForm()">Close</button>
-                <button type="submit" class="btn btn-primary" ng-click="submitForm('stanceDetection')">Continue</button>
+                <div class="modal-footer">
+                    <button class="btn btn-danger" ng-click="leaveForm()">Close</button>
+                    <button type="submit" class="btn btn-primary" ng-click="submitForm('stanceDetection')">Continue</button>
+                </div>
             </div>
-            </div>
-        </form>
-    </div>
+        </div>
+    </form>
 </div>
 
 <div ng-show="activeDialog == 'endForm'">
     <form>
         <div class="modal-backdrop"></div>
-        <div class="modal hide fade in" tabindex="-1" aria-hidden="true" style="display: block;">
+        <div class="modal">
             <div class="modal-content">
                 <div class="modal-body" style="text-align:center">
                     <br>
