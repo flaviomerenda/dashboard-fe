@@ -4,16 +4,20 @@
     <div class="modal">
         <div class="modal-header">
             <h2>{{checkWorthinessForm.title}}</h2>
-            <h4>{{checkWorthinessForm.subtitle}}</h4>
+            <h4>
+                {{checkWorthinessForm.subtitle}}
+                <sup> 
+                    <a class="icon-info" title="{{checkWorthinessForm.info}}"></a>
+                </sup>
+            </h4>
         </div>
         <div class="modal-body">
-            <label>{{checkWorthinessForm.question}}</label>
+            <h5>{{checkWorthinessForm.question}}</h5>
+            <h5><ul><li><i><b>{{checkWorthinessForm.sentence}}</b></i></ul></li></h5>
             <br>
-            <ul><li><label><i><b>{{checkWorthinessForm.sentence}}</b></i></label></ul></li>
-            <br>
-            <div ng-repeat="(key, value) in checkWorthinessForm.values">
+            <div ng-repeat="value in checkWorthinessForm.values">
                 <label class="radio">
-                    <input type="radio" ng-model="checkWorthinessReview.reviewRating.ratingValue" value="{{key}}" required> {{value}}
+                    <input type="radio" ng-model="checkWorthinessReview.reviewRating.ratingValue" value="{{value.label}}" required> {{value.expl}}
                 </label>
             </div>
         </div>
@@ -34,9 +38,13 @@
                 <h4>{{rephraseClaimForm.subtitle}}</h4>
             </div>
                 <div class="modal-body">
-                    <label>{{rephraseClaimForm.question}}</label>
-                    <br>
-                    <ul><li><label><i><b>{{rephraseClaimForm.sentence}}</b></i></label></ul></li>
+                    <h5>
+                        {{rephraseClaimForm.question}}
+                        <sup> 
+                            <a class="icon-info" title="{{rephraseClaimForm.info}}"></a>
+                        </sup>
+                    </h5>
+                    <ul><li><h5><i><b>{{rephraseClaimForm.sentence}}</b></i></h5></ul></li>
                     <br>
                     <label>
                         {{rephraseClaimForm.value}} 
@@ -61,9 +69,13 @@
                 <h4>{{simplifyClaimForm.subtitle}}</h4>
             </div>
                 <div class="modal-body">
-                    <label>{{simplifyClaimForm.question}}</label>
-                    <br>
-                    <ul><li><label><i><b>{{simplifyClaimForm.sentence}}</b></i></label></ul></li>
+                    <h5>
+                        {{simplifyClaimForm.question}}
+                        <sup> 
+                            <a class="icon-info" title="{{simplifyClaimForm.info}}"></a>
+                        </sup>
+                    </h5>
+                    <ul><li><h5><i><b>{{simplifyClaimForm.sentence}}</b></i></h5></ul></li>
                     <br>
                     <label>
                         {{simplifyClaimForm.value}} 
@@ -88,15 +100,14 @@
                 <h4>{{sentenceSimilarityForm.subtitle}}</h4>
             </div>
             <div class="modal-body">
-                <label>{{sentenceSimilarityForm.question}}</label>
-                <br>
+                <h5>{{sentenceSimilarityForm.question}}</h5>
                 <div ng-repeat="value in sentenceSimilarityForm.sentencePair">
-                    <ul><li><label><i><b>{{value}}</b></i></label></ul></li>
+                    <ul><li><h5><i><b>{{value}}</b></i></h5></ul></li>
                 </div>
                 <br>
-                <div ng-repeat="(key, value) in sentenceSimilarityForm.values">
+                <div ng-repeat="value in sentenceSimilarityForm.values | orderBy:'-label'">
                     <label class="radio">
-                        <input type="radio" ng-model="sentenceSimilarityReview.reviewRating.ratingValue" value="{{key}}" required> {{value}}
+                        <input type="radio" ng-model="sentenceSimilarityReview.reviewRating.ratingValue" value="{{value.label}}" required> {{value.expl}}
                     </label>
                 </div>
             </div>
@@ -117,15 +128,14 @@
                 <h4>{{stanceDetectionForm.subtitle}}</h4>
             </div>
             <div class="modal-body">
-                <label>{{stanceDetectionForm.question}}</label>
-                <br>
+                <h5>{{stanceDetectionForm.question}}</h5>
                 <div ng-repeat="value in stanceDetectionForm.sentencePair">
-                    <ul><li><label><i><b>{{value}}</b></i></label></ul></li>
+                    <ul><li><h5><i><b>{{value}}</b></i></h5></ul></li>
                 </div>
                 <br>
-                <div ng-repeat="(key, value) in stanceDetectionForm.values">
+                <div ng-repeat="value in stanceDetectionForm.values">
                     <label class="radio">
-                        <input type="radio" ng-model="stanceDetectionReview.reviewRating.ratingValue" value="{{key}}" required> {{value}}
+                        <input type="radio" ng-model="stanceDetectionReview.reviewRating.ratingValue" value="{{value.label}}" required> {{value.expl}}
                     </label>
                 </div>
             </div>

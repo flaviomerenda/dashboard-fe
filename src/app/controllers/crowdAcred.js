@@ -20,11 +20,13 @@ define(
                 if ($scope.wholeGraph.reviewedAsInaccurate == true) {
                     $scope.triggerSentenceNode = findTriggerItem('QSentCredReview', 'Sentence')
                     $scope.triggerSentencePairNode = findTriggerItem('SentSimilarityReview', 'SentencePair')
-                    $scope.checkWorthinessForm = checkWorthinessTask()
-                    $scope.rephraseClaimForm = rephraseClaimTask()
-                    $scope.simplifyClaimForm = simplifyClaimTask()
-                    $scope.sentenceSimilarityForm = sentenceSimilarityTask()
-                    $scope.stanceDetectionForm = stanceDetectionTask()
+                    if ($scope.triggerSentenceNode && $scope.triggerSentencePairNode) {
+                        $scope.checkWorthinessForm = checkWorthinessTask()
+                        $scope.rephraseClaimForm = rephraseClaimTask()
+                        $scope.simplifyClaimForm = simplifyClaimTask()
+                        $scope.sentenceSimilarityForm = sentenceSimilarityTask()
+                        $scope.stanceDetectionForm = stanceDetectionTask()
+                    }
                 }
             })
 
@@ -40,9 +42,11 @@ define(
                 let mainNode = gSearch.nodeById($scope.wholeGraph.mainNode)
                 let review = gSearch.findCriticalNodes(mainNode, 'isBasedOnKept')
                     .filter(n => n['@type'] == reviewType)[0]
-                let trgItem = gSearch.lookupNodes(review, 'itemReviewed', 'source')
-                    .filter(n => n['@type'] == itemType)[0]
-                return trgItem 
+                if (review) {
+                    let trgItem = gSearch.lookupNodes(review, 'itemReviewed', 'source')
+                        .filter(n => n['@type'] == itemType)[0]
+                        return trgItem 
+                }
             }
 
             const taskValues = {
@@ -72,8 +76,9 @@ define(
                     title: "Check Worthiness Task",
                     subtitle: "Help us to detect if a sentence contains a factual claim",
                     question: "Do you think the following sentence contains a factual claim?",
+                    info: "A factual claims is any statement that refers to measurable effects that can be proved right or wrong",
                     sentence: $scope.triggerSentenceNode.text,
-                    values: taskValues.checkWortinessValues
+                    values: Object.entries(taskValues.checkWortinessValues).map(v => {return({label: v[0], expl: v[1]})})
                 }
             }
             
@@ -81,6 +86,7 @@ define(
                 return {
                     title: "Rephrase Claim Task",
                     subtitle: "Help us to rephrase a sentence as a factual claim",
+                    info: "e.g., ",
                     question: "Do you think the following sentence can be rephrased as factual claim? if yes, try to rephrase it please.",
                     sentence: $scope.triggerSentenceNode.text,
                     value: "Rephrased Claim: ",
@@ -91,6 +97,7 @@ define(
                 return {
                     title: "Simplify Claim Task",
                     subtitle: "Help us to simplify a detected claim",
+                    info: "e.g., ",
                     question: "Do you think the following sentence can be simplified to focus on the detected claim? if yes, try to simplify it please.",
                     sentence: $scope.triggerSentenceNode.text,
                     value: "Simplified Claim: "
@@ -103,7 +110,7 @@ define(
                     subtitle: "Help us to detect how similar are two sentences",
                     question: "Choose one of the options that describes the semantic similarity grade between the following pair of sentences.",
                     sentencePair: formatSentencePair($scope.triggerSentencePairNode.text),
-                    values: taskValues.sentenceSimilarityValues
+                    values: Object.entries(taskValues.sentenceSimilarityValues).map(v => {return({label: v[0], expl: v[1]})})
                 }
             }
             
@@ -113,7 +120,7 @@ define(
                     subtitle: "Help us to better understand the relation between two sentences",
                     question: "Choose one of the options that describes the relation between the following sentences.",
                     sentencePair: formatSentencePair($scope.triggerSentencePairNode.text),
-                    values: taskValues.stanceDetectionValues
+                    values: Object.entries(taskValues.stanceDetectionValues).map(v => {return({label: v[0], expl: v[1]})})
                 }
             }
 
@@ -293,16 +300,18 @@ define(
                     }
                 }
                 if (formType == "rephraseClaim" && $scope.rephraseClaimReview.normalizedClaim.text) {
-                        $scope.activeDialog = "endForm"
+                    $scope.activeDialog = "endForm"
                 }
                 if (formType == "simplifyClaim" && $scope.simplifyClaimReview.normalizedClaim.text) {
-                        $scope.activeDialog = "sentenceSimilarity"
+                    $scope.activeDialog = "sentenceSimilarity"
                 }
                 if (formType == "sentenceSimilarity" && $scope.sentenceSimilarityReview.reviewRating.ratingValue) {
-                        $scope.activeDialog = "stanceDetection"
+                    if (parseInt($scope.sentenceSimilarityReview.reviewRating.ratingValue) > 1) {
+                        $scope.activeDialog = "stanceDetection"}
+                    else {$scope.activeDialog = "endForm"}
                 }
                 if (formType == "stanceDetection" && $scope.stanceDetectionReview.reviewRating.ratingValue) {
-                        $scope.activeDialog = "endForm"
+                    $scope.activeDialog = "endForm"
                 }
             }
 
